@@ -12,8 +12,8 @@
 ### 1. Clone project
 
 ```bash
-git clone https://github.com/loihd98/webtruyen.git
-cd webtruyen
+git clone https://github.com/loihd98/vivutruyenhay.git
+cd vivutruyenhay
 ```
 
 ### 2. Setup environment
@@ -145,7 +145,7 @@ docker pull hello-world
 
 ```bash
 cd /opt
-sudo git clone https://github.com/loihd98/webtruyen.git
+sudo git clone https://github.com/loihd98/vivutruyenhay.git webtruyen
 sudo chown -R $USER:$USER webtruyen
 cd webtruyen
 
