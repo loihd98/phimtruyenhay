@@ -8,7 +8,7 @@ import JsonLd, {
 } from "../../../components/seo/JsonLd";
 
 const API_BASE_URL =
-  process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+  process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "/api";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://vivutruyenhay.com";
 
 // SSR: Fetch film review on server for SEO

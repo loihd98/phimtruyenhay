@@ -3,7 +3,7 @@ import { MetadataRoute } from "next";
 const API_BASE_URL =
   process.env.API_URL ||
   process.env.NEXT_PUBLIC_API_URL ||
-  "http://localhost:5000/api";
+  "http://localhost/api";
 
 async function fetchAllStorySlugs(): Promise<
   Array<{ slug: string; updatedAt: string }>

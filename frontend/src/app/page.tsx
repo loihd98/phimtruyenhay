@@ -7,7 +7,7 @@ import JsonLd, {
 } from "../components/seo/JsonLd";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://vivutruyenhay.com";
-const API_URL = process.env.API_URL || "http://localhost:5000/api";
+const API_URL = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "/api";
 
 async function fetchHomepageData() {
   try {
