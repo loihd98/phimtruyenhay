@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { persistStore, persistReducer } from "redux-persist";
+import { persistStore, persistReducer, createTransform } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { combineReducers } from "@reduxjs/toolkit";
 
@@ -17,12 +17,34 @@ const rootReducer = combineReducers({
   unlock: unlockSlice,
 });
 
+/**
+ * Transform: strip accessToken before writing to localStorage.
+ * On rehydration the provider will do a silent /auth/refresh
+ * to get a fresh accessToken from the httpOnly cookie.
+ * This prevents tokens from sitting in localStorage.
+ */
+const stripTokenTransform = createTransform(
+  // inbound: state → storage (strip the token)
+  (inboundState: any, key) => {
+    if (key === "auth") {
+      const { accessToken, ...rest } = inboundState;
+      return rest; // don't persist the access token
+    }
+    return inboundState;
+  },
+  // outbound: storage → state (nothing special)
+  (outboundState: any, key) => {
+    return outboundState;
+  },
+  { whitelist: ["auth"] }
+);
+
 // Single persist config for the entire root
 const persistConfig = {
   key: "root",
   storage,
   whitelist: ["auth", "ui"], // Only persist auth and ui slices
-  transforms: [], // No transforms needed for now
+  transforms: [stripTokenTransform],
 };
 
 // Create single persisted root reducer

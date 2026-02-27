@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
-import { RootState } from "../../store";
+import { RootState, AppDispatch } from "../../store";
+import { logoutUser } from "../../store/slices/authSlice";
 import { useLanguage } from "../../contexts/LanguageContext";
 import Layout from "../layout/Layout";
 import AdminStats from "./AdminStats";
@@ -21,6 +22,7 @@ import AdminSidebar from "./AdminSidebar";
 import { AdminTab } from "../../types/admin";
 
 const AdminDashboard: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const { user, isAuthenticated } = useSelector(
     (state: RootState) => state.auth
   );
@@ -42,11 +44,8 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleLogout = () => {
-    // Clear auth data
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-
-    // Redirect to home page
+    // Dispatch logout action (clears Redux state + server revokes cookie)
+    dispatch(logoutUser());
     window.location.href = "/";
   };
 

@@ -42,6 +42,7 @@ export const setTokenHandlers = (
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 30000,
+  withCredentials: true, // send httpOnly cookies on every request
   headers: {
     "Content-Type": "application/json",
   },
@@ -126,14 +127,19 @@ export const authAPI = {
       apiClient.post("/auth/register", { email, password, name }),
     ),
 
-  refreshToken: (refreshToken: string) =>
+  refreshToken: () =>
     apiRequest<AuthResponse>(() =>
-      apiClient.post("/auth/refresh", { refreshToken }),
+      apiClient.post("/auth/refresh"),  // cookie sent automatically
     ),
 
-  logout: (refreshToken: string) =>
+  logout: () =>
     apiRequest<{ message: string }>(() =>
-      apiClient.post("/auth/logout", { refreshToken }),
+      apiClient.post("/auth/logout"),   // cookie sent automatically
+    ),
+
+  logoutAll: () =>
+    apiRequest<{ message: string }>(() =>
+      apiClient.post("/auth/logout-all"),
     ),
 
   getProfile: () => apiRequest<User>(() => apiClient.get("/auth/me")),

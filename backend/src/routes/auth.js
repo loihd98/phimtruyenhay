@@ -8,8 +8,9 @@ const router = express.Router();
 // Traditional auth routes
 router.post("/register", authController.register);
 router.post("/login", authController.login);
-router.post("/refresh", authController.refresh);
-router.post("/logout", authController.logout);
+router.post("/refresh", authController.refresh);   // reads cookie, not body
+router.post("/logout", authController.logout);     // reads cookie, clears it
+router.post("/logout-all", authenticateToken, authController.logoutAll);
 
 // Protected route to get current user
 router.get("/me", authenticateToken, authController.me);

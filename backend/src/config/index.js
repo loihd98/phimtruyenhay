@@ -10,8 +10,9 @@ module.exports = {
   // JWT
   jwtSecret: process.env.JWT_SECRET,
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,
-  jwtExpiresIn: "15m",
-  jwtRefreshExpiresIn: "7d",
+  jwtExpiresIn: "15m",           // Short-lived access token
+  jwtRefreshExpiresIn: "7d",     // Refresh token lifetime
+  refreshTokenMaxAgeDays: 7,     // Cookie max-age in days
 
   // OAuth
   google: {
@@ -32,4 +33,8 @@ module.exports = {
 
   // Base URL
   baseUrl: process.env.BASE_URL || "http://localhost:3000",
+
+  // Cookie
+  cookieDomain: process.env.COOKIE_DOMAIN || undefined,
+  isProduction: (process.env.NODE_ENV || "development") === "production",
 };

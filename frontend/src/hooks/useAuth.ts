@@ -4,6 +4,7 @@ import { RootState } from "../store";
 
 /**
  * Main auth hook - provides complete auth state and helper functions
+ * NOTE: refreshToken is no longer in state — it's an httpOnly cookie
  */
 export const useAuth = () => {
   const [isReady, setIsReady] = useState(false);
@@ -12,7 +13,6 @@ export const useAuth = () => {
   useEffect(() => {
     // Wait a bit to ensure rehydration is complete
     const timer = setTimeout(() => {
-      console.log("Auth hook ready, current state:", auth);
       setIsReady(true);
     }, 100);
 

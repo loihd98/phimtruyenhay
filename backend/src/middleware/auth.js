@@ -25,6 +25,7 @@ const authenticateToken = async (req, res, next) => {
         role: true,
         avatar: true,
         createdAt: true,
+        tokenVersion: true,
       },
     });
 
@@ -32,6 +33,18 @@ const authenticateToken = async (req, res, next) => {
       return res.status(401).json({
         error: "Unauthorized",
         message: "Người dùng không tồn tại",
+      });
+    }
+
+    // Token version check — if the user's tokenVersion has been
+    // incremented since this access token was issued, reject it.
+    if (
+      typeof decoded.tokenVersion === "number" &&
+      decoded.tokenVersion !== user.tokenVersion
+    ) {
+      return res.status(401).json({
+        error: "Unauthorized",
+        message: "Token đã bị thu hồi",
       });
     }
 

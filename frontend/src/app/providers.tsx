@@ -18,12 +18,12 @@ export default function ClientProvider({
   useEffect(() => {
     // Set up token handlers for API client
     setTokenHandlers(
-      // getAuthToken
+      // getAuthToken — reads accessToken from memory (Redux store)
       () => {
         const state = store.getState();
         return state.auth.accessToken;
       },
-      // handleTokenRefresh
+      // handleTokenRefresh — calls /auth/refresh (cookie sent automatically)
       async () => {
         try {
           const result = await store.dispatch(refreshToken());
@@ -42,24 +42,15 @@ export default function ClientProvider({
       }
     );
 
-    // Clean up old persist keys (migration)
-    if (typeof window !== "undefined") {
-      const oldAuthKey = localStorage.getItem("persist:auth");
-      if (oldAuthKey) {
-        localStorage.removeItem("persist:auth");
-        localStorage.removeItem("persist:ui");
-      }
-    }
-
-    // Validate tokens on app startup
-    const validatePersistedTokens = () => {
+    // Validate auth on app startup by attempting a silent refresh.
+    // After rehydration, we have user info but no accessToken
+    // (stripped by the persist transform). The httpOnly cookie
+    // is used to get a fresh accessToken.
+    const validateAuth = () => {
       const state = store.getState();
 
-      if (
-        state.auth.isAuthenticated &&
-        state.auth.refreshToken &&
-        state.auth.user
-      ) {
+      if (state.auth.isAuthenticated || state.auth.user) {
+        // Try to refresh the access token
         store
           .dispatch(refreshToken())
           .then((result) => {
@@ -72,20 +63,11 @@ export default function ClientProvider({
           .catch(() => {
             store.dispatch(clearAuth());
           });
-      } else {
-        // Clear any partial auth state
-        if (
-          state.auth.isAuthenticated ||
-          state.auth.accessToken ||
-          state.auth.refreshToken
-        ) {
-          store.dispatch(clearAuth());
-        }
       }
     };
 
     // Wait for persist gate to rehydrate, then validate
-    setTimeout(validatePersistedTokens, 1000);
+    setTimeout(validateAuth, 500);
   }, []);
 
   return (

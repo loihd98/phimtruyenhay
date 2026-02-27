@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
+const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
 const prisma = require("./lib/prisma");
 const config = require("./config");
@@ -14,13 +15,16 @@ app.use(
   }),
 );
 
-// CORS
+// CORS — lock down origin in production so cookies are scoped correctly
 app.use(
   cors({
-    origin: true,
-    credentials: true,
+    origin: config.isProduction ? config.corsOrigin : true,
+    credentials: true,   // required for httpOnly cookies
   }),
 );
+
+// Cookie parser — needed to read httpOnly refresh-token cookie
+app.use(cookieParser());
 
 // Rate limiting
 const limiter = rateLimit({

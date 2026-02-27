@@ -42,6 +42,9 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   
+  // Token version — increment to invalidate all tokens
+  tokenVersion Int      @default(0)
+  
   // Relations
   stories      Story[]
   comments     Comment[]
@@ -49,8 +52,28 @@ model User {
   unlockedChapters Chapter[] @relation("ChapterUnlocks")
   filmReviews  FilmReview[]
   filmComments FilmComment[]
+  refreshTokens RefreshToken[]
   
   @@map("users")
+}
+
+model RefreshToken {
+  id           String   @id @default(cuid())
+  tokenHash    String   @unique   // SHA-256 hash of the refresh token
+  family       String             // Token family for rotation detection
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt    DateTime
+  revokedAt    DateTime?          // Non-null = revoked
+  replacedBy   String?            // ID of the token that replaced this one
+  userAgent    String?
+  ipAddress    String?
+  createdAt    DateTime @default(now())
+  
+  @@index([userId])
+  @@index([family])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
 }
 
 model Genre {

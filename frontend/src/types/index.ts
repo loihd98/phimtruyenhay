@@ -170,12 +170,10 @@ export interface AuthResponse {
   message: string;
   user: User;
   accessToken: string;
-  refreshToken: string;
+  // refreshToken is no longer in the JSON response — it's in an httpOnly cookie
 }
 
-export interface RefreshTokenRequest {
-  refreshToken: string;
-}
+// RefreshTokenRequest no longer needed — cookie is sent automatically
 
 // Story query types
 export interface StoryQuery {
@@ -258,7 +256,7 @@ export interface SearchResult {
 export interface AuthState {
   user: User | null;
   accessToken: string | null;
-  refreshToken: string | null;
+  // refreshToken no longer stored in client state — httpOnly cookie
   isLoading: boolean;
   isAuthenticated: boolean;
   error: string | null;

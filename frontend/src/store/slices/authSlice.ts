@@ -16,7 +16,8 @@ export const getRedirectPath = (user: User | null): string => {
   }
 };
 
-// Async thunks
+// ─── Async thunks ────────────────────────────────────────────
+
 export const loginUser = createAsyncThunk<
   AuthResponse,
   { email: string; password: string }
@@ -28,13 +29,12 @@ export const loginUser = createAsyncThunk<
   ) => {
     try {
       const response = await authAPI.login(email, password);
-      // Extract the AuthResponse from the API response
       if ("data" in response && response.data) {
         return response.data;
       }
       return response as AuthResponse;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.error || "Login failed");
+      return rejectWithValue(error.error || error.message || "Login failed");
     }
   }
 );
@@ -54,39 +54,35 @@ export const registerUser = createAsyncThunk<
   ) => {
     try {
       const response = await authAPI.register(email, password, name);
-      // Extract the AuthResponse from the API response
       if ("data" in response && response.data) {
         return response.data;
       }
       return response as AuthResponse;
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.error || "Registration failed"
+        error.error || error.message || "Registration failed"
       );
     }
   }
 );
 
+/**
+ * Silent refresh — calls POST /auth/refresh.
+ * The httpOnly cookie is sent automatically by the browser.
+ * No refresh token is read from Redux state.
+ */
 export const refreshToken = createAsyncThunk<AuthResponse, void>(
   "auth/refresh",
-  async (_, { getState, rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const state = getState() as { auth: AuthState };
-      const refreshToken = state.auth.refreshToken;
-
-      if (!refreshToken) {
-        throw new Error("No refresh token");
-      }
-
-      const response = await authAPI.refreshToken(refreshToken);
-      // Extract the AuthResponse from the API response
+      const response = await authAPI.refreshToken();
       if ("data" in response && response.data) {
         return response.data;
       }
       return response as AuthResponse;
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.error || "Token refresh failed"
+        error.error || error.message || "Token refresh failed"
       );
     }
   }
@@ -94,24 +90,11 @@ export const refreshToken = createAsyncThunk<AuthResponse, void>(
 
 export const logoutUser = createAsyncThunk(
   "auth/logout",
-  async (_, { getState }) => {
+  async () => {
     try {
-      const state = getState() as { auth: AuthState };
-      const refreshToken = state.auth.refreshToken;
-
-      if (refreshToken) {
-        await authAPI.logout(refreshToken);
-      }
+      await authAPI.logout(); // server clears the cookie
     } catch (error) {
-      // Ignore logout errors, still clear local state
-      console.error("Logout error:", error);
-    }
-
-    // Clear persisted data
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("persist:auth");
-      localStorage.removeItem("persist:ui");
-      localStorage.removeItem("persist:root");
+      // Ignore logout errors — still clear local state
     }
   }
 );
@@ -124,23 +107,23 @@ export const getProfile = createAsyncThunk(
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.error || "Failed to get profile"
+        error.error || error.message || "Failed to get profile"
       );
     }
   }
 );
 
-// Initial state
+// ─── Initial state ───────────────────────────────────────────
+// NOTE: refreshToken is NOT stored in state — it lives in an httpOnly cookie
 const initialState: AuthState = {
   user: null,
   accessToken: null,
-  refreshToken: null,
   isLoading: false,
   isAuthenticated: false,
   error: null,
 };
 
-// Auth slice
+// ─── Slice ───────────────────────────────────────────────────
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -153,18 +136,13 @@ const authSlice = createSlice({
         state.user = { ...state.user, ...action.payload };
       }
     },
-    setTokens: (
-      state,
-      action: PayloadAction<{ accessToken: string; refreshToken: string }>
-    ) => {
-      state.accessToken = action.payload.accessToken;
-      state.refreshToken = action.payload.refreshToken;
+    setAccessToken: (state, action: PayloadAction<string>) => {
+      state.accessToken = action.payload;
       state.isAuthenticated = true;
     },
     clearAuth: (state) => {
       state.user = null;
       state.accessToken = null;
-      state.refreshToken = null;
       state.isAuthenticated = false;
       state.error = null;
     },
@@ -182,7 +160,6 @@ const authSlice = createSlice({
         if (authResponse) {
           state.user = authResponse.user;
           state.accessToken = authResponse.accessToken;
-          state.refreshToken = authResponse.refreshToken;
           state.isAuthenticated = true;
         }
         state.error = null;
@@ -203,7 +180,6 @@ const authSlice = createSlice({
         if (authResponse) {
           state.user = authResponse.user;
           state.accessToken = authResponse.accessToken;
-          state.refreshToken = authResponse.refreshToken;
           state.isAuthenticated = true;
         }
         state.error = null;
@@ -215,23 +191,22 @@ const authSlice = createSlice({
 
       // Refresh token
       .addCase(refreshToken.pending, () => {
-        // refreshing
+        // silent refresh — no loading spinner
       })
       .addCase(refreshToken.fulfilled, (state, action) => {
         const authResponse = action.payload;
         if (authResponse) {
           state.accessToken = authResponse.accessToken;
-          state.refreshToken = authResponse.refreshToken;
           if (authResponse.user) {
             state.user = authResponse.user;
           }
           state.isAuthenticated = true;
         }
       })
-      .addCase(refreshToken.rejected, (state, action) => {
+      .addCase(refreshToken.rejected, (state) => {
+        // Refresh failed — clear everything
         state.user = null;
         state.accessToken = null;
-        state.refreshToken = null;
         state.isAuthenticated = false;
       })
 
@@ -239,7 +214,6 @@ const authSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.accessToken = null;
-        state.refreshToken = null;
         state.isAuthenticated = false;
         state.error = null;
       })
@@ -259,7 +233,6 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.user = null;
         state.accessToken = null;
-        state.refreshToken = null;
         state.isAuthenticated = false;
       })
 
@@ -267,53 +240,29 @@ const authSlice = createSlice({
       .addMatcher(
         (action) => action.type === REHYDRATE,
         (state, action: any) => {
-          console.log("🔄 REHYDRATE action received");
-
-          // Check localStorage keys
-          if (typeof window !== "undefined") {
-            const persistKeys = Object.keys(localStorage).filter((k) =>
-              k.startsWith("persist")
-            );
-            console.log("🗄️ Available persist keys:", persistKeys);
-          }
-
-          // With root persist, auth data will be in action.payload.auth
           let persistedAuth = null;
 
-          // Try both locations for auth data
           if (action.payload?.auth) {
             persistedAuth = action.payload.auth;
-            console.log("📍 Found auth data in payload.auth");
           } else if (action.payload && typeof action.payload === "object") {
-            // Sometimes the auth data might be directly in payload
-            if (action.payload.user || action.payload.accessToken) {
+            if (action.payload.user) {
               persistedAuth = action.payload;
-              console.log("📍 Found auth data directly in payload");
             }
           }
 
-          if (persistedAuth) {
-            console.log("📦 Persisted auth found:", {
-              hasUser: !!persistedAuth.user,
-              hasTokens: !!(
-                persistedAuth.accessToken && persistedAuth.refreshToken
-              ),
-              isAuthenticated: persistedAuth.isAuthenticated,
-            });
-
-            // Validate that we have the required tokens
-            if (persistedAuth.accessToken && persistedAuth.refreshToken) {
-              console.log("✅ Valid tokens found, restoring auth state");
-              return {
-                ...state,
-                ...persistedAuth,
-                isLoading: false,
-                error: null,
-              };
-            }
+          if (persistedAuth && persistedAuth.user) {
+            // Restore user info; accessToken is NOT persisted — the
+            // provider will do a silent /auth/refresh to get a new one.
+            return {
+              ...state,
+              user: persistedAuth.user,
+              accessToken: null, // will be set after silent refresh
+              isAuthenticated: true,
+              isLoading: false,
+              error: null,
+            };
           }
-          // If no valid persisted auth, maintain clean initial state
-          console.log("❌ No valid persisted auth, using initial state");
+
           return {
             ...initialState,
             isLoading: false,
@@ -323,6 +272,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearError, updateUser, setTokens, clearAuth } =
+export const { clearError, updateUser, setAccessToken, clearAuth } =
   authSlice.actions;
 export default authSlice.reducer;

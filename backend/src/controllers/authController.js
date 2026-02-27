@@ -2,9 +2,40 @@ const bcrypt = require("bcryptjs");
 const prisma = require("../lib/prisma");
 const tokenService = require("../utils/tokenService");
 const validationService = require("../utils/validationService");
+const config = require("../config");
+
+/**
+ * Helper: extract client metadata for refresh token records
+ */
+function getClientMeta(req) {
+  return {
+    userAgent: req.headers["user-agent"] || null,
+    ipAddress:
+      req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
+      req.socket?.remoteAddress ||
+      null,
+  };
+}
+
+/**
+ * Helper: build safe user response (never expose passwordHash)
+ */
+function toUserResponse(user) {
+  return {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    avatar: user.avatar || null,
+    role: user.role,
+    googleId: user.googleId || null,
+    facebookId: user.facebookId || null,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt || user.createdAt,
+  };
+}
 
 class AuthController {
-  // Register new user
+  // ───────────────────────────────────────────── Register ─────
   async register(req, res) {
     try {
       const { email, password, name } = req.body;
@@ -37,38 +68,24 @@ class AuthController {
           name: name.trim(),
           role: "USER",
         },
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          role: true,
-          avatar: true,
-          createdAt: true,
-        },
       });
 
-      // Generate tokens
-      const tokens = tokenService.generateTokenPair(user);
+      // Generate access token
+      const accessToken = tokenService.generateAccessToken(user);
 
-      // Format user response with all required fields
-      const userResponse = {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        avatar: user.avatar,
-        role: user.role,
-        googleId: null,
-        facebookId: null,
-        createdAt: user.createdAt,
-        updatedAt: user.createdAt, // Same as createdAt for new user
-      };
+      // Create refresh token in DB + set httpOnly cookie
+      const { rawToken } = await tokenService.createRefreshToken(
+        user,
+        getClientMeta(req)
+      );
+      tokenService.setRefreshCookie(res, rawToken);
 
       res.status(201).json({
         message: "Đăng ký thành công",
         data: {
-          user: userResponse,
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
+          user: toUserResponse(user),
+          accessToken, // returned in body — stored in memory only
+          // refreshToken is NOT in the JSON body — it's in the cookie
         },
       });
     } catch (error) {
@@ -88,7 +105,7 @@ class AuthController {
     }
   }
 
-  // Login user
+  // ───────────────────────────────────────────── Login ────────
   async login(req, res) {
     try {
       const { email, password } = req.body;
@@ -118,31 +135,21 @@ class AuthController {
         });
       }
 
-      // Generate tokens
-      const tokens = tokenService.generateTokenPair(user);
+      // Generate access token
+      const accessToken = tokenService.generateAccessToken(user);
 
-      // Return user data without password, including all fields
-      const { passwordHash, ...userWithoutPassword } = user;
-
-      // Ensure we have all required fields with proper formatting
-      const userResponse = {
-        id: userWithoutPassword.id,
-        email: userWithoutPassword.email,
-        name: userWithoutPassword.name,
-        avatar: userWithoutPassword.avatar,
-        role: userWithoutPassword.role,
-        googleId: userWithoutPassword.googleId,
-        facebookId: userWithoutPassword.facebookId,
-        createdAt: userWithoutPassword.createdAt,
-        updatedAt: userWithoutPassword.updatedAt,
-      };
+      // Create refresh token in DB + set httpOnly cookie
+      const { rawToken } = await tokenService.createRefreshToken(
+        user,
+        getClientMeta(req)
+      );
+      tokenService.setRefreshCookie(res, rawToken);
 
       res.json({
         message: "Đăng nhập thành công",
         data: {
-          user: userResponse,
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
+          user: toUserResponse(user),
+          accessToken,
         },
       });
     } catch (error) {
@@ -162,67 +169,38 @@ class AuthController {
     }
   }
 
-  // Refresh token
+  // ───────────────────────────────────────────── Refresh ──────
   async refresh(req, res) {
     try {
-      const { refreshToken } = req.body;
+      // Read refresh token from httpOnly cookie (NOT from body)
+      const rawToken = req.cookies?.refreshToken;
 
-      if (!refreshToken) {
+      if (!rawToken) {
         return res.status(401).json({
           error: "Unauthorized",
-          message: "Refresh token là bắt buộc",
+          message: "Refresh token không được cung cấp",
         });
       }
 
-      // Verify refresh token
-      const decoded = tokenService.verifyRefreshToken(refreshToken);
+      // Rotate: verify old → revoke old → issue new pair
+      const { accessToken, rawRefreshToken, user } =
+        await tokenService.rotateRefreshToken(rawToken, getClientMeta(req));
 
-      // Get user
-      const user = await prisma.user.findUnique({
-        where: { id: decoded.userId },
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          role: true,
-          avatar: true,
-          createdAt: true,
-        },
-      });
-
-      if (!user) {
-        return res.status(401).json({
-          error: "Unauthorized",
-          message: "Người dùng không tồn tại",
-        });
-      }
-
-      // Generate new tokens
-      const tokens = tokenService.generateTokenPair(user);
-
-      // Format user response with all required fields
-      const userResponse = {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        avatar: user.avatar,
-        role: user.role,
-        googleId: user.googleId || null,
-        facebookId: user.facebookId || null,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt || user.createdAt,
-      };
+      // Set the new refresh token in cookie
+      tokenService.setRefreshCookie(res, rawRefreshToken);
 
       res.json({
         message: "Token đã được làm mới",
         data: {
-          user: userResponse,
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
+          user: toUserResponse(user),
+          accessToken,
         },
       });
     } catch (error) {
       console.error("Refresh token error:", error);
+
+      // Clear the bad cookie
+      tokenService.clearRefreshCookie(res);
 
       res.status(401).json({
         error: "Unauthorized",
@@ -231,7 +209,45 @@ class AuthController {
     }
   }
 
-  // Get current user profile
+  // ───────────────────────────────────────────── Logout ───────
+  async logout(req, res) {
+    try {
+      const rawToken = req.cookies?.refreshToken;
+
+      if (rawToken) {
+        // Revoke the token in DB
+        await tokenService.revokeToken(rawToken);
+      }
+
+      // Clear cookie
+      tokenService.clearRefreshCookie(res);
+
+      res.json({ message: "Đăng xuất thành công" });
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Still clear cookie even on error
+      tokenService.clearRefreshCookie(res);
+      res.json({ message: "Đăng xuất thành công" });
+    }
+  }
+
+  // ───────────────────────────────────── Logout all devices ──
+  async logoutAll(req, res) {
+    try {
+      await tokenService.revokeAllUserTokens(req.user.id);
+      tokenService.clearRefreshCookie(res);
+
+      res.json({ message: "Đã đăng xuất tất cả thiết bị" });
+    } catch (error) {
+      console.error("Logout all error:", error);
+      res.status(500).json({
+        error: "Internal Server Error",
+        message: "Có lỗi xảy ra",
+      });
+    }
+  }
+
+  // ───────────────────────────────────────────── Me ───────────
   async me(req, res) {
     try {
       const user = await prisma.user.findUnique({
@@ -260,9 +276,7 @@ class AuthController {
         });
       }
 
-      res.json({
-        user,
-      });
+      res.json({ user });
     } catch (error) {
       console.error("Get profile error:", error);
 
@@ -273,35 +287,35 @@ class AuthController {
     }
   }
 
-  // Handle OAuth success
+  // ───────────────────────────────────── OAuth success ────────
   async oauthSuccess(req, res) {
     try {
       const user = req.user;
 
-      // Generate tokens
-      const tokens = tokenService.generateTokenPair(user);
+      // Generate access token
+      const accessToken = tokenService.generateAccessToken(user);
 
-      // Redirect to frontend with tokens
-      const redirectUrl = `${process.env.CORS_ORIGIN}/auth/callback?token=${tokens.accessToken}&refresh=${tokens.refreshToken}`;
+      // Create refresh token in DB + set httpOnly cookie
+      const { rawToken } = await tokenService.createRefreshToken(
+        user,
+        getClientMeta(req)
+      );
+      tokenService.setRefreshCookie(res, rawToken);
+
+      // Redirect to frontend with access token only (refresh is in cookie)
+      const redirectUrl = `${config.corsOrigin}/auth/callback?token=${accessToken}`;
       res.redirect(redirectUrl);
     } catch (error) {
       console.error("OAuth success error:", error);
-      res.redirect(`${process.env.CORS_ORIGIN}/auth/error`);
+      res.redirect(`${config.corsOrigin}/auth/error`);
     }
   }
 
-  // Handle OAuth failure
+  // ───────────────────────────────────── OAuth failure ────────
   async oauthFailure(req, res) {
     res.redirect(
-      `${process.env.CORS_ORIGIN}/auth/error?message=OAuth authentication failed`
+      `${config.corsOrigin}/auth/error?message=OAuth authentication failed`
     );
-  }
-
-  // Logout (client-side token removal)
-  async logout(req, res) {
-    res.json({
-      message: "Đăng xuất thành công",
-    });
   }
 }
 
