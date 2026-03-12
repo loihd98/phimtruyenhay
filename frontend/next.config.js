@@ -27,13 +27,12 @@ const nextConfig = {
     const apiUrl =
       process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
     const baseUrl = apiUrl.replace("/api", "");
-    const mediaBaseUrl = process.env.MEDIA_URL_INTERNAL || "http://nginx";
 
     return [
-      {
-        source: "/uploads/:path*",
-        destination: `${mediaBaseUrl}/uploads/:path*`,
-      },
+      // NOTE: /uploads/ is intentionally NOT rewritten here.
+      // In production, nginx serves /uploads/ directly (location ^~ /uploads/).
+      // In the frontend container, uploads are also mounted at public/uploads/
+      // so Next.js static-file serving handles any fallback requests.
       {
         source: "/api/:path*",
         destination: `${apiUrl}/:path*`,
