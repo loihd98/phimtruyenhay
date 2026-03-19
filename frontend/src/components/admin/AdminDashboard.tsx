@@ -9,7 +9,6 @@ import { useLanguage } from "../../contexts/LanguageContext";
 import Layout from "../layout/Layout";
 import AdminStats from "./AdminStats";
 import AdminStoryManager from "./AdminStoryManager";
-import AdminChapterManager from "./AdminChapterManager";
 import AdminAffiliatePage from "./AdminAffiliatePage";
 import AdminUserManager from "./AdminUserManager";
 import AdminCommentManager from "./AdminCommentManager";
@@ -103,8 +102,6 @@ const AdminDashboard: React.FC = () => {
         return <AdminStoryManager storyType="TEXT" />;
       case "audio-stories":
         return <AdminStoryManager storyType="AUDIO" />;
-      case "chapters":
-        return <AdminChapterManager />;
       case "genres":
         return <AdminGenresManager genreType="TEXT" />;
       case "audio-genres":
@@ -209,9 +206,8 @@ const AdminDashboard: React.FC = () => {
                         </p>
                       </div>
                       <svg
-                        className={`w-4 h-4 text-gray-500 transition-transform ${
-                          showUserDropdown ? "rotate-180" : ""
-                        }`}
+                        className={`w-4 h-4 text-gray-500 transition-transform ${showUserDropdown ? "rotate-180" : ""
+                          }`}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"

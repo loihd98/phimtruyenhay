@@ -2,7 +2,6 @@ export type AdminTab =
   | "dashboard"
   | "stories"
   | "audio-stories"
-  | "chapters"
   | "genres"
   | "audio-genres"
   | "affiliate-links"

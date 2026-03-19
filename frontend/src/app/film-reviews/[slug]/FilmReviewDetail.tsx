@@ -27,6 +27,7 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
   const [filmReview, setFilmReview] = useState<FilmReview | null>(initialData);
   const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   // Comments state
   const [comments, setComments] = useState<FilmComment[]>([]);
@@ -122,6 +123,14 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
     }
   };
 
+  const getYouTubeId = (url: string): string | null => {
+    if (!url) return null;
+    const match = url.match(
+      /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+    );
+    return match ? match[1] : null;
+  };
+
   const renderStars = (rating: number) => {
     const stars = Math.round(rating / 2);
     return (
@@ -129,11 +138,10 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
         {[1, 2, 3, 4, 5].map((star) => (
           <svg
             key={star}
-            className={`w-6 h-6 ${
-              star <= stars
+            className={`w-6 h-6 ${star <= stars
                 ? "text-yellow-400"
                 : "text-gray-300 dark:text-gray-600"
-            }`}
+              }`}
             fill="currentColor"
             viewBox="0 0 20 20"
           >
@@ -186,49 +194,84 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Back button */}
       <div className="max-w-4xl mx-auto">
-        {/* Back button */}
         <Link
           href="/film-reviews"
           className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline mb-6 text-sm"
         >
           ← Quay lại danh sách review phim
         </Link>
+      </div>
 
-        {/* 1. Thumbnail - clickable to open YouTube/review link */}
-        <div
-          className="relative w-full h-64 md:h-[450px] rounded-xl overflow-hidden mb-6 bg-gray-200 dark:bg-gray-700 cursor-pointer group"
-          onClick={() => {
-            if (filmReview.reviewLink) {
-              window.open(filmReview.reviewLink, "_blank", "noopener,noreferrer");
-            }
-          }}
-          title="Nhấn để xem video trên YouTube"
-        >
-          {filmReview.thumbnailUrl ? (
-            <Image
-              src={getMediaUrl(filmReview.thumbnailUrl)}
-              alt={filmReview.title}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
-              priority
-              sizes="(max-width: 768px) 100vw, 800px"
-            />
-          ) : (
-            <div className="flex items-center justify-center h-full text-8xl">
-              🎬
+      {/* 1. Video embed / Thumbnail */}
+      {(() => {
+        const youtubeId = getYouTubeId(filmReview.reviewLink);
+        if (isVideoPlaying && youtubeId) {
+          return (
+            <div className="w-full bg-black mb-0" style={{ aspectRatio: "16/9" }}>
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&controls=1&rel=0&modestbranding=1`}
+                width="100%"
+                height="100%"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                title={filmReview.title}
+                style={{ border: 0, display: "block" }}
+              />
             </div>
-          )}
-          {/* Play overlay */}
-          <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors duration-300">
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-red-600/90 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-              <svg className="w-8 h-8 md:w-10 md:h-10 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z" />
-              </svg>
+          );
+        }
+        return (
+          <div className="max-w-4xl mx-auto">
+            <div
+              className="relative w-full h-64 md:h-[450px] rounded-xl overflow-hidden mb-6 bg-gray-200 dark:bg-gray-700 cursor-pointer group"
+              onClick={() => {
+                if (youtubeId) {
+                  setIsVideoPlaying(true);
+                } else if (filmReview.reviewLink) {
+                  window.open(filmReview.reviewLink, "_blank", "noopener,noreferrer");
+                }
+              }}
+              title={youtubeId ? "Nhấn để xem video" : "Nhấn để xem trên YouTube"}
+            >
+              {filmReview.thumbnailUrl ? (
+                <Image
+                  src={getMediaUrl(filmReview.thumbnailUrl)}
+                  alt={filmReview.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  priority
+                  sizes="(max-width: 768px) 100vw, 800px"
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full text-8xl">
+                  🎬
+                </div>
+              )}
+              {/* Play overlay */}
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors duration-300">
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-red-600/90 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                  <svg className="w-8 h-8 md:w-10 md:h-10 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+              </div>
+              {youtubeId && (
+                <div className="absolute bottom-3 right-3 flex items-center gap-1 bg-black/60 text-white text-xs px-2 py-1 rounded">
+                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.59 3.5 12 3.5 12 3.5s-7.59 0-9.38.55a3.02 3.02 0 0 0-2.12 2.14A31.53 31.53 0 0 0 0 12a31.53 31.53 0 0 0 .5 5.81A3.02 3.02 0 0 0 2.62 19.95C4.41 20.5 12 20.5 12 20.5s7.59 0 9.38-.55a3.02 3.02 0 0 0 2.12-2.14A31.53 31.53 0 0 0 24 12a31.53 31.53 0 0 0-.5-5.81z" />
+                    <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="white" />
+                  </svg>
+                  YouTube
+                </div>
+              )}
             </div>
           </div>
-        </div>
+        );
+      })()}
 
+      <div className="max-w-4xl mx-auto pt-6">
         {/* 2. Title */}
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
           {filmReview.title}
@@ -323,7 +366,7 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
           </div>
         )}
 
-        {/* 8. Comments Section */}
+        {/* 9. Comments Section */}
         <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
             💬 Bình luận ({commentPagination.total})
@@ -525,11 +568,10 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
                     <button
                       key={page}
                       onClick={() => fetchComments(page)}
-                      className={`w-8 h-8 rounded-full text-sm ${
-                        commentPage === page
+                      className={`w-8 h-8 rounded-full text-sm ${commentPage === page
                           ? "bg-blue-600 text-white"
                           : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
-                      } transition-colors`}
+                        } transition-colors`}
                     >
                       {page}
                     </button>
@@ -540,7 +582,7 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
           )}
         </div>
 
-        {/* 9. Review Link */}
+        {/* 10. Review Link */}
         <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
           <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
             🔗 Link Review Phim

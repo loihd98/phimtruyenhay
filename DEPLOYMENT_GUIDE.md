@@ -160,7 +160,7 @@ systemctl start docker
 ```bash
 mkdir -p /opt
 cd /opt
-git clone https://github.com/loihd98/khotruyen.git webtruyen
+git clone https://github.com/loihd98/khotruyen.vn.git webtruyen
 cd /opt/webtruyen
 ```
 
