@@ -77,6 +77,7 @@ app.use("/api/chapters", require("./routes/chapters"));
 app.use("/api/comments", require("./routes/comments")); // Mount back at /api/comments
 app.use("/api/bookmarks", require("./routes/bookmarks"));
 app.use("/api/admin", require("./routes/admin"));
+app.use("/api/permissions", require("./routes/permissions"));
 app.use("/api/media", require("./routes/media"));
 app.use("/api/contact", require("./routes/contact"));
 app.use("/api/affiliate", require("./routes/affiliate"));

@@ -19,7 +19,7 @@ const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
-  const { user, isAuthenticated, isAdmin, isReady } = useAuth();
+  const { user, isAuthenticated, isAdmin, hasAdminAccess, isReady } = useAuth();
 
   const isStoriesPage = useMemo(() => {
     return (
@@ -54,7 +54,7 @@ const Navbar: React.FC = () => {
   };
 
   const handleProfileClick = () => {
-    if (isAdmin) {
+    if (hasAdminAccess) {
       router.push("/admin");
     } else {
       router.push("/profile");
@@ -132,33 +132,30 @@ const Navbar: React.FC = () => {
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
                 </span>
               </Link> */}
+              {/* Search icon - Desktop */}
+              {!isStoriesPage && (
+                <Link
+                  href="/truyen_audio"
+                  className="p-2 rounded-lg text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 flex items-center"
+                  title="Tìm kiếm"
+                >
+                  <svg
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </Link>
+              )}
             </div>
           </div>
-
-          {/* Search icon - Desktop */}
-          {!isStoriesPage && (
-            <div className="hidden lg:flex items-center px-2">
-              <Link
-                href="/truyen_audio"
-                className="p-2 rounded-lg text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200"
-                title="Tìm kiếm"
-              >
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              </Link>
-            </div>
-          )}
           {/* Logo */}
           <Link
             href="/"
@@ -285,7 +282,7 @@ const Navbar: React.FC = () => {
                             />
                           </svg>
                           <span>
-                            {isAdmin ? t("nav.admin") : t("nav.profile")}
+                            {hasAdminAccess ? t("nav.admin") : t("nav.profile")}
                           </span>
                         </button>
 
@@ -368,7 +365,7 @@ const Navbar: React.FC = () => {
                 </div>
 
                 {/* Admin link */}
-                {isAdmin && (
+                {hasAdminAccess && (
                   <Link
                     href="/admin"
                     className="group relative text-gray-500 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 hover:shadow-md hover:scale-105"
@@ -483,7 +480,7 @@ const Navbar: React.FC = () => {
                   >
                     🔖 {t("nav.bookmarks")}
                   </Link>
-                  {isAdmin && (
+                  {hasAdminAccess && (
                     <Link
                       href="/admin"
                       onClick={() => setIsMobileMenuOpen(false)}

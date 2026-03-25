@@ -1,5 +1,23 @@
 const prisma = require("../lib/prisma");
 const slugify = require("slugify");
+const path = require("path");
+const fs = require("fs");
+const config = require("../config");
+
+function deleteOldMediaFile(oldUrl, newUrl) {
+  if (!oldUrl || oldUrl === newUrl) return;
+  try {
+    const match = oldUrl.match(/\/uploads\/(image|audio)\/(.+)$/);
+    if (!match) return;
+    const filePath = path.join(config.uploadPath, match[1], match[2]);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      console.log(`Deleted old media file: ${filePath}`);
+    }
+  } catch (err) {
+    console.error("Error deleting old media file:", err.message);
+  }
+}
 
 class FilmReviewsController {
   // ==================== PUBLIC ENDPOINTS ====================
@@ -601,6 +619,11 @@ class FilmReviewsController {
           }
           actorConnections.push({ id: actor.id });
         }
+      }
+
+      // Delete old thumbnail if being replaced
+      if (thumbnailUrl !== undefined && thumbnailUrl !== existing.thumbnailUrl) {
+        deleteOldMediaFile(existing.thumbnailUrl, thumbnailUrl);
       }
 
       const updateData = {

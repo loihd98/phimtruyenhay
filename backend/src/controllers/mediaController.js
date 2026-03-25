@@ -505,6 +505,17 @@ class MediaController {
         });
       }
 
+      // Check media usage before deleting
+      const mediaUsageService = require("../utils/mediaUsageService");
+      const usageCheck = await mediaUsageService.canDeleteMedia(id);
+      if (!usageCheck.canDelete) {
+        return res.status(409).json({
+          success: false,
+          message: usageCheck.message,
+          usages: usageCheck.usages,
+        });
+      }
+
       // Delete physical file
       const filePath = path.join(
         config.uploadPath || "./uploads",
@@ -578,6 +589,73 @@ class MediaController {
         success: false,
         message: "Failed to search media files",
       });
+    }
+  }
+
+  // GET /api/admin/media/usages - Get usage info for all media files
+  async getFileUsages(req, res) {
+    try {
+      // Find all stories and their thumbnail/audio URLs
+      const stories = await prisma.story.findMany({
+        select: { id: true, title: true, slug: true, type: true, thumbnailUrl: true },
+      });
+      const chapters = await prisma.chapter.findMany({
+        where: { audioUrl: { not: null } },
+        select: { id: true, title: true, audioUrl: true, story: { select: { id: true, title: true, slug: true, type: true } } },
+      });
+      const films = await prisma.filmReview.findMany({
+        select: { id: true, title: true, slug: true, thumbnailUrl: true },
+      });
+
+      // Build a map: filename -> [{ type, title, slug }]
+      const usageMap = {};
+
+      const extractFilename = (url) => {
+        if (!url) return null;
+        const parts = url.split("/");
+        return parts[parts.length - 1];
+      };
+
+      for (const story of stories) {
+        const fname = extractFilename(story.thumbnailUrl);
+        if (fname) {
+          if (!usageMap[fname]) usageMap[fname] = [];
+          usageMap[fname].push({
+            type: story.type === "AUDIO" ? "Truyện Audio" : "Truyện Text",
+            title: story.title,
+            slug: story.slug,
+          });
+        }
+      }
+
+      for (const chapter of chapters) {
+        const fname = extractFilename(chapter.audioUrl);
+        if (fname) {
+          if (!usageMap[fname]) usageMap[fname] = [];
+          usageMap[fname].push({
+            type: "Audio Chapter",
+            title: `${chapter.story.title} - ${chapter.title}`,
+            slug: chapter.story.slug,
+          });
+        }
+      }
+
+      for (const film of films) {
+        const fname = extractFilename(film.thumbnailUrl);
+        if (fname) {
+          if (!usageMap[fname]) usageMap[fname] = [];
+          usageMap[fname].push({
+            type: "Phim",
+            title: film.title,
+            slug: film.slug,
+          });
+        }
+      }
+
+      res.json({ usageMap });
+    } catch (error) {
+      console.error("Get file usages error:", error);
+      res.status(500).json({ error: "Internal Server Error", message: "Lỗi lấy thông tin sử dụng file" });
     }
   }
 }

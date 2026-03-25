@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useLanguage } from "../../contexts/LanguageContext";
+import { usePermissions } from "../../hooks/usePermissions";
 import { Story } from "../../types";
 import apiClient from "@/utils/api";
 import Modal from "./Modal";
@@ -36,6 +37,13 @@ interface PaginationData {
 
 const AdminStoryManager: React.FC<{ storyType?: "TEXT" | "AUDIO" }> = ({ storyType }) => {
   const { t } = useLanguage();
+  const { hasPermission } = usePermissions();
+
+  // Permission checks based on storyType
+  const permPrefix = storyType === "AUDIO" ? "story_audio" : "story_text";
+  const canCreate = hasPermission(`${permPrefix}.create`);
+  const canUpdate = hasPermission(`${permPrefix}.update`);
+  const canDelete = hasPermission(`${permPrefix}.delete`);
 
   // State management
   const [stories, setStories] = useState<Story[]>([]);
@@ -204,7 +212,9 @@ const AdminStoryManager: React.FC<{ storyType?: "TEXT" | "AUDIO" }> = ({ storyTy
             </h3>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              disabled={!canCreate}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${canCreate ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"}`}
+              title={!canCreate ? "Bạn không có quyền tạo mới" : ""}
             >
               + {t("admin.stories.create_new")}
             </button>
@@ -403,13 +413,17 @@ const AdminStoryManager: React.FC<{ storyType?: "TEXT" | "AUDIO" }> = ({ storyTy
                     <div className="flex space-x-2">
                       <button
                         onClick={() => setEditingStory(story)}
-                        className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+                        disabled={!canUpdate}
+                        className={canUpdate ? "text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300" : "text-gray-400 dark:text-gray-600 cursor-not-allowed"}
+                        title={!canUpdate ? "Bạn không có quyền chỉnh sửa" : ""}
                       >
                         ✏️
                       </button>
                       <button
                         onClick={() => handleDelete(story.id)}
-                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                        disabled={!canDelete}
+                        className={canDelete ? "text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300" : "text-gray-400 dark:text-gray-600 cursor-not-allowed"}
+                        title={!canDelete ? "Bạn không có quyền xóa" : ""}
                       >
                         🗑️
                       </button>

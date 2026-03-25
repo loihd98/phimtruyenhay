@@ -9,6 +9,7 @@ export const getRedirectPath = (user: User | null): string => {
 
   switch (user.role) {
     case "ADMIN":
+    case "EDITOR":
       return "/admin";
     case "USER":
     default:

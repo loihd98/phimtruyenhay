@@ -17,9 +17,16 @@ interface MediaFile {
   url: string;
 }
 
+interface FileUsage {
+  type: string;
+  title: string;
+  slug: string;
+}
+
 const MediaManager: React.FC = () => {
   const { t } = useLanguage();
   const [files, setFiles] = useState<MediaFile[]>([]);
+  const [usageMap, setUsageMap] = useState<Record<string, FileUsage[]>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [filterType, setFilterType] = useState<
@@ -39,18 +46,22 @@ const MediaManager: React.FC = () => {
     try {
       setIsLoading(true);
 
-      // Fetch both audio and image files from file system
-      const [audioResponse, imageResponse] = await Promise.all([
+      // Fetch both audio and image files from file system + usages
+      const [audioResponse, imageResponse, usagesResponse] = await Promise.all([
         apiClient
           .get("/admin/media/files?type=audio&limit=1000")
           .catch(() => ({ data: { files: [] } })),
         apiClient
           .get("/admin/media/files?type=image&limit=1000")
           .catch(() => ({ data: { files: [] } })),
+        apiClient
+          .get("/admin/media/usages")
+          .catch(() => ({ data: { usageMap: {} } })),
       ]);
 
       const audioFiles = audioResponse.data?.files || [];
       const imageFiles = imageResponse.data?.files || [];
+      setUsageMap(usagesResponse.data?.usageMap || {});
 
       // Combine and format files
       const allFiles = [
@@ -313,6 +324,18 @@ const MediaManager: React.FC = () => {
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     {new Date(file.uploadedAt).toLocaleDateString()}
                   </p>
+                  {/* Usage info */}
+                  {usageMap[file.name] && usageMap[file.name].length > 0 ? (
+                    <div className="mt-1 space-y-0.5">
+                      {usageMap[file.name].map((usage, i) => (
+                        <p key={i} className="text-xs text-emerald-600 dark:text-emerald-400 truncate" title={`${usage.type}: ${usage.title}`}>
+                          📌 {usage.type}: {usage.title}
+                        </p>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-orange-500 dark:text-orange-400 mt-1">⚠️ Chưa sử dụng</p>
+                  )}
                   <button
                     onClick={() => navigator.clipboard.writeText(file.url)}
                     className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"

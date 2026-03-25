@@ -4,13 +4,68 @@ class BookmarksController {
   // Create bookmark
   async createBookmark(req, res) {
     try {
-      const { storyId, chapterId } = req.body;
+      const { storyId, chapterId, filmReviewId } = req.body;
 
-      // Validate that at least one of storyId or chapterId is provided
-      if (!storyId && !chapterId) {
+      // Validate that at least one target is provided
+      if (!storyId && !chapterId && !filmReviewId) {
         return res.status(400).json({
           error: "Bad Request",
-          message: "Cần cung cấp storyId hoặc chapterId",
+          message: "Cần cung cấp storyId, chapterId hoặc filmReviewId",
+        });
+      }
+
+      // Cannot mix story and film bookmarks
+      if (filmReviewId && (storyId || chapterId)) {
+        return res.status(400).json({
+          error: "Bad Request",
+          message: "Không thể bookmark truyện và phim cùng lúc",
+        });
+      }
+
+      if (filmReviewId) {
+        const filmReview = await prisma.filmReview.findUnique({
+          where: { id: filmReviewId },
+          select: { id: true, title: true },
+        });
+
+        if (!filmReview) {
+          return res.status(404).json({
+            error: "Not Found",
+            message: "Film review không tồn tại",
+          });
+        }
+
+        const existingBookmark = await prisma.bookmark.findFirst({
+          where: { userId: req.user.id, filmReviewId },
+        });
+
+        if (existingBookmark) {
+          return res.status(400).json({
+            error: "Conflict",
+            message: "Bookmark đã tồn tại",
+          });
+        }
+
+        const bookmark = await prisma.bookmark.create({
+          data: {
+            userId: req.user.id,
+            filmReviewId,
+          },
+          include: {
+            filmReview: {
+              select: {
+                id: true,
+                slug: true,
+                title: true,
+                thumbnailUrl: true,
+              },
+            },
+          },
+        });
+
+        return res.status(201).json({
+          message: "Bookmark đã được tạo",
+          bookmark,
         });
       }
 
@@ -175,14 +230,36 @@ class BookmarksController {
   // Toggle bookmark (create if not exists, delete if exists)
   async toggleBookmark(req, res) {
     try {
-      const { storyId, chapterId } = req.body;
+      const { storyId, chapterId, filmReviewId } = req.body;
 
       // Validate input
-      if (!storyId && !chapterId) {
+      if (!storyId && !chapterId && !filmReviewId) {
         return res.status(400).json({
           error: "Bad Request",
-          message: "Cần cung cấp storyId hoặc chapterId",
+          message: "Cần cung cấp storyId, chapterId hoặc filmReviewId",
         });
+      }
+
+      // Film review bookmark toggle
+      if (filmReviewId) {
+        const existingBookmark = await prisma.bookmark.findFirst({
+          where: { userId: req.user.id, filmReviewId },
+        });
+
+        if (existingBookmark) {
+          await prisma.bookmark.delete({ where: { id: existingBookmark.id } });
+          return res.json({ message: "Bookmark đã được xóa", action: "removed" });
+        } else {
+          const bookmark = await prisma.bookmark.create({
+            data: { userId: req.user.id, filmReviewId },
+            include: {
+              filmReview: {
+                select: { id: true, slug: true, title: true, thumbnailUrl: true },
+              },
+            },
+          });
+          return res.status(201).json({ message: "Bookmark đã được tạo", action: "added", bookmark });
+        }
       }
 
       // Check if bookmark exists
@@ -254,26 +331,31 @@ class BookmarksController {
   // Check if item is bookmarked
   async checkBookmark(req, res) {
     try {
-      const { storyId, chapterId } = req.query;
+      const { storyId, chapterId, filmReviewId } = req.query;
 
-      if (!storyId && !chapterId) {
+      if (!storyId && !chapterId && !filmReviewId) {
         return res.status(400).json({
           error: "Bad Request",
-          message: "Cần cung cấp storyId hoặc chapterId",
+          message: "Cần cung cấp storyId, chapterId hoặc filmReviewId",
         });
       }
 
-      const bookmark = await prisma.bookmark.findFirst({
-        where: {
-          userId: req.user.id,
-          storyId: storyId || null,
-          chapterId: chapterId || null,
-        },
-        select: {
-          id: true,
-          createdAt: true,
-        },
-      });
+      let bookmark;
+      if (filmReviewId) {
+        bookmark = await prisma.bookmark.findFirst({
+          where: { userId: req.user.id, filmReviewId },
+          select: { id: true, createdAt: true },
+        });
+      } else {
+        bookmark = await prisma.bookmark.findFirst({
+          where: {
+            userId: req.user.id,
+            storyId: storyId || null,
+            chapterId: chapterId || null,
+          },
+          select: { id: true, createdAt: true },
+        });
+      }
 
       res.json({
         isBookmarked: !!bookmark,
@@ -294,9 +376,20 @@ class BookmarksController {
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 10;
       const skip = (page - 1) * limit;
+      const { type } = req.query; // "TEXT", "AUDIO", "FILM", or undefined for all
+
+      const where = { userId: req.user.id };
+
+      if (type === "FILM") {
+        where.filmReviewId = { not: null };
+        where.storyId = null;
+      } else if (type === "TEXT" || type === "AUDIO") {
+        where.filmReviewId = null;
+        where.story = { is: { type } };
+      }
 
       const bookmarks = await prisma.bookmark.findMany({
-        where: { userId: req.user.id },
+        where,
         include: {
           story: {
             select: {
@@ -311,6 +404,20 @@ class BookmarksController {
               author: {
                 select: {
                   name: true,
+                },
+              },
+              textGenres: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                },
+              },
+              audioGenres: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
                 },
               },
             },
@@ -332,15 +439,37 @@ class BookmarksController {
               },
             },
           },
+          filmReview: {
+            select: {
+              id: true,
+              slug: true,
+              title: true,
+              description: true,
+              thumbnailUrl: true,
+              rating: true,
+              viewCount: true,
+              categories: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                },
+              },
+              author: {
+                select: {
+                  name: true,
+                },
+              },
+              createdAt: true,
+            },
+          },
         },
         orderBy: { createdAt: "desc" },
         skip,
         take: limit,
       });
 
-      const total = await prisma.bookmark.count({
-        where: { userId: req.user.id },
-      });
+      const total = await prisma.bookmark.count({ where });
 
       res.json({
         bookmarks,

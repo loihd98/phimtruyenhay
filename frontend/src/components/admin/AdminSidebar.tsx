@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "../../contexts/LanguageContext";
+import { usePermissions } from "../../hooks/usePermissions";
 import { User } from "../../types";
 import { AdminTab } from "../../types/admin";
 
@@ -18,8 +19,30 @@ interface MenuGroup {
   id: string;
   label: string;
   icon: React.ReactNode;
-  items: { id: AdminTab; label: string }[];
+  items: { id: AdminTab; label: string; permission?: string }[];
+  permission?: string; // Group-level permission
 }
+
+/**
+ * TAB_PERMISSION_MAP — maps sidebar tabs to required permission codes.
+ * Tabs not in this map default to ADMIN-only.
+ * "ADMIN_ONLY" means the tab is hidden for non-ADMIN roles entirely.
+ */
+const TAB_PERMISSION_MAP: Partial<Record<AdminTab, string | "ADMIN_ONLY">> = {
+  dashboard: "admin.dashboard.view",
+  stories: "story_text.view",
+  "audio-stories": "story_audio.view",
+  genres: "story_text.view",
+  "audio-genres": "story_audio.view",
+  "film-reviews": "film.view",
+  "film-categories": "film.view",
+  users: "ADMIN_ONLY",
+  comments: "ADMIN_ONLY",
+  media: "ADMIN_ONLY",
+  roles: "ADMIN_ONLY",
+  settings: "ADMIN_ONLY",
+  "affiliate-links": "ADMIN_ONLY",
+};
 
 const AdminSidebar: React.FC<AdminSidebarProps> = ({
   activeTab,
@@ -30,7 +53,21 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
 }) => {
   const { t } = useLanguage();
   const router = useRouter();
+  const { hasPermission } = usePermissions();
   const [expandedGroups, setExpandedGroups] = useState<string[]>(["audio", "text", "film"]);
+
+  const isAdmin = user?.role === "ADMIN";
+
+  /**
+   * Check if a tab should be visible based on permissions
+   */
+  const canSeeTab = (tabId: AdminTab): boolean => {
+    if (isAdmin) return true;
+    const requiredPermission = TAB_PERMISSION_MAP[tabId];
+    if (!requiredPermission) return true; // No permission required
+    if (requiredPermission === "ADMIN_ONLY") return false; // Only ADMIN
+    return hasPermission(requiredPermission);
+  };
 
   const toggleGroup = (groupId: string) => {
     setExpandedGroups((prev) =>
@@ -144,6 +181,15 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
         </svg>
       ),
     },
+    {
+      id: "roles" as AdminTab,
+      label: "Phân quyền",
+      icon: (
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+      ),
+    },
   ];
 
   const isTabInGroup = (groupId: string) => {
@@ -198,7 +244,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
                 {user?.name}
               </p>
               <p className="text-xs text-blue-400 font-medium">
-                {t("admin.role")}
+                {user?.role || t("admin.role")}
               </p>
             </div>
           </div>
@@ -207,6 +253,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
         {/* Navigation */}
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {/* Dashboard standalone item */}
+          {canSeeTab("dashboard") && (
           <button
             onClick={() => handleMenuClick("dashboard")}
             className={`group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg w-full text-left transition-all duration-200 ${activeTab === "dashboard"
@@ -217,9 +264,15 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
             <span className="mr-3">{standaloneItems[0].icon}</span>
             <span>{standaloneItems[0].label}</span>
           </button>
+          )}
 
           {/* Collapsible Menu Groups */}
-          {menuGroups.map((group) => (
+          {menuGroups.map((group) => {
+            // Filter items by permission
+            const visibleItems = group.items.filter((item) => canSeeTab(item.id));
+            if (visibleItems.length === 0) return null;
+
+            return (
             <div key={group.id} className="mt-1">
               <button
                 onClick={() => toggleGroup(group.id)}
@@ -249,7 +302,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
                   }`}
               >
                 <div className="ml-4 mt-1 space-y-0.5 border-l-2 border-gray-700 pl-3">
-                  {group.items.map((item) => (
+                  {visibleItems.map((item) => (
                     <button
                       key={item.id}
                       onClick={() => handleMenuClick(item.id)}
@@ -266,13 +319,14 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
 
           {/* Divider */}
           <div className="border-t border-gray-700 my-2"></div>
 
           {/* Standalone items (skip dashboard, already rendered) */}
-          {standaloneItems.slice(1).map((item) => (
+          {standaloneItems.slice(1).filter((item) => canSeeTab(item.id)).map((item) => (
             <button
               key={item.id}
               onClick={() => handleMenuClick(item.id)}

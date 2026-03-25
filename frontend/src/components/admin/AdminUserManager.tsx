@@ -38,7 +38,7 @@ const AdminUserManager: React.FC = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterRole, setFilterRole] = useState<"ALL" | "USER" | "ADMIN">("ALL");
+  const [filterRole, setFilterRole] = useState<"ALL" | "USER" | "ADMIN" | "EDITOR">("ALL");
   const [showUserModal, setShowUserModal] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [updatingUsers, setUpdatingUsers] = useState<Set<string>>(new Set());
@@ -47,7 +47,7 @@ const AdminUserManager: React.FC = () => {
     name: "",
     email: "",
     password: "",
-    role: "USER" as "USER" | "ADMIN",
+    role: "USER" as "USER" | "ADMIN" | "EDITOR",
   });
 
   useEffect(() => {
@@ -104,7 +104,7 @@ const AdminUserManager: React.FC = () => {
 
   const handleRoleChange = async (
     userId: string,
-    newRole: "USER" | "ADMIN"
+    newRole: "USER" | "ADMIN" | "EDITOR"
   ) => {
     if (updatingUsers.has(userId)) return;
 
@@ -172,7 +172,7 @@ const AdminUserManager: React.FC = () => {
       name: user.name || "",
       email: user.email || "",
       password: "", // Don't pre-fill password
-      role: user.role as "USER" | "ADMIN",
+      role: user.role as "USER" | "ADMIN" | "EDITOR",
     });
     setShowUserModal(true);
   };
@@ -443,6 +443,7 @@ const AdminUserManager: React.FC = () => {
               >
                 <option value="ALL">{t("admin.users.all_roles")}</option>
                 <option value="ADMIN">{t("admin.users.role_admin")}</option>
+                <option value="EDITOR">Editor</option>
                 <option value="PREMIUM">{t("admin.users.role_premium")}</option>
                 <option value="USER">{t("admin.users.role_user")}</option>
               </select>
@@ -575,7 +576,7 @@ const AdminUserManager: React.FC = () => {
                         onChange={(e) =>
                           handleRoleChange(
                             user.id,
-                            e.target.value as "USER" | "ADMIN"
+                            e.target.value as "USER" | "ADMIN" | "EDITOR"
                           )
                         }
                         disabled={
@@ -585,7 +586,8 @@ const AdminUserManager: React.FC = () => {
                         className="text-xs px-2 py-1 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 dark:text-white disabled:opacity-50"
                       >
                         <option value="USER">User</option>
-                        <option value="ADMIN">Admin</option>
+                        <option value="EDITOR">✍️ Editor</option>
+                        <option value="ADMIN">👑 Admin</option>
                       </select>
 
                       <button
@@ -795,12 +797,13 @@ const AdminUserManager: React.FC = () => {
               onChange={(e) =>
                 setUserForm({
                   ...userForm,
-                  role: e.target.value as "USER" | "ADMIN",
+                  role: e.target.value as "USER" | "ADMIN" | "EDITOR",
                 })
               }
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
             >
               <option value="USER">👤 User</option>
+              <option value="EDITOR">✍️ Editor</option>
               <option value="ADMIN">👑 Admin</option>
             </select>
           </div>

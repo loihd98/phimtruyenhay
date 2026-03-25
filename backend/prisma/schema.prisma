@@ -13,6 +13,13 @@ datasource db {
 enum Role {
   USER
   ADMIN
+  EDITOR
+  REVIEWER
+}
+
+enum PermissionType {
+  action
+  view
 }
 
 enum StoryType {
@@ -130,6 +137,9 @@ model Media {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
+  // Relations
+  usages      MediaUsage[]
+  
   @@map("media")
 }
 
@@ -236,11 +246,16 @@ model Bookmark {
   // Chapter relationship (optional)
   chapterId String?
   chapter   Chapter? @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  // Film review relationship (optional)
+  filmReviewId String?
+  filmReview   FilmReview? @relation(fields: [filmReviewId], references: [id], onDelete: Cascade)
   
   // Timestamps
   createdAt DateTime @default(now())
   
   @@unique([userId, storyId, chapterId])
+  @@unique([userId, filmReviewId])
   @@map("bookmarks")
 }
 
@@ -309,6 +324,7 @@ model FilmReview {
 
   // Relations
   comments      FilmComment[]
+  bookmarks     Bookmark[]
 
   @@map("film_reviews")
 }
@@ -336,4 +352,58 @@ model FilmComment {
   updatedAt    DateTime @updatedAt
 
   @@map("film_comments")
+}
+
+// ===== RBAC Permission System =====
+
+model Permission {
+  id          String         @id @default(cuid())
+  code        String         @unique  // e.g. "story_text.create"
+  name        String
+  group       String         // e.g. "story_text", "story_audio", "film", "user", "admin", "media"
+  type        PermissionType // "action" or "view"
+  description String?
+
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  // Relations
+  rolePermissions RolePermission[]
+
+  @@index([group])
+  @@index([type])
+  @@map("permissions")
+}
+
+model RolePermission {
+  id           String  @id @default(cuid())
+  role         Role
+  permissionId String
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  granted      Boolean @default(false)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([role, permissionId])
+  @@index([role])
+  @@map("role_permissions")
+}
+
+// ===== Media Usage Tracking =====
+
+model MediaUsage {
+  id         String @id @default(cuid())
+  mediaId    String
+  media      Media  @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+  entityType String // "story_text", "story_audio", "film"
+  entityId   String
+  field      String // e.g. "thumbnail", "audio_url"
+
+  createdAt  DateTime @default(now())
+
+  @@unique([mediaId, entityType, entityId, field])
+  @@index([mediaId])
+  @@index([entityType, entityId])
+  @@map("media_usages")
 }

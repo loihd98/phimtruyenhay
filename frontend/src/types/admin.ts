@@ -10,4 +10,5 @@ export type AdminTab =
   | "media"
   | "settings"
   | "film-reviews"
-  | "film-categories";
+  | "film-categories"
+  | "roles";

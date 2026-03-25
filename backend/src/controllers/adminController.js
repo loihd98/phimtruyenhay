@@ -1,6 +1,31 @@
 const prisma = require("../lib/prisma");
+const bcrypt = require("bcryptjs");
 const slugify = require("slugify");
+const path = require("path");
+const fs = require("fs");
 const validationService = require("../utils/validationService");
+const config = require("../config");
+
+/**
+ * Delete an old media file from disk when it's being replaced.
+ * @param {string|null} oldUrl - The old file URL (e.g. /uploads/image/abc.jpg)
+ * @param {string|null} newUrl - The new file URL
+ */
+function deleteOldMediaFile(oldUrl, newUrl) {
+  if (!oldUrl || oldUrl === newUrl) return;
+  try {
+    // Extract path from URL like /uploads/image/filename.jpg
+    const match = oldUrl.match(/\/uploads\/(image|audio)\/(.+)$/);
+    if (!match) return;
+    const filePath = path.join(config.uploadPath, match[1], match[2]);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      console.log(`Deleted old media file: ${filePath}`);
+    }
+  } catch (err) {
+    console.error("Error deleting old media file:", err.message);
+  }
+}
 
 // Normalize story: merge textGenres/audioGenres into a single `genres` field
 function normalizeStory(story) {
@@ -168,6 +193,64 @@ class AdminController {
   }
 
   // Manage Users
+
+  async createUser(req, res) {
+    try {
+      const { name, email, password, role } = req.body;
+
+      if (!name || !email || !password) {
+        return res.status(400).json({
+          error: "Bad Request",
+          message: "Vui lòng điền đầy đủ tên, email và mật khẩu",
+        });
+      }
+
+      const validRoles = ["USER", "ADMIN", "EDITOR"];
+      const userRole = validRoles.includes(role) ? role : "USER";
+
+      // Check if email already exists
+      const existing = await prisma.user.findUnique({
+        where: { email: email.toLowerCase() },
+      });
+      if (existing) {
+        return res.status(400).json({
+          error: "Bad Request",
+          message: "Email đã được sử dụng",
+        });
+      }
+
+      const passwordHash = await bcrypt.hash(password, 12);
+
+      const user = await prisma.user.create({
+        data: {
+          name: name.trim(),
+          email: email.toLowerCase(),
+          passwordHash,
+          role: userRole,
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          avatar: true,
+          createdAt: true,
+        },
+      });
+
+      res.status(201).json({
+        message: "Tạo người dùng thành công",
+        user,
+      });
+    } catch (error) {
+      console.error("Create user error:", error);
+      res.status(500).json({
+        error: "Internal Server Error",
+        message: "Có lỗi xảy ra khi tạo người dùng",
+      });
+    }
+  }
+
   async getUsers(req, res) {
     try {
       const page = parseInt(req.query.page) || 1;
@@ -247,10 +330,10 @@ class AdminController {
       const { id } = req.params;
       const { role } = req.body;
 
-      if (!["USER", "ADMIN"].includes(role)) {
+      if (!["USER", "ADMIN", "EDITOR"].includes(role)) {
         return res.status(400).json({
           error: "Bad Request",
-          message: "Role phải là USER hoặc ADMIN",
+          message: "Role phải là USER, ADMIN hoặc EDITOR",
         });
       }
 
@@ -342,7 +425,7 @@ class AdminController {
         updateData.avatar = avatar;
       }
 
-      if (role !== undefined && ["USER", "ADMIN"].includes(role)) {
+      if (role !== undefined && ["USER", "ADMIN", "EDITOR"].includes(role)) {
         updateData.role = role;
       }
 
@@ -823,6 +906,9 @@ class AdminController {
       }
 
       if (thumbnailUrl !== undefined) {
+        // Delete old thumbnail if it's being replaced
+        const oldStory = await prisma.story.findUnique({ where: { id }, select: { thumbnailUrl: true } });
+        if (oldStory) deleteOldMediaFile(oldStory.thumbnailUrl, thumbnailUrl);
         updateData.thumbnailUrl = thumbnailUrl || null;
       }
 
@@ -880,8 +966,10 @@ class AdminController {
         });
         if (chapter1) {
           const chapterUpdate = {};
-          if (chapter1AudioUrl !== undefined)
+          if (chapter1AudioUrl !== undefined) {
+            deleteOldMediaFile(chapter1.audioUrl, chapter1AudioUrl);
             chapterUpdate.audioUrl = chapter1AudioUrl || null;
+          }
           if (chapter1Title !== undefined && chapter1Title.trim())
             chapterUpdate.title = chapter1Title.trim();
           await prisma.chapter.update({

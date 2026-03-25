@@ -23,8 +23,10 @@ export const useAuth = () => {
     ...auth,
     isReady,
     isAdmin: auth.user?.role === "ADMIN",
+    isEditor: auth.user?.role === "EDITOR",
     isPremium: auth.user?.role === "PREMIUM",
     isUser: auth.user?.role === "USER",
+    hasAdminAccess: ["ADMIN", "EDITOR"].includes(auth.user?.role || ""),
   };
 };
 

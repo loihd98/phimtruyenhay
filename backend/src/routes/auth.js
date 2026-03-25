@@ -1,6 +1,7 @@
 const express = require("express");
 const passport = require("../config/passport");
 const authController = require("../controllers/authController");
+const permissionsController = require("../controllers/permissionsController");
 const { authenticateToken } = require("../middleware/auth");
 
 const router = express.Router();
@@ -14,6 +15,9 @@ router.post("/logout-all", authenticateToken, authController.logoutAll);
 
 // Protected route to get current user
 router.get("/me", authenticateToken, authController.me);
+
+// GET /api/auth/me/permissions — get current user's permissions
+router.get("/me/permissions", authenticateToken, permissionsController.getMyPermissions);
 
 // Google OAuth routes
 router.get(

@@ -9,9 +9,13 @@ interface AdminGuardProps {
   children: React.ReactNode;
 }
 
+const ADMIN_ROLES = ["ADMIN", "EDITOR"];
+
 const AdminGuard: React.FC<AdminGuardProps> = ({ children }) => {
-  const { user, isAuthenticated, isLoading, isAdmin } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
+
+  const hasAdminAccess = user?.role ? ADMIN_ROLES.includes(user.role) : false;
 
   useEffect(() => {
     // Wait for auth state to load
@@ -24,13 +28,13 @@ const AdminGuard: React.FC<AdminGuardProps> = ({ children }) => {
       return;
     }
 
-    // Check if user is not admin
-    if (!isAdmin) {
+    // Check if user has admin access role
+    if (!hasAdminAccess) {
       toast.error("Bạn không có quyền truy cập trang admin");
       router.replace("/");
       return;
     }
-  }, [isAuthenticated, user, isLoading, isAdmin, router]);
+  }, [isAuthenticated, user, isLoading, hasAdminAccess, router]);
 
   // Show loading while checking auth
   if (isLoading) {
@@ -46,8 +50,8 @@ const AdminGuard: React.FC<AdminGuardProps> = ({ children }) => {
     );
   }
 
-  // Don't render anything if not authenticated or not admin
-  if (!isAuthenticated || !user || !isAdmin) {
+  // Don't render anything if not authenticated or doesn't have admin access
+  if (!isAuthenticated || !user || !hasAdminAccess) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">

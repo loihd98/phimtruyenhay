@@ -4,7 +4,7 @@ export interface User {
   name: string;
   username?: string;
   displayName?: string;
-  role: "USER" | "ADMIN" | "PREMIUM";
+  role: "USER" | "ADMIN" | "EDITOR" | "PREMIUM";
   status?: "ACTIVE" | "INACTIVE" | "BANNED";
   avatar?: string;
   createdAt: string;
@@ -426,4 +426,41 @@ export interface FilmReviewQuery {
   search?: string;
   sort?: "createdAt" | "rating" | "viewCount" | "title";
   status?: "DRAFT" | "PUBLISHED";
+}
+
+// ===== RBAC Permission Types =====
+
+export interface Permission {
+  id: string;
+  code: string;
+  name: string;
+  group: string;
+  type: "action" | "view";
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+  roles?: {
+    ADMIN: boolean;
+    EDITOR: boolean;
+    USER: boolean;
+  };
+}
+
+export interface PermissionMatrix {
+  groups: Record<string, Permission[]>;
+  roles: string[];
+}
+
+export interface UserPermissions {
+  role: string;
+  permissions: string[];
+}
+
+export interface MediaUsage {
+  id: string;
+  mediaId: string;
+  entityType: string;
+  entityId: string;
+  field: string;
+  createdAt: string;
 }

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import apiClient from "@/utils/api";
 import AdminFilmReviewForm from "./AdminFilmReviewForm";
+import { usePermissions } from "../../hooks/usePermissions";
 
 interface AffiliateLink {
   id: string;
@@ -52,6 +53,11 @@ interface PaginationMeta {
 }
 
 const AdminFilmReviewManager: React.FC = () => {
+  const { hasPermission } = usePermissions();
+  const canCreate = hasPermission("film.create");
+  const canUpdate = hasPermission("film.update");
+  const canDelete = hasPermission("film.delete");
+
   const [reviews, setReviews] = useState<FilmReview[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -314,7 +320,9 @@ const AdminFilmReviewManager: React.FC = () => {
         </div>
         <button
           onClick={handleCreateNew}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center"
+          disabled={!canCreate}
+          className={`px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center ${canCreate ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"}`}
+          title={!canCreate ? "Bạn không có quyền tạo mới" : ""}
         >
           <svg
             className="w-4 h-4 mr-2"
@@ -533,7 +541,8 @@ const AdminFilmReviewManager: React.FC = () => {
             {!searchTerm && !statusFilter && (
               <button
                 onClick={handleCreateNew}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                disabled={!canCreate}
+                className={`px-4 py-2 rounded-lg transition-colors ${canCreate ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"}`}
               >
                 Tạo review mới
               </button>
@@ -693,8 +702,9 @@ const AdminFilmReviewManager: React.FC = () => {
                           {/* Edit */}
                           <button
                             onClick={() => handleEdit(review)}
-                            className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 p-1 rounded transition-colors"
-                            title="Chỉnh sửa"
+                            disabled={!canUpdate}
+                            className={`p-1 rounded transition-colors ${canUpdate ? "text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300" : "text-gray-400 dark:text-gray-600 cursor-not-allowed"}`}
+                            title={!canUpdate ? "Bạn không có quyền chỉnh sửa" : "Chỉnh sửa"}
                           >
                             <svg
                               className="w-4 h-4"
@@ -713,8 +723,9 @@ const AdminFilmReviewManager: React.FC = () => {
                           {/* Delete */}
                           <button
                             onClick={() => handleDeleteClick(review)}
-                            className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 p-1 rounded transition-colors"
-                            title="Xóa"
+                            disabled={!canDelete}
+                            className={`p-1 rounded transition-colors ${canDelete ? "text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300" : "text-gray-400 dark:text-gray-600 cursor-not-allowed"}`}
+                            title={!canDelete ? "Bạn không có quyền xóa" : "Xóa"}
                           >
                             <svg
                               className="w-4 h-4"

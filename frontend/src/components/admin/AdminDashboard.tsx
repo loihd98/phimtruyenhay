@@ -18,6 +18,7 @@ import AdminGenresManager from "./AdminGenresManager";
 import AdminFilmReviewManager from "./AdminFilmReviewManager";
 import AdminFilmCategoriesManager from "./AdminFilmCategoriesManager";
 import AdminSidebar from "./AdminSidebar";
+import RoleManagement from "./RoleManagement";
 import { AdminTab } from "../../types/admin";
 
 const AdminDashboard: React.FC = () => {
@@ -54,7 +55,9 @@ const AdminDashboard: React.FC = () => {
       return;
     }
 
-    if (user?.role !== "ADMIN") {
+    // Allow ADMIN, EDITOR to access admin panel
+    const adminRoles = ["ADMIN", "EDITOR"];
+    if (!user?.role || !adminRoles.includes(user.role)) {
       router.push("/");
       return;
     }
@@ -120,6 +123,8 @@ const AdminDashboard: React.FC = () => {
         return <AdminFilmReviewManager />;
       case "film-categories":
         return <AdminFilmCategoriesManager />;
+      case "roles":
+        return <RoleManagement />;
       default:
         return <AdminStats />;
     }

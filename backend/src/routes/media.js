@@ -6,34 +6,51 @@ const {
   uploadImage,
   uploadUniversal,
 } = require("../controllers/mediaController");
-const { authenticateToken, requireAdmin } = require("../middleware/auth");
+const { authenticateToken } = require("../middleware/auth");
+const permissionService = require("../utils/permissionService");
 
 const router = express.Router();
 
-// All media routes require admin authentication
+// All media routes require authentication
 router.use(authenticateToken);
-router.use(requireAdmin);
+
+// Permission check middleware — ADMIN bypasses, others need media permissions
+const requireMediaPermission = (code) => async (req, res, next) => {
+  if (req.user.role === "ADMIN") return next();
+  try {
+    const hasAccess = await permissionService.hasPermission(req.user.role, code);
+    if (!hasAccess) {
+      return res.status(403).json({ error: "Forbidden", message: "Bạn không có quyền thực hiện hành động này" });
+    }
+    next();
+  } catch (error) {
+    return res.status(500).json({ error: "Internal Server Error", message: "Lỗi kiểm tra quyền" });
+  }
+};
 
 // Upload audio file
-router.post("/upload/audio", uploadAudio, MediaController.uploadAudio);
+router.post("/upload/audio", requireMediaPermission("media.upload"), uploadAudio, MediaController.uploadAudio);
 
 // Upload image file
-router.post("/upload/image", uploadImage, MediaController.uploadImage);
+router.post("/upload/image", requireMediaPermission("media.upload"), uploadImage, MediaController.uploadImage);
 
 // Media management routes
-router.get("/", MediaController.getMediaFiles);
-router.post("/upload", uploadUniversal, MediaController.uploadMediaToDatabase);
-router.delete("/:id", MediaController.deleteMediaFile);
-router.get("/search", MediaController.searchMediaFiles);
+router.get("/", requireMediaPermission("media.view"), MediaController.getMediaFiles);
+router.post("/upload", requireMediaPermission("media.upload"), uploadUniversal, MediaController.uploadMediaToDatabase);
+router.delete("/:id", requireMediaPermission("media.delete"), MediaController.deleteMediaFile);
+router.get("/search", requireMediaPermission("media.view"), MediaController.searchMediaFiles);
 
 // Get file info
-router.get("/files/:filename", MediaController.getFileInfo);
+router.get("/files/:filename", requireMediaPermission("media.view"), MediaController.getFileInfo);
+
+// File usage info
+router.get("/usages", requireMediaPermission("media.view"), MediaController.getFileUsages);
 
 // List files
-router.get("/files", MediaController.listFiles);
+router.get("/files", requireMediaPermission("media.view"), MediaController.listFiles);
 
 // Delete file
-router.delete("/files/:filename", MediaController.deleteFile);
+router.delete("/files/:filename", requireMediaPermission("media.delete"), MediaController.deleteFile);
 
 // Error handling for multer
 router.use((error, req, res, next) => {

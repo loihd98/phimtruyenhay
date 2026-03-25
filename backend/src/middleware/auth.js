@@ -1,5 +1,6 @@
 const prisma = require("../lib/prisma");
 const tokenService = require("../utils/tokenService");
+const permissionService = require("../utils/permissionService");
 
 const authenticateToken = async (req, res, next) => {
   try {
@@ -109,9 +110,120 @@ const optionalAuth = async (req, res, next) => {
   }
 };
 
+/**
+ * requirePermission(code) — checks that the authenticated user's role
+ * has the specified permission code. ADMIN always bypasses.
+ */
+const requirePermission = (code) => {
+  return async (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({
+        error: "Unauthorized",
+        message: "Vui lòng đăng nhập",
+      });
+    }
+
+    // ADMIN bypass
+    if (req.user.role === "ADMIN") {
+      return next();
+    }
+
+    try {
+      const hasAccess = await permissionService.hasPermission(req.user.role, code);
+      if (!hasAccess) {
+        return res.status(403).json({
+          error: "Forbidden",
+          message: "Bạn không có quyền thực hiện hành động này",
+        });
+      }
+      next();
+    } catch (error) {
+      console.error("Permission check error:", error);
+      return res.status(500).json({
+        error: "Internal Server Error",
+        message: "Lỗi kiểm tra quyền",
+      });
+    }
+  };
+};
+
+/**
+ * requireAdminAccess — shorthand for requirePermission("admin.access")
+ */
+const requireAdminAccess = async (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({
+      error: "Unauthorized",
+      message: "Vui lòng đăng nhập",
+    });
+  }
+
+  // ADMIN bypass
+  if (req.user.role === "ADMIN") {
+    return next();
+  }
+
+  try {
+    const hasAccess = await permissionService.hasPermission(req.user.role, "admin.access");
+    if (!hasAccess) {
+      return res.status(403).json({
+        error: "Forbidden",
+        message: "Bạn không có quyền truy cập tính năng này",
+      });
+    }
+    next();
+  } catch (error) {
+    console.error("Admin access check error:", error);
+    return res.status(500).json({
+      error: "Internal Server Error",
+      message: "Lỗi kiểm tra quyền",
+    });
+  }
+};
+
+/**
+ * requireAnyPermission([...codes]) — checks that the user has at least one
+ * of the given permissions. ADMIN always bypasses.
+ */
+const requireAnyPermission = (codes) => {
+  return async (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({
+        error: "Unauthorized",
+        message: "Vui lòng đăng nhập",
+      });
+    }
+
+    // ADMIN bypass
+    if (req.user.role === "ADMIN") {
+      return next();
+    }
+
+    try {
+      const hasAccess = await permissionService.hasAnyPermission(req.user.role, codes);
+      if (!hasAccess) {
+        return res.status(403).json({
+          error: "Forbidden",
+          message: "Bạn không có quyền thực hiện hành động này",
+        });
+      }
+      next();
+    } catch (error) {
+      console.error("Permission check error:", error);
+      return res.status(500).json({
+        error: "Internal Server Error",
+        message: "Lỗi kiểm tra quyền",
+      });
+    }
+  };
+};
+
 module.exports = {
   authenticateToken,
   requireAuth: authenticateToken, // Alias for consistency
-  requireAdmin: [authenticateToken, requireAdmin], // Combine auth + admin check
+  requireAdmin: [authenticateToken, requireAdmin], // Combine auth + admin check — backward compat
+  requireAdminAccess: [authenticateToken, requireAdminAccess],
+  requirePermission: (code) => [authenticateToken, requirePermission(code)],
+  requireAnyPermission: (codes) => [authenticateToken, requireAnyPermission(codes)],
   optionalAuth,
 };

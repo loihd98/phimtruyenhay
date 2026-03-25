@@ -423,6 +423,42 @@ docker compose -f docker-compose.prod.yml exec postgres \
   "UPDATE users SET role = 'ADMIN' WHERE email = 'admin@khotruyen.vn';"
 ```
 
+### 7.5 Seed RBAC Permissions
+
+The RBAC system requires permissions to be seeded for role-based access control. This must be run after initial deployment and after any permission changes:
+
+```bash
+cd /opt/webtruyen
+
+# Seed permissions (creates ~28 permissions across 8 groups)
+docker compose -f docker-compose.prod.yml exec backend node src/scripts/seed-permissions.js
+```
+
+This creates permissions for:
+- **story_text**: CRUD for text stories + genre management
+- **story_audio**: CRUD for audio stories + genre management  
+- **film**: CRUD for film reviews + genre management
+- **review.moderate**: Moderate comments
+- **admin.users/media/settings/roles/affiliate**: Admin-only operations
+
+Default role assignments:
+- **ADMIN**: All permissions (hardcoded, not stored in DB)
+- **EDITOR**: View/create/update for stories and films, genre management
+- **USER**: No admin permissions
+
+> **Note**: After updating `seed-permissions.js` (e.g., adding new permissions), re-run the seed script. It uses upsert so existing permissions are preserved.
+
+### 7.6 Database Migration for Bookmarks (Film Support)
+
+If upgrading from a version without film bookmark support, run the migration:
+
+```bash
+cd /opt/webtruyen
+
+# Apply schema changes (adds filmReviewId to bookmarks table)
+docker compose -f docker-compose.prod.yml exec backend npx prisma db push
+```
+
 ---
 
 ## 8. Verify Everything Works

@@ -17,6 +17,9 @@ import {
   FilmCategory,
   FilmComment,
   FilmReviewQuery,
+  Permission,
+  PermissionMatrix,
+  UserPermissions,
 } from "../types";
 
 // Base API URL
@@ -26,6 +29,19 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
 let getAuthToken: (() => string | null) | null = null;
 let handleTokenRefresh: (() => Promise<string | null>) | null = null;
 let handleLogout: (() => void) | null = null;
+
+// Refresh deduplication — prevent parallel refresh calls
+let isRefreshing = false;
+let refreshSubscribers: Array<(token: string | null) => void> = [];
+
+const onRefreshed = (token: string | null) => {
+  refreshSubscribers.forEach((cb) => cb(token));
+  refreshSubscribers = [];
+};
+
+const addRefreshSubscriber = (cb: (token: string | null) => void) => {
+  refreshSubscribers.push(cb);
+};
 
 // Function to set token management handlers
 export const setTokenHandlers = (
@@ -65,7 +81,7 @@ apiClient.interceptors.request.use(
   },
 );
 
-// Response interceptor to handle token refresh
+// Response interceptor to handle token refresh (with deduplication)
 apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
@@ -74,9 +90,28 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
+      // If already refreshing, queue this request
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          addRefreshSubscriber((token: string | null) => {
+            if (token && originalRequest.headers) {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+              resolve(apiClient(originalRequest));
+            } else {
+              reject(error);
+            }
+          });
+        });
+      }
+
+      isRefreshing = true;
+
       try {
         if (handleTokenRefresh) {
           const newToken = await handleTokenRefresh();
+
+          isRefreshing = false;
+          onRefreshed(newToken);
 
           if (newToken && originalRequest.headers) {
             originalRequest.headers.Authorization = `Bearer ${newToken}`;
@@ -84,10 +119,12 @@ apiClient.interceptors.response.use(
           }
         }
       } catch (refreshError) {
+        isRefreshing = false;
+        onRefreshed(null);
+
         if (handleLogout) {
           handleLogout();
         }
-        // Redirect to login if in browser
         if (typeof window !== "undefined") {
           window.location.href = "/auth/login";
         }
@@ -481,6 +518,42 @@ export const filmReviewsAdminAPI = {
   deleteComment: (id: string) =>
     apiRequest<{ message: string }>(() =>
       apiClient.delete(`/admin/film-comments/${id}`),
+    ),
+};
+
+// Permissions API
+export const permissionsAPI = {
+  getMyPermissions: () =>
+    apiRequest<UserPermissions>(() => apiClient.get("/auth/me/permissions")),
+
+  getAllPermissions: () =>
+    apiRequest<Permission[]>(() => apiClient.get("/permissions")),
+
+  getPermissionMatrix: () =>
+    apiRequest<PermissionMatrix>(() => apiClient.get("/permissions/matrix")),
+
+  updateRolePermissions: (
+    role: string,
+    updates: Array<{ permissionId: string; granted: boolean }>
+  ) =>
+    apiRequest<{ updated: number }>(() =>
+      apiClient.put(`/permissions/role/${role}`, { updates })
+    ),
+
+  createPermission: (data: {
+    code: string;
+    name: string;
+    group: string;
+    type: "action" | "view";
+    description?: string;
+  }) => apiRequest<Permission>(() => apiClient.post("/permissions", data)),
+
+  updatePermission: (id: string, data: Partial<Permission>) =>
+    apiRequest<Permission>(() => apiClient.patch(`/permissions/${id}`, data)),
+
+  deletePermission: (id: string) =>
+    apiRequest<{ message: string }>(() =>
+      apiClient.delete(`/permissions/${id}`)
     ),
 };
 
