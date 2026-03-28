@@ -9,7 +9,7 @@ import { RootState } from "../../store";
 import { addBookmark, removeBookmark } from "../../store/slices/bookmarkSlice";
 import { openAudioPlayer } from "../../store/slices/uiSlice";
 import { AppDispatch } from "../../store";
-import { getMediaUrl } from "../../utils/media";
+import { getMediaUrl, formatViewCount } from "../../utils/media";
 import Image from "next/image";
 import apiClient from "@/utils/api";
 
@@ -338,7 +338,7 @@ const StoryCard: React.FC<StoryCardProps> = ({
                       d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                     />
                   </svg>
-                  <span>{story.viewCount}</span>
+                  <span>{formatViewCount(story.viewCount)}</span>
                 </div>
               </div>
             </div>
@@ -349,7 +349,7 @@ const StoryCard: React.FC<StoryCardProps> = ({
         return (
           <div
             key={story?.id}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer flex flex-col h-full"
             onClick={handleCardClick}
           >
             {/* Compact thumbnail with title overlay */}
@@ -422,8 +422,8 @@ const StoryCard: React.FC<StoryCardProps> = ({
             </div>
 
             {/* Minimal bottom content */}
-            <div className="p-2">
-              <h3 className="text-white pb-2 font-bold">{story?.title}</h3>
+            <div className="p-2 flex flex-col flex-1">
+              <h3 className="text-white pb-2 font-bold line-clamp-2">{story?.title}</h3>
               {/* Genres */}
               <div className="flex flex-wrap gap-1 mb-2">
                 {story?.genres?.slice(0, 2).map((genre) => (
@@ -442,9 +442,9 @@ const StoryCard: React.FC<StoryCardProps> = ({
               </div>
 
               {/* Stats */}
-              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mt-auto">
                 <span className="flex items-center">
-                  👁️ {story?.viewCount?.toLocaleString() || "0"}
+                  👁️ {formatViewCount(story?.viewCount || 0)}
                 </span>
                 <span>
                   📅 {new Date(story?.createdAt)?.toLocaleDateString("vi-VN")}
@@ -552,7 +552,7 @@ const StoryCard: React.FC<StoryCardProps> = ({
                         d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                       />
                     </svg>
-                    <span>{story.viewCount}</span>
+                    <span>{formatViewCount(story.viewCount)}</span>
                   </div>
                 </div>
                 {story.type !== "AUDIO" && (

@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
-import { getMediaUrl } from "../../../utils/media";
+import { getMediaUrl, formatViewCount } from "../../../utils/media";
 import apiClient from "../../../utils/api";
 import { FilmReview, FilmComment } from "../../../types";
 
@@ -658,7 +658,7 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
             📅 Đăng ngày:{" "}
             {new Date(filmReview.createdAt).toLocaleDateString("vi-VN")}
           </span>
-          <span>👁 Lượt xem: {filmReview.viewCount}</span>
+          <span>👁 Lượt xem: {formatViewCount(filmReview.viewCount)}</span>
           {filmReview.author && <span>✍️ Bởi: {filmReview.author.name}</span>}
         </div>
       </div>

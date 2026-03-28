@@ -475,6 +475,7 @@ class FilmReviewsController {
         categoryIds,
         actorNames,
         affiliateId,
+        initViewCount,
       } = req.body;
 
       // Validation
@@ -534,6 +535,10 @@ class FilmReviewsController {
           status: status || "DRAFT",
           authorId: req.user.id,
           affiliateId: affiliateId || null,
+          viewCount:
+            initViewCount !== undefined
+              ? Math.max(0, parseInt(initViewCount) || 0)
+              : 1000,
           categories: categoryIds?.length
             ? { connect: categoryIds.map((id) => ({ id })) }
             : undefined,
@@ -579,6 +584,7 @@ class FilmReviewsController {
         categoryIds,
         actorNames,
         affiliateId,
+        viewCount,
       } = req.body;
 
       const existing = await prisma.filmReview.findUnique({ where: { id } });
@@ -621,7 +627,10 @@ class FilmReviewsController {
       }
 
       // Delete old thumbnail if being replaced
-      if (thumbnailUrl !== undefined && thumbnailUrl !== existing.thumbnailUrl) {
+      if (
+        thumbnailUrl !== undefined &&
+        thumbnailUrl !== existing.thumbnailUrl
+      ) {
         deleteOldMediaFile(existing.thumbnailUrl, thumbnailUrl);
       }
 
@@ -645,6 +654,9 @@ class FilmReviewsController {
           affiliateId !== undefined
             ? affiliateId || null
             : existing.affiliateId,
+        ...(viewCount !== undefined && {
+          viewCount: Math.max(0, parseInt(viewCount) || 0),
+        }),
       };
 
       // Handle category updates

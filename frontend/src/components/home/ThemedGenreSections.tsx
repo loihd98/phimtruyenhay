@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { storiesAPI } from "../../utils/api";
 import { Story } from "../../types";
-import { getMediaUrl } from "../../utils/media";
+import { getMediaUrl, formatViewCount } from "../../utils/media";
 import apiClient from "../../utils/api";
 
 interface ThemedSection {
@@ -136,7 +136,7 @@ const ThemedGenreSections: React.FC<ThemedGenreSectionsProps> = ({ initialSectio
         </h3>
         <div className="flex items-center justify-between text-[10px] text-gray-500 dark:text-gray-400 mt-1.5">
           <span className="flex items-center gap-0.5">
-            👁 {story.viewCount?.toLocaleString("vi-VN") || 0}
+            👁 {formatViewCount(story.viewCount || 0)}
           </span>
           {story.genres && story.genres.length > 0 && (
             <span className="truncate max-w-[80px]">

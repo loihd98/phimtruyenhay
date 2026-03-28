@@ -773,6 +773,7 @@ class AdminController {
         affiliateId,
         chapter1Title,
         chapter1AudioUrl,
+        initViewCount,
       } = req.body;
 
       // Validation
@@ -802,6 +803,10 @@ class AdminController {
           thumbnailUrl: thumbnailUrl || null,
           authorId: req.user.id,
           affiliateId: affiliateId || null,
+          viewCount:
+            initViewCount !== undefined
+              ? Math.max(0, parseInt(initViewCount) || 0)
+              : 1000,
           [genreField]: genreIds?.length
             ? { connect: genreIds.map((id) => ({ id })) }
             : undefined,
@@ -862,6 +867,7 @@ class AdminController {
         status,
         chapter1AudioUrl,
         chapter1Title,
+        viewCount,
       } = req.body;
 
       const updateData = {};
@@ -906,7 +912,10 @@ class AdminController {
 
       if (thumbnailUrl !== undefined) {
         // Delete old thumbnail if it's being replaced
-        const oldStory = await prisma.story.findUnique({ where: { id }, select: { thumbnailUrl: true } });
+        const oldStory = await prisma.story.findUnique({
+          where: { id },
+          select: { thumbnailUrl: true },
+        });
         if (oldStory) deleteOldMediaFile(oldStory.thumbnailUrl, thumbnailUrl);
         updateData.thumbnailUrl = thumbnailUrl || null;
       }
@@ -941,6 +950,10 @@ class AdminController {
         } else {
           updateData.textGenres = { set: genreIds.map((id) => ({ id })) };
         }
+      }
+
+      if (viewCount !== undefined) {
+        updateData.viewCount = Math.max(0, parseInt(viewCount) || 0);
       }
 
       const story = await prisma.story.update({

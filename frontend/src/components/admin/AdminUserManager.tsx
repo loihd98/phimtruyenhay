@@ -126,7 +126,7 @@ const AdminUserManager: React.FC = () => {
       toast.success(data.message || "Cập nhật role thành công");
     } catch (error: any) {
       console.error("Error updating user role:", error);
-      toast.error(error.message || "Có lỗi xảy ra khi cập nhật role");
+      toast.error(error.response?.data?.message || "Có lỗi xảy ra khi cập nhật role");
     } finally {
       setUpdatingUsers((prev) => {
         const newArray = Array.from(prev).filter((id) => id !== userId);
@@ -260,6 +260,10 @@ const AdminUserManager: React.FC = () => {
       ADMIN: {
         color: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
         text: "👑 Admin",
+      },
+      EDITOR: {
+        color: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
+        text: "✍️ Editor",
       },
       USER: {
         color: "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200",
@@ -701,11 +705,10 @@ const AdminUserManager: React.FC = () => {
                       setPagination((prev) => ({ ...prev, page: pageNum }))
                     }
                     disabled={isLoading}
-                    className={`px-3 py-1 text-sm rounded border ${
-                      pageNum === pagination.page
+                    className={`px-3 py-1 text-sm rounded border ${pageNum === pagination.page
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white"
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                      } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     {pageNum}
                   </button>

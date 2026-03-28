@@ -10,7 +10,7 @@ import Image from "next/image";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import SimpleAudioPlayer from "../../../components/audio/SimpleAudioPlayer";
-import { getMediaUrl } from "../../../utils/media";
+import { getMediaUrl, formatViewCount } from "../../../utils/media";
 import Layout from "@/components/layout/Layout";
 import apiClient, { storiesAPI } from "@/utils/api";
 import CommentSection from "@/components/comments/CommentSection";
@@ -435,7 +435,7 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                       </h1>
                       <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                         <span>👤 {story.author.name}</span>
-                        <span>👁️ {story.viewCount.toLocaleString()}</span>
+                        <span>👁️ {formatViewCount(story.viewCount)}</span>
                         <span
                           className={`px-2 py-1 rounded-full text-xs ${isAudioStory
                             ? "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
@@ -718,7 +718,7 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                               d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                             />
                           </svg>
-                          {trendingStory.viewCount?.toLocaleString() || 0}
+                          {formatViewCount(trendingStory.viewCount || 0)}
                         </div>
                       </div>
                     </div>

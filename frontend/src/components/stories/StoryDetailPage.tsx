@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useSelector } from "react-redux";
 
 import { RootState } from "@/store";
-import { getMediaUrl } from "@/utils/media";
+import { getMediaUrl, formatViewCount } from "@/utils/media";
 import SimpleAudioPlayer from "../audio/SimpleAudioPlayer";
 import apiClient from "@/utils/api";
 
@@ -281,7 +281,7 @@ const StoryDetailPage: React.FC = () => {
                     </h1>
                     <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                       <span>👤 {story.author.name}</span>
-                      <span>👁️ {story.viewCount.toLocaleString()}</span>
+                      <span>👁️ {formatViewCount(story.viewCount)}</span>
                       <span
                         className={`px-2 py-1 rounded-full text-xs ${story.type === "AUDIO"
                           ? "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"

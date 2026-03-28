@@ -32,7 +32,7 @@ app.use(cookieParser());
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 2000, // limit each IP to 2000 requests per 15 minutes
+  max: 6000, // limit each IP to 6000 requests per 15 minutes
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -45,7 +45,7 @@ app.use("/api/", limiter);
 // Stricter rate limit for auth endpoints
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 200, // 200 attempts per 15 minutes
+  max: 600, // 600 attempts per 15 minutes
   message: {
     error: "Too Many Requests",
     message: "Too many login attempts, please try again later.",

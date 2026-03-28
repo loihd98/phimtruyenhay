@@ -18,6 +18,9 @@ Complete A-to-Z guide for deploying the website to a fresh **Ubuntu 20.04 VPS** 
 10. [Database Backup & Restore](#10-database-backup--restore)
 11. [Maintenance & Updates](#11-maintenance--updates)
 12. [Troubleshooting](#12-troubleshooting)
+13. [Quy Trình Phát Triển Khi Web Đang Chạy](#13-quy-trình-phát-triển-khi-web-đang-chạy)
+14. [Restart & Deploy Không Ảnh Hưởng Website](#14-restart--deploy-không-ảnh-hưởng-website)
+15. [Dọn Rác Trên VPS](#15-dọn-rác-trên-vps)
 
 ---
 
@@ -57,9 +60,38 @@ Both should resolve to `103.199.18.123`.
 
 ### 3.1 Connect to VPS
 
+**VPS IP:** `103.199.16.250`  
+**Default user:** `root` (or `deploy` if you created one in step 3.5)
+
+#### From Linux / macOS
+
 ```bash
 ssh root@103.199.18.123
 ```
+
+#### From Windows (PowerShell or CMD)
+
+```powershell
+ssh root@103.199.16.250
+```
+
+If PowerShell OpenSSH is not available, install [PuTTY](https://www.putty.org/) and connect to `103.199.16.250` port `22`.
+
+#### Set up SSH Key (recommended — skip password every time)
+
+Run this **once** from your local machine:
+
+```bash
+# Generate a key pair (press Enter to accept defaults)
+ssh-keygen -t ed25519 -C "khotruyen-vps"
+
+# Copy your public key to the VPS (enter VPS password when prompted)
+ssh-copy-id root@103.199.16.250
+```
+
+After this, `ssh root@103.199.16.250` will log in without a password.
+
+> **Windows alternative:** Use `type $HOME\.ssh\id_ed25519.pub | ssh root@103.199.16.250 "cat >> ~/.ssh/authorized_keys"` in PowerShell.
 
 ### 3.2 Update System
 
@@ -627,19 +659,64 @@ docker compose -f docker-compose.prod.yml up -d
 
 ## 11. Maintenance & Updates
 
-### 11.1 Deploy Code Updates
+### 11.1 Deploy Code Updates (Safe — No Downtime, No Data Loss)
+
+> **Golden rule:** Always use `--no-deps` so only the changed service is rebuilt. Database and other services keep running.
+
+#### Step 1 — SSH into VPS
 
 ```bash
+ssh root@103.199.16.250
 cd /opt/webtruyen
+```
 
-# Pull latest code
+#### Step 2 — Pull the latest code
+
+```bash
 git pull origin master
+```
 
-# Rebuild and restart
-docker compose -f docker-compose.prod.yml up -d --build
+#### Step 3 — Rebuild only what changed
 
-# Check logs
-docker compose -f docker-compose.prod.yml logs -f --tail=50
+```bash
+# Frontend only (UI changes, new pages, bug fixes)
+docker compose -f docker-compose.prod.yml up -d --build --no-deps frontend
+
+# Backend only (API logic, new routes — no schema change)
+docker compose -f docker-compose.prod.yml up -d --build --no-deps backend
+
+# Both frontend + backend (no schema change)
+docker compose -f docker-compose.prod.yml up -d --build --no-deps backend
+sleep 20
+docker compose -f docker-compose.prod.yml up -d --build --no-deps frontend
+```
+
+> **If the schema changed** (you edited `prisma/schema.prisma`), follow Section 13.3 instead — it includes a mandatory backup step.
+
+#### Step 4 — Confirm everything is healthy
+
+```bash
+# All containers should show "Up" or "Up (healthy)"
+docker compose -f docker-compose.prod.yml ps
+
+# Quick API test
+curl https://khotruyen.vn/api/health
+```
+
+#### What each flag does
+
+| Flag | Effect |
+|------|--------|
+| `--no-deps` | Only rebuild the specified service, never touches postgres/nginx |
+| `--build` | Forces Docker to rebuild the image with latest code |
+| `-d` | Runs in background (detached) |
+
+#### Check logs after deploy
+
+```bash
+# Watch live logs for errors (Ctrl+C to stop)
+docker compose -f docker-compose.prod.yml logs -f backend --tail=50
+docker compose -f docker-compose.prod.yml logs -f frontend --tail=50
 ```
 
 ### 11.2 Restart Individual Services

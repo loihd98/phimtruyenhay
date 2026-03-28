@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { getMediaUrl } from "../../utils/media";
+import { getMediaUrl, formatViewCount } from "../../utils/media";
 import apiClient from "@/utils/api";
 
 interface Story {
@@ -101,7 +101,7 @@ export default function StorySidebar({ className = "", flat = false }: SidebarPr
             {story.type === "AUDIO" ? "🎧" : "📖"}
           </span>
           <span className="text-xs text-gray-500 dark:text-gray-400">
-            👁️ {story.viewCount.toLocaleString()}
+            👁️ {formatViewCount(story.viewCount)}
           </span>
         </div>
       </div>

@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { RootState } from "../../store";
-import { getMediaUrl } from "../../utils/media";
+import { getMediaUrl, formatViewCount } from "../../utils/media";
 import Layout from "@/components/layout/Layout";
 import apiClient from "@/utils/api";
 
@@ -336,7 +336,7 @@ export default function BookmarksPage() {
                             </div>
 
                             <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                              <span>👁️ {bookmark.filmReview.viewCount?.toLocaleString()}</span>
+                              <span>👁️ {formatViewCount(bookmark.filmReview.viewCount)}</span>
                               <span>📅 {new Date(bookmark.createdAt).toLocaleDateString("vi-VN")}</span>
                             </div>
                           </div>
@@ -453,7 +453,7 @@ export default function BookmarksPage() {
                         {/* Stats */}
                         <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                           <span>
-                            👁️ {bookmark?.story?.viewCount?.toLocaleString()}
+                            👁️ {formatViewCount(bookmark?.story?.viewCount || 0)}
                           </span>
                           <span>
                             📅{" "}

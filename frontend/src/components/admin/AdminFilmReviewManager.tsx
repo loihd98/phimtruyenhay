@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import apiClient from "@/utils/api";
+import { formatViewCount } from "@/utils/media";
 import AdminFilmReviewForm from "./AdminFilmReviewForm";
 import { usePermissions } from "../../hooks/usePermissions";
 
@@ -665,7 +666,7 @@ const AdminFilmReviewManager: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900 dark:text-white">
-                          {review.viewCount.toLocaleString("vi-VN")}
+                          {formatViewCount(review.viewCount)}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

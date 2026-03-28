@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import StoryCard from "../stories/StoryCard";
-import { getMediaUrl } from "../../utils/media";
+import { getMediaUrl, formatViewCount } from "../../utils/media";
 import {
     isAffiliateCooldown,
     markAffiliateShown,
@@ -158,7 +158,7 @@ const HomepageContent: React.FC<HomepageContentProps> = ({
                                     <div
                                         key={review.id}
                                         onClick={() => handleReviewClick(review)}
-                                        className="cursor-pointer group bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                                        className="cursor-pointer group bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col"
                                     >
                                         <div className="relative h-44 sm:h-52 bg-gray-200 dark:bg-gray-700 overflow-hidden">
                                             {review.thumbnailUrl ? (
@@ -178,7 +178,7 @@ const HomepageContent: React.FC<HomepageContentProps> = ({
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="p-3">
+                                        <div className="p-3 flex flex-col flex-1">
                                             <h3 className="font-semibold text-gray-900 dark:text-white text-sm mb-1.5 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                                 {review.title}
                                             </h3>
@@ -192,9 +192,9 @@ const HomepageContent: React.FC<HomepageContentProps> = ({
                                                     ))}
                                                 </div>
                                             )}
-                                            <div className="flex items-center justify-between text-[10px] text-gray-500 dark:text-gray-400">
+                                            <div className="flex items-center justify-between text-[10px] text-gray-500 dark:text-gray-400 mt-auto">
                                                 <span>{new Date(review.createdAt).toLocaleDateString("vi-VN")}</span>
-                                                <span>👁 {review.viewCount}</span>
+                                                <span>👁 {formatViewCount(review.viewCount)}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -268,7 +268,7 @@ const HomepageContent: React.FC<HomepageContentProps> = ({
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                                     </svg>
-                                                    {story.viewCount || 0}
+                                                    {formatViewCount(story.viewCount || 0)}
                                                 </div>
                                             </div>
                                         </Link>
@@ -312,7 +312,7 @@ const HomepageContent: React.FC<HomepageContentProps> = ({
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                                     </svg>
-                                                    {review.viewCount}
+                                                    {formatViewCount(review.viewCount)}
                                                 </div>
                                             </div>
                                         </Link>

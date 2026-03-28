@@ -33,6 +33,7 @@ interface StoryFormData {
   status: "DRAFT" | "PUBLISHED" | "HIDDEN";
   chapter1Title?: string;
   chapter1AudioUrl?: string;
+  initViewCount: number;
 }
 
 interface TextChapterDraft {
@@ -74,6 +75,7 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
     status: "DRAFT",
     chapter1Title: "Chương 1",
     chapter1AudioUrl: "",
+    initViewCount: 1000,
   });
 
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -199,6 +201,7 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
           status: story.status || "DRAFT",
           chapter1Title: story.chapters?.find((c: any) => c.number === 1)?.title || "Chương 1",
           chapter1AudioUrl: story.chapters?.find((c: any) => c.number === 1)?.audioUrl || "",
+          initViewCount: story.viewCount ?? 1000,
         });
 
         const ch1AudioUrl = story.chapters?.find((c: any) => c.number === 1)?.audioUrl;
@@ -406,7 +409,12 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
 
       const method = storyId ? "put" : "post";
 
-      const response = await apiClient[method](url, formData);
+      // For create, send initViewCount; for update send viewCount so backend applies it
+      const payload = storyId
+        ? { ...formData, viewCount: formData.initViewCount }
+        : formData;
+
+      const response = await apiClient[method](url, payload);
 
       if (response.status >= 200 && response.status < 300) {
         // For TEXT: create or update chapters
@@ -459,6 +467,7 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
             status: "DRAFT",
             chapter1Title: "Chương 1",
             chapter1AudioUrl: "",
+            initViewCount: 1000,
           });
           setThumbnailPreview("");
           setChapter1AudioPreview("");
@@ -568,7 +577,23 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
               </select>
             </div>
 
-            {/* Genres */}
+            {/* View Count */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                👁️ View count
+              </label>
+              <input
+                type="number"
+                min="0"
+                value={formData.initViewCount}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, initViewCount: Math.max(0, parseInt(e.target.value) || 0) }))
+                }
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                placeholder="1000"
+              />
+              <p className="text-xs text-gray-500 mt-1">Số view hiển thị (mặc định: 1000)</p>
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Thể loại * (chọn ít nhất 1)

@@ -45,6 +45,20 @@ export const getMediaUrl = (url: string): string => {
   return url;
 };
 
+// Format view count to compact notation (1K, 2.5K, 1M, etc.)
+export const formatViewCount = (count: number): string => {
+  if (!count || count < 0) return "0";
+  if (count >= 1_000_000) {
+    const val = count / 1_000_000;
+    return `${val % 1 === 0 ? val.toFixed(0) : val.toFixed(1)}M`;
+  }
+  if (count >= 1_000) {
+    const val = count / 1_000;
+    return `${val % 1 === 0 ? val.toFixed(0) : val.toFixed(1)}K`;
+  }
+  return count.toString();
+};
+
 // Get the correct API URL for file uploads
 export const getUploadApiUrl = (type: "image" | "audio"): string => {
   return `/api/media/upload/${type}`;

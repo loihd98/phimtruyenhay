@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useLanguage } from "../../contexts/LanguageContext";
 import apiClient from "../../utils/api";
 import toast from "react-hot-toast";
+import { formatViewCount } from "../../utils/media";
 
 interface StatsData {
   totalStories: number;
@@ -364,7 +365,7 @@ const AdminStats: React.FC = () => {
                         {film.title}
                       </h4>
                       <div className="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
-                        <span>👁️ {(film.viewCount || 0).toLocaleString()}</span>
+                        <span>👁️ {formatViewCount(film.viewCount || 0)}</span>
                         <span className="text-yellow-500">⭐ {(film.rating || 0).toFixed(1)}</span>
                       </div>
                     </div>

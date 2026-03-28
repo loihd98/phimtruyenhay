@@ -5,6 +5,7 @@ import { useLanguage } from "../../contexts/LanguageContext";
 import { usePermissions } from "../../hooks/usePermissions";
 import { Story } from "../../types";
 import apiClient from "@/utils/api";
+import { formatViewCount } from "@/utils/media";
 import Modal from "./Modal";
 import AdminStoryForm from "./AdminStoryForm";
 import Pagination from "../../components/ui/Pagination";
@@ -401,7 +402,7 @@ const AdminStoryManager: React.FC<{ storyType?: "TEXT" | "AUDIO" }> = ({ storyTy
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     <div className="space-y-1">
-                      <div>👁️ {story.viewCount.toLocaleString()}</div>
+                      <div>👁️ {formatViewCount(story.viewCount)}</div>
                       <div>📖 {story._count?.chapters || 0}</div>
                       <div>🔖 {story._count?.bookmarks || 0}</div>
                     </div>

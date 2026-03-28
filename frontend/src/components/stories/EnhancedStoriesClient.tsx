@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "../../contexts/LanguageContext";
 import StoryCard from "../../components/stories/StoryCard";
 import { Story, Genre } from "../../types";
+import { formatViewCount } from "../../utils/media";
 
 interface EnhancedStoriesClientProps {
   initialStories: Story[];
@@ -460,7 +461,7 @@ const EnhancedStoriesClient: React.FC<EnhancedStoriesClientProps> = ({
                       )}
                       <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500 dark:text-gray-400">
                         <span>{story.author?.name}</span>
-                        <span>👁️ {story.viewCount.toLocaleString()}</span>
+                        <span>👁️ {formatViewCount(story.viewCount)}</span>
                         <span>📖 {story._count?.chapters || 0}</span>
                         <span
                           className={`px-2 py-1 rounded text-xs ${story.type === "AUDIO"

@@ -6,7 +6,7 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import StorySearchForm from "../../../components/stories/StorySearchForm";
 import AdminStoryForm from "../../../components/admin/AdminStoryForm";
-import { getMediaUrl } from "../../../utils/media";
+import { getMediaUrl, formatViewCount } from "../../../utils/media";
 import { useAccessToken } from "../../../hooks/useAuth";
 import apiClient from "@/utils/api";
 import Layout from "@/components/layout/Layout";
@@ -297,7 +297,7 @@ const AdminStoriesPage: React.FC = () => {
                       {getStatusBadge(story.status)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      <div>Lượt xem: {story.viewCount}</div>
+                      <div>Lượt xem: {formatViewCount(story.viewCount)}</div>
                       <div>Chương: {story._count?.chapters || 0}</div>
                       <div>Bookmark: {story._count?.bookmarks || 0}</div>
                     </td>

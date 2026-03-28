@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { getMediaUrl } from "../../utils/media";
+import { getMediaUrl, formatViewCount } from "../../utils/media";
 import apiClient from "../../utils/api";
 import {
   isAffiliateCooldown,
@@ -161,7 +161,7 @@ const FeaturedFilmReviews: React.FC<FeaturedFilmReviewsProps> = ({ initialReview
             <div
               key={review.id}
               onClick={() => handleCardClick(review)}
-              className="cursor-pointer group bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              className="cursor-pointer group bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col"
             >
               {/* Thumbnail */}
               <div className="relative h-44 sm:h-56 bg-gray-200 dark:bg-gray-700 overflow-hidden">
@@ -187,7 +187,7 @@ const FeaturedFilmReviews: React.FC<FeaturedFilmReviewsProps> = ({ initialReview
               </div>
 
               {/* Content */}
-              <div className="p-3 sm:p-4">
+              <div className="p-3 sm:p-4 flex flex-col flex-1">
                 <h3 className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base mb-1.5 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                   {review.title}
                 </h3>
@@ -210,12 +210,12 @@ const FeaturedFilmReviews: React.FC<FeaturedFilmReviewsProps> = ({ initialReview
                 )}
 
                 {/* Footer */}
-                <div className="flex items-center justify-between text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
+                <div className="flex items-center justify-between text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-auto">
                   <span>
                     {new Date(review.createdAt).toLocaleDateString("vi-VN")}
                   </span>
                   <span className="flex items-center gap-1">
-                    👁 {review.viewCount}
+                    👁 {formatViewCount(review.viewCount)}
                   </span>
                 </div>
               </div>

@@ -48,6 +48,7 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
     rating: 7,
     reviewLink: "",
     status: "DRAFT" as "DRAFT" | "PUBLISHED",
+    initViewCount: 1000,
   });
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
@@ -78,6 +79,7 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
         rating: review.rating,
         reviewLink: review.reviewLink,
         status: review.status,
+        initViewCount: (review as any).viewCount ?? 1000,
       });
       setTags(review.tags || []);
       setSelectedCategoryIds(
@@ -160,14 +162,16 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
         affiliateId: affiliateId || null,
       };
 
+      const viewCountValue = Math.max(0, Number(formData.initViewCount) || 0);
+
       if (review) {
         await apiClient.put(
           `/admin/film-reviews/${review.id}`,
-          payload
+          { ...payload, viewCount: viewCountValue }
         );
         toast.success("Cập nhật review phim thành công!");
       } else {
-        await apiClient.post("/admin/film-reviews", payload);
+        await apiClient.post("/admin/film-reviews", { ...payload, initViewCount: viewCountValue });
         toast.success("Tạo review phim thành công!");
       }
 
@@ -191,7 +195,7 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "rating" ? Number(value) : value,
+      [name]: name === "rating" || name === "initViewCount" ? Number(value) : value,
     }));
 
     if (errors[name]) {
@@ -334,9 +338,8 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
             value={formData.title}
             onChange={handleChange}
             placeholder="Nhập tiêu đề review phim..."
-            className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
-              errors.title ? "border-red-500" : ""
-            }`}
+            className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${errors.title ? "border-red-500" : ""
+              }`}
           />
           {errors.title && (
             <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -380,9 +383,8 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
               value={formData.reviewLink}
               onChange={handleChange}
               placeholder="https://youtube.com/watch?v=..."
-              className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
-                errors.reviewLink ? "border-red-500" : ""
-              }`}
+              className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${errors.reviewLink ? "border-red-500" : ""
+                }`}
             />
             {errors.reviewLink && (
               <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -448,9 +450,8 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
               value={formData.thumbnailUrl}
               onChange={handleChange}
               placeholder="Hoặc nhập URL ảnh trực tiếp..."
-              className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm ${
-                errors.thumbnailUrl ? "border-red-500" : ""
-              }`}
+              className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm ${errors.thumbnailUrl ? "border-red-500" : ""
+                }`}
             />
             {errors.thumbnailUrl && (
               <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -498,15 +499,14 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
                 className="flex-1 h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-yellow-500"
               />
               <span
-                className={`text-lg font-bold min-w-[3rem] text-center ${
-                  formData.rating >= 8
+                className={`text-lg font-bold min-w-[3rem] text-center ${formData.rating >= 8
                     ? "text-green-500"
                     : formData.rating >= 5
-                    ? "text-yellow-500"
-                    : formData.rating > 0
-                    ? "text-red-500"
-                    : "text-gray-400"
-                }`}
+                      ? "text-yellow-500"
+                      : formData.rating > 0
+                        ? "text-red-500"
+                        : "text-gray-400"
+                  }`}
               >
                 {formData.rating}
               </span>
@@ -537,6 +537,23 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
               <option value="PUBLISHED">Xuất bản</option>
             </select>
           </div>
+
+          {/* View Count */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              👁️ View count
+            </label>
+            <input
+              type="number"
+              min="0"
+              name="initViewCount"
+              value={formData.initViewCount}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              placeholder="1000"
+            />
+            <p className="mt-1 text-xs text-gray-500">Số view hiển thị (mặc định: 1000)</p>
+          </div>
         </div>
 
         {/* Categories */}
@@ -557,11 +574,10 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
                   key={cat.id}
                   type="button"
                   onClick={() => handleCategoryToggle(cat.id)}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
-                    selectedCategoryIds.includes(cat.id)
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${selectedCategoryIds.includes(cat.id)
                       ? "bg-blue-100 border-blue-300 text-blue-800 dark:bg-blue-900/40 dark:border-blue-600 dark:text-blue-300"
                       : "bg-gray-50 border-gray-200 text-gray-600 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600"
-                  }`}
+                    }`}
                 >
                   {selectedCategoryIds.includes(cat.id) && (
                     <span className="mr-1">✓</span>

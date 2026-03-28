@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { getMediaUrl } from "../../utils/media";
+import { getMediaUrl, formatViewCount } from "../../utils/media";
 import apiClient from "../../utils/api";
 import { FilmCategory, FilmReview } from "../../types";
 import {
@@ -301,7 +301,7 @@ const FilmReviewsClient: React.FC<FilmReviewsClientProps> = ({
                     router.push(`/film-reviews/${review.slug}`);
                   }
                 }}
-                className="cursor-pointer group bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                className="cursor-pointer group bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col"
               >
                 {/* Thumbnail */}
                 <div className="relative aspect-square bg-gray-200 dark:bg-gray-700 overflow-hidden">
@@ -325,7 +325,7 @@ const FilmReviewsClient: React.FC<FilmReviewsClientProps> = ({
                 </div>
 
                 {/* Content */}
-                <div className="p-4">
+                <div className="p-4 flex flex-col flex-1">
                   <h3 className="font-semibold text-gray-900 dark:text-white text-lg mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {review.title}
                   </h3>
@@ -362,13 +362,13 @@ const FilmReviewsClient: React.FC<FilmReviewsClientProps> = ({
                   )}
 
                   {/* Footer */}
-                  <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-100 dark:border-gray-700">
+                  <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-100 dark:border-gray-700 mt-auto">
                     <span>
                       {new Date(review.createdAt).toLocaleDateString("vi-VN")}
                     </span>
                     <div className="flex items-center gap-3">
                       <span className="flex items-center gap-1">
-                        👁 {review.viewCount}
+                        👁 {formatViewCount(review.viewCount)}
                       </span>
                       {review._count && (
                         <span className="flex items-center gap-1">
