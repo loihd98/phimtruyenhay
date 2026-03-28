@@ -813,7 +813,15 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
                           </button>
                         </div>
                         {chapter.audioPreview && (
-                          <audio controls className="w-full mt-2 h-8">
+                          <audio
+                            controls
+                            className="w-full mt-2 h-8"
+                            onError={() => {
+                              updateTextChapter(idx, "audioPreview", "");
+                              updateTextChapter(idx, "audioUrl", "");
+                              toast.error(`File audio chương ${chapter.number} bị thiếu, vui lòng upload lại.`);
+                            }}
+                          >
                             <source src={chapter.audioPreview} />
                           </audio>
                         )}
@@ -893,7 +901,16 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
                 </div>
                 {chapter1AudioPreview && (
                   <div className="mt-2">
-                    <audio controls className="w-full">
+                    <audio
+                      controls
+                      className="w-full"
+                      onError={() => {
+                        // File missing on server — clear preview so user can re-upload
+                        setChapter1AudioPreview("");
+                        setFormData((prev) => ({ ...prev, chapter1AudioUrl: "" }));
+                        toast.error("File audio bị thiếu trên server, vui lòng upload lại.");
+                      }}
+                    >
                       <source src={chapter1AudioPreview} />
                       Trình duyệt không hỗ trợ phát audio.
                     </audio>

@@ -965,8 +965,8 @@ class AdminController {
         });
         if (chapter1) {
           const chapterUpdate = {};
+          const oldAudioUrl = chapter1.audioUrl;
           if (chapter1AudioUrl !== undefined) {
-            deleteOldMediaFile(chapter1.audioUrl, chapter1AudioUrl);
             chapterUpdate.audioUrl = chapter1AudioUrl || null;
           }
           if (chapter1Title !== undefined && chapter1Title.trim())
@@ -975,6 +975,15 @@ class AdminController {
             where: { id: chapter1.id },
             data: chapterUpdate,
           });
+          // Delete old audio file AFTER successful DB update, and only when
+          // replacing with a different non-empty URL (not when just clearing)
+          if (
+            chapter1AudioUrl &&
+            oldAudioUrl &&
+            oldAudioUrl !== chapter1AudioUrl
+          ) {
+            deleteOldMediaFile(oldAudioUrl, chapter1AudioUrl);
+          }
         } else if (story.type === "AUDIO") {
           // Chapter 1 was never created (e.g., story created via a different path)
           // Create it now so future edits also work
