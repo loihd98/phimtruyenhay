@@ -700,16 +700,16 @@ docker compose -f docker-compose.prod.yml up -d --build --no-deps frontend
 docker compose -f docker-compose.prod.yml ps
 
 # Quick API test
-curl https://khotruyen.vn/api/health
+curl https://vivutruyenhay.com/api/health
 ```
 
 #### What each flag does
 
-| Flag | Effect |
-|------|--------|
+| Flag        | Effect                                                           |
+| ----------- | ---------------------------------------------------------------- |
 | `--no-deps` | Only rebuild the specified service, never touches postgres/nginx |
-| `--build` | Forces Docker to rebuild the image with latest code |
-| `-d` | Runs in background (detached) |
+| `--build`   | Forces Docker to rebuild the image with latest code              |
+| `-d`        | Runs in background (detached)                                    |
 
 #### Check logs after deploy
 
