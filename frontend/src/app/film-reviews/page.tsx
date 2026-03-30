@@ -9,7 +9,7 @@ import JsonLd, {
 
 const API_BASE_URL =
   process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "/api";
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://khotruyen.vn";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://vivutruyenhay.com";
 
 // SSR: Fetch categories and tags on server
 async function getFilmCategories() {
@@ -51,22 +51,22 @@ export async function generateMetadata({
   const tag = searchParams.tag as string;
   const search = searchParams.search as string;
 
-  let title = "Review Phim - Xem Phim Online Miễn Phí | khotruyen.vn";
+  let title = "Review Phim - Xem Phim Online Miễn Phí | vivutruyenhay.com";
   let description =
-    "Xem phim online miễn phí với nhiều thể loại hấp dẫn như phim hành động, tình cảm, kinh dị và phim mới cập nhật mỗi ngày tại khotruyen.vn.";
+    "Xem phim online miễn phí với nhiều thể loại hấp dẫn như phim hành động, tình cảm, kinh dị và phim mới cập nhật mỗi ngày tại vivutruyenhay.com.";
 
   if (category) {
-    title = `Review Phim - ${category} | khotruyen.vn`;
+    title = `Review Phim - ${category} | vivutruyenhay.com`;
     description = `Review phim thể loại ${category}. Xem đánh giá, xếp hạng phim mới nhất.`;
   }
 
   if (tag) {
-    title = `Review Phim - #${tag} | khotruyen.vn`;
+    title = `Review Phim - #${tag} | vivutruyenhay.com`;
     description = `Review phim với tag #${tag}. Xem đánh giá, xếp hạng phim.`;
   }
 
   if (search) {
-    title = `Tìm kiếm: ${search} - Review Phim | khotruyen.vn`;
+    title = `Tìm kiếm: ${search} - Review Phim | vivutruyenhay.com`;
     description = `Kết quả tìm kiếm review phim cho "${search}".`;
   }
 

@@ -6,9 +6,9 @@ const API_URL =
     process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost/api";
 
 export const metadata: Metadata = {
-    title: "Thể Loại Truyện – khotruyen.vn",
+    title: "Thể Loại Truyện – vivutruyenhay.com",
     description:
-        "Khám phá tất cả thể loại truyện audio và truyện đọc online tại khotruyen.vn. Truyện ma, trinh thám, ngôn tình, đô thị, tiên hiệp, kiếm hiệp, huyền huyễn, truyện người lớn và nhiều thể loại hấp dẫn khác.",
+        "Khám phá tất cả thể loại truyện audio và truyện đọc online tại vivutruyenhay.com. Truyện ma, trinh thám, ngôn tình, đô thị, tiên hiệp, kiếm hiệp, huyền huyễn, truyện người lớn và nhiều thể loại hấp dẫn khác.",
     keywords: [
         "thể loại truyện",
         "tiên hiệp",
@@ -18,12 +18,12 @@ export const metadata: Metadata = {
         "huyền huyễn",
         "truyện audio",
         "đọc truyện online",
-        "khotruyen.vn",
+        "vivutruyenhay.com",
     ],
     openGraph: {
-        title: "Thể Loại Truyện – khotruyen.vn",
+        title: "Thể Loại Truyện – vivutruyenhay.com",
         description:
-            "Khám phá tất cả thể loại truyện tại khotruyen.vn.",
+            "Khám phá tất cả thể loại truyện tại vivutruyenhay.com.",
         type: "website",
         locale: "vi_VN",
     },

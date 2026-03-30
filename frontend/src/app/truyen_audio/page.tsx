@@ -15,16 +15,16 @@ export async function generateMetadata({
     const genre = searchParams.genre as string;
     const search = searchParams.search as string;
 
-    let title = "Truyện Audio Online – Nghe Truyện Audio Miễn Phí | khotruyen.vn";
+    let title = "Truyện Audio Online – Nghe Truyện Audio Miễn Phí | vivutruyenhay.com";
     let description =
-        "Nghe truyện audio hay nhất gồm truyện ma, trinh thám, ngôn tình, truyện người lớn và nhiều thể loại hấp dẫn. Nghe miễn phí tại khotruyen.vn.";
+        "Nghe truyện audio hay nhất gồm truyện ma, trinh thám, ngôn tình, truyện người lớn và nhiều thể loại hấp dẫn. Nghe miễn phí tại vivutruyenhay.com.";
 
     if (genre) {
-        title = `Truyện Audio thể loại ${genre} – khotruyen.vn`;
+        title = `Truyện Audio thể loại ${genre} – vivutruyenhay.com`;
         description = `Nghe truyện audio thể loại ${genre} miễn phí tại Kho Truyện Hay.`;
     }
     if (search) {
-        title = `Tìm kiếm truyện audio: ${search} – khotruyen.vn`;
+        title = `Tìm kiếm truyện audio: ${search} – vivutruyenhay.com`;
         description = `Kết quả tìm kiếm truyện audio cho "${search}".`;
     }
 

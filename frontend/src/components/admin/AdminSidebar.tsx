@@ -344,7 +344,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
         {/* Footer */}
         <div className="p-4 border-t border-gray-700 bg-gray-800">
           <div className="text-xs text-gray-500 text-center">
-            <div className="font-medium text-gray-400">khotruyen.vn Admin</div>
+            <div className="font-medium text-gray-400">vivutruyenhay.com Admin</div>
             <div className="mt-1">Version 1.0.0</div>
           </div>
         </div>

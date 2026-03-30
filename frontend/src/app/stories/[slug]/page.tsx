@@ -25,17 +25,17 @@ export async function generateMetadata({
 
   if (!story) {
     return {
-      title: "Truyện không tồn tại - khotruyen.vn",
+      title: "Truyện không tồn tại - vivutruyenhay.com",
       description: "Truyện bạn tìm kiếm không tồn tại hoặc đã bị xóa.",
     };
   }
 
   const isAudio = story.type === "AUDIO";
   const typeLabel = isAudio ? "Truyện Audio" : "Truyện Chữ";
-  const title = `${story.title} - ${typeLabel} | khotruyen.vn`;
+  const title = `${story.title} - ${typeLabel} | vivutruyenhay.com`;
   const description =
     story.description?.substring(0, 160) ||
-    `Đọc ${story.title} - ${typeLabel} miễn phí tại khotruyen.vn. ${story.chapters?.length || 0} chương.`;
+    `Đọc ${story.title} - ${typeLabel} miễn phí tại vivutruyenhay.com. ${story.chapters?.length || 0} chương.`;
 
   const genres = story.genres?.map((g: any) => g.name).join(", ") || "";
 
@@ -49,20 +49,20 @@ export async function generateMetadata({
       "đọc truyện online",
       "nghe truyện audio",
       "truyện hay",
-      "khotruyen.vn",
+      "vivutruyenhay.com",
     ],
     openGraph: {
       title,
       description,
       type: "article",
       locale: "vi_VN",
-      siteName: "khotruyen.vn",
+      siteName: "vivutruyenhay.com",
       ...(story.thumbnailUrl && {
         images: [
           {
             url: story.thumbnailUrl.startsWith("http")
               ? story.thumbnailUrl
-              : `${process.env.NEXT_PUBLIC_SITE_URL || "https://khotruyen.vn"}${story.thumbnailUrl}`,
+              : `${process.env.NEXT_PUBLIC_SITE_URL || "https://vivutruyenhay.com"}${story.thumbnailUrl}`,
             width: 1200,
             height: 630,
             alt: story.title,
@@ -74,7 +74,7 @@ export async function generateMetadata({
       canonical: `/stories/${params.slug}`,
     },
     other: {
-      "article:author": story.author?.name || "khotruyen.vn",
+      "article:author": story.author?.name || "vivutruyenhay.com",
       ...(genres && { "article:tag": genres }),
     },
   };

@@ -43,7 +43,7 @@ async function fetchAllFilmReviewSlugs(): Promise<
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://khotruyen.vn";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://vivutruyenhay.com";
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [

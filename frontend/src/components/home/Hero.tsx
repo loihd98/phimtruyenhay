@@ -13,7 +13,7 @@ const Hero: React.FC = () => {
             Kho Truyện Hay – Nghe Truyện Audio, Đọc Truyện Online Và Xem Phim Hay Mỗi Ngày
           </h1>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Kho Truyện Hay là website tổng hợp truyện audio, truyện đọc online và phim hay với nhiều thể loại hấp dẫn như truyện ma, truyện trinh thám, truyện ngôn tình, truyện đô thị và truyện tình cảm người lớn. Nghe truyện audio chất lượng cao miễn phí tại khotruyen.vn
+            Kho Truyện Hay là website tổng hợp truyện audio, truyện đọc online và phim hay với nhiều thể loại hấp dẫn như truyện ma, truyện trinh thám, truyện ngôn tình, truyện đô thị và truyện tình cảm người lớn. Nghe truyện audio chất lượng cao miễn phí tại vivutruyenhay.com
           </p>
           <div className="flex flex-row gap-4 justify-center">
             <Link

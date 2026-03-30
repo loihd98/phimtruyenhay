@@ -15,16 +15,16 @@ export async function generateMetadata({
     const genre = searchParams.genre as string;
     const search = searchParams.search as string;
 
-    let title = "Truyện Đọc Online – Kho Truyện Đọc Online Miễn Phí | khotruyen.vn";
+    let title = "Truyện Đọc Online – Kho Truyện Đọc Online Miễn Phí | vivutruyenhay.com";
     let description =
-        "Kho truyện đọc online với nhiều thể loại hấp dẫn như ngôn tình, trinh thám, truyện ma và truyện người lớn. Đọc miễn phí tại khotruyen.vn.";
+        "Kho truyện đọc online với nhiều thể loại hấp dẫn như ngôn tình, trinh thám, truyện ma và truyện người lớn. Đọc miễn phí tại vivutruyenhay.com.";
 
     if (genre) {
-        title = `Truyện Chữ thể loại ${genre} – khotruyen.vn`;
+        title = `Truyện Chữ thể loại ${genre} – vivutruyenhay.com`;
         description = `Đọc truyện chữ thể loại ${genre} miễn phí tại Kho Truyện Hay.`;
     }
     if (search) {
-        title = `Tìm kiếm truyện chữ: ${search} – khotruyen.vn`;
+        title = `Tìm kiếm truyện chữ: ${search} – vivutruyenhay.com`;
         description = `Kết quả tìm kiếm truyện chữ cho "${search}".`;
     }
 
