@@ -60,7 +60,7 @@ const FeaturedFilmReviews: React.FC<FeaturedFilmReviewsProps> = ({ initialReview
     ) {
       setPopupReview(review);
     } else {
-      router.push(`/film-reviews/${review.slug}`);
+      router.push(`/phim/${review.slug}`);
     }
   };
 
@@ -74,7 +74,7 @@ const FeaturedFilmReviews: React.FC<FeaturedFilmReviewsProps> = ({ initialReview
             className={`w-3.5 h-3.5 ${
               star <= stars
                 ? "text-yellow-400"
-                : "text-gray-300 dark:text-gray-600"
+                : "text-zinc-600"
             }`}
             fill="currentColor"
             viewBox="0 0 20 20"
@@ -82,7 +82,7 @@ const FeaturedFilmReviews: React.FC<FeaturedFilmReviewsProps> = ({ initialReview
             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
           </svg>
         ))}
-        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">
+        <span className="text-xs font-medium text-zinc-500 ml-1">
           {rating.toFixed(1)}
         </span>
       </div>
@@ -94,19 +94,19 @@ const FeaturedFilmReviews: React.FC<FeaturedFilmReviewsProps> = ({ initialReview
       <section className="py-8 sm:py-12 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
-            <div className="h-8 w-48 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-            <div className="h-8 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+            <div className="h-8 w-48 bg-white/[0.04] rounded animate-pulse" />
+            <div className="h-8 w-24 bg-white/[0.04] rounded animate-pulse" />
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             {Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden animate-pulse"
+                className="bg-white/[0.02] rounded-xl shadow overflow-hidden animate-pulse"
               >
-                <div className="h-44 sm:h-56 bg-gray-300 dark:bg-gray-700" />
+                <div className="h-44 sm:h-56 bg-gray-300 " />
                 <div className="p-3 space-y-2">
-                  <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4" />
-                  <div className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-1/2" />
+                  <div className="h-4 bg-gray-300  rounded w-3/4" />
+                  <div className="h-3 bg-gray-300  rounded w-1/2" />
                 </div>
               </div>
             ))}
@@ -126,17 +126,17 @@ const FeaturedFilmReviews: React.FC<FeaturedFilmReviewsProps> = ({ initialReview
           <div className="flex items-center gap-3">
             <span className="text-2xl sm:text-3xl">🎬</span>
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-xl sm:text-2xl font-bold text-white">
                 Review Phim Hay
               </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 hidden sm:block">
+              <p className="text-sm text-zinc-500 hidden sm:block">
                 Đánh giá phim mới nhất từ cộng đồng
               </p>
             </div>
           </div>
           <Link
-            href="/film-reviews"
-            className="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium text-sm sm:text-base transition-colors"
+            href="/phim"
+            className="flex items-center gap-1 text-primary-400 hover:text-primary-500 hover:text-primary-300 font-medium text-sm sm:text-base transition-colors"
           >
             Xem tất cả
             <svg
@@ -161,10 +161,10 @@ const FeaturedFilmReviews: React.FC<FeaturedFilmReviewsProps> = ({ initialReview
             <div
               key={review.id}
               onClick={() => handleCardClick(review)}
-              className="cursor-pointer group bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col"
+              className="cursor-pointer group bg-white/[0.02] rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col"
             >
               {/* Thumbnail */}
-              <div className="relative h-44 sm:h-56 bg-gray-200 dark:bg-gray-700 overflow-hidden">
+              <div className="relative h-44 sm:h-56 bg-white/[0.04] overflow-hidden">
                 {review.thumbnailUrl ? (
                   <Image
                     src={getMediaUrl(review.thumbnailUrl)}
@@ -188,7 +188,7 @@ const FeaturedFilmReviews: React.FC<FeaturedFilmReviewsProps> = ({ initialReview
 
               {/* Content */}
               <div className="p-3 sm:p-4 flex flex-col flex-1">
-                <h3 className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base mb-1.5 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                <h3 className="font-semibold text-white text-sm sm:text-base mb-1.5 line-clamp-2 group-hover:text-primary-400 transition-colors">
                   {review.title}
                 </h3>
 
@@ -201,7 +201,7 @@ const FeaturedFilmReviews: React.FC<FeaturedFilmReviewsProps> = ({ initialReview
                     {review.categories.slice(0, 2).map((cat) => (
                       <span
                         key={cat.id}
-                        className="text-[10px] sm:text-xs px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full"
+                        className="text-[10px] sm:text-xs px-1.5 py-0.5 bg-primary-500/10 text-primary-400 rounded-full"
                       >
                         {cat.name}
                       </span>
@@ -210,7 +210,7 @@ const FeaturedFilmReviews: React.FC<FeaturedFilmReviewsProps> = ({ initialReview
                 )}
 
                 {/* Footer */}
-                <div className="flex items-center justify-between text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-auto">
+                <div className="flex items-center justify-between text-[10px] sm:text-xs text-zinc-500 mt-auto">
                   <span>
                     {new Date(review.createdAt).toLocaleDateString("vi-VN")}
                   </span>
@@ -227,7 +227,7 @@ const FeaturedFilmReviews: React.FC<FeaturedFilmReviewsProps> = ({ initialReview
       {/* Affiliate Popup */}
       {popupReview && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in duration-300">
+          <div className="bg-white/[0.02] rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in duration-300">
             {popupReview.thumbnailUrl && (
               <div className="relative h-48 w-full">
                 <Image
@@ -242,16 +242,16 @@ const FeaturedFilmReviews: React.FC<FeaturedFilmReviewsProps> = ({ initialReview
             )}
             <div className="p-6 text-center">
               <div className="text-4xl mb-3">🎬</div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              <h3 className="text-xl font-bold text-white mb-2">
                 Cảm ơn bạn đã quan tâm!
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-1 text-sm">
+              <p className="text-zinc-500 mb-1 text-sm">
                 Bạn đang xem review phim:
               </p>
-              <p className="text-lg font-semibold text-blue-600 dark:text-blue-400 mb-4">
+              <p className="text-lg font-semibold text-primary-400 mb-4">
                 {popupReview.title}
               </p>
-              <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+              <p className="text-zinc-500 text-sm mb-6">
                 Nhấn nút bên dưới để xem phim. Cảm ơn bạn đã ủng hộ chúng tôi!
                 ❤️
               </p>
@@ -267,7 +267,7 @@ const FeaturedFilmReviews: React.FC<FeaturedFilmReviewsProps> = ({ initialReview
                   }
                   const slug = popupReview.slug;
                   setPopupReview(null);
-                  router.push(`/film-reviews/${slug}`);
+                  router.push(`/phim/${slug}`);
                 }}
                 className="w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] flex items-center justify-center gap-2"
               >

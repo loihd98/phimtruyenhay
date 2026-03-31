@@ -160,33 +160,47 @@ async function main() {
   // ══════════════════════════════
   console.log("👤 Seeding users...");
 
-  const adminPassword = await bcrypt.hash("admin123456", 12);
+  const adminPassword = await bcrypt.hash("Admin@Midnight2026!", 12);
   const admin = await prisma.user.upsert({
-    where: { email: "admin@webtruyen.com" },
+    where: { email: "admin@themidnightmoviereel.io.vn" },
     update: {},
     create: {
-      email: "admin@webtruyen.com",
+      email: "admin@themidnightmoviereel.io.vn",
       passwordHash: adminPassword,
-      name: "Administrator",
+      name: "Admin Midnight",
       role: "ADMIN",
     },
   });
 
-  // Create demo user
-  const userPassword = await bcrypt.hash("user123456", 12);
-  const demoUser = await prisma.user.upsert({
-    where: { email: "user@example.com" },
+  // Create editor user
+  const editorPassword = await bcrypt.hash("Editor@Midnight2026!", 12);
+  const editor = await prisma.user.upsert({
+    where: { email: "editor@themidnightmoviereel.io.vn" },
     update: {},
     create: {
-      email: "user@example.com",
+      email: "editor@themidnightmoviereel.io.vn",
+      passwordHash: editorPassword,
+      name: "Editor Midnight",
+      role: "EDITOR",
+    },
+  });
+
+  // Create demo user
+  const userPassword = await bcrypt.hash("Demo@Midnight2026!", 12);
+  const demoUser = await prisma.user.upsert({
+    where: { email: "demo@themidnightmoviereel.io.vn" },
+    update: {},
+    create: {
+      email: "demo@themidnightmoviereel.io.vn",
       passwordHash: userPassword,
       name: "Demo User",
       role: "USER",
     },
   });
 
-  console.log(`   ✅ admin@webtruyen.com / admin123456`);
-  console.log(`   ✅ user@example.com   / user123456`);
+  console.log(`   ✅ admin@themidnightmoviereel.io.vn  / Admin@Midnight2026!`);
+  console.log(`   ✅ editor@themidnightmoviereel.io.vn / Editor@Midnight2026!`);
+  console.log(`   ✅ demo@themidnightmoviereel.io.vn   / Demo@Midnight2026!`);
 
   // ══════════════════════════════
   //  2. TEXT GENRES

@@ -557,4 +557,51 @@ export const permissionsAPI = {
     ),
 };
 
+// Blog API
+export const blogAPI = {
+  getPosts: (params?: { page?: number; limit?: number; category?: string; tag?: string; search?: string; sort?: string }) =>
+    apiRequest<any>(() => apiClient.get("/blog", { params })),
+
+  getPost: (slug: string) =>
+    apiRequest<any>(() => apiClient.get(`/blog/${slug}`)),
+
+  getCategories: () =>
+    apiRequest<any>(() => apiClient.get("/blog/categories")),
+
+  getTags: () =>
+    apiRequest<any>(() => apiClient.get("/blog/tags")),
+
+  getComments: (slug: string) =>
+    apiRequest<any>(() => apiClient.get(`/blog/${slug}/comments`)),
+
+  createComment: (slug: string, content: string, parentId?: string) =>
+    apiRequest<any>(() => apiClient.post(`/blog/${slug}/comments`, { content, parentId })),
+
+  // Authenticated
+  getMyPosts: (params?: { page?: number; limit?: number; status?: string }) =>
+    apiRequest<any>(() => apiClient.get("/blog/my-posts", { params })),
+
+  createPost: (data: { title: string; content: string; excerpt?: string; thumbnailUrl?: string; tags?: string[]; categoryIds?: string[]; status?: string }) =>
+    apiRequest<any>(() => apiClient.post("/blog", data)),
+
+  updatePost: (id: string, data: any) =>
+    apiRequest<any>(() => apiClient.put(`/blog/${id}`, data)),
+
+  deletePost: (id: string) =>
+    apiRequest<any>(() => apiClient.delete(`/blog/${id}`)),
+
+  // Admin
+  adminGetAllPosts: (params?: any) =>
+    apiRequest<any>(() => apiClient.get("/blog/admin/all", { params })),
+
+  createCategory: (data: { name: string }) =>
+    apiRequest<any>(() => apiClient.post("/blog/categories", data)),
+
+  updateCategory: (id: string, data: { name: string }) =>
+    apiRequest<any>(() => apiClient.put(`/blog/categories/${id}`, data)),
+
+  deleteCategory: (id: string) =>
+    apiRequest<any>(() => apiClient.delete(`/blog/categories/${id}`)),
+};
+
 export default apiClient;

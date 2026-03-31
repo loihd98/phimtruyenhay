@@ -1,97 +1,58 @@
 // app/layout.tsx (RootLayout - server component)
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 import "../../styles/globals.css";
 import ClientProvider from "./providers";
 import ThemeProvider from "@/components/layout/ThemeProvider";
+import GoogleAnalytics from "@/components/seo/GoogleAnalytics";
+import GoogleAdSense from "@/components/seo/GoogleAdSense";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://vivutruyenhay.com";
-const siteName = "Vi Vu Truyện Hay";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://themidnightmoviereel.io.vn";
+const siteName = "The Midnight Movie Reel";
 const siteDescription =
-  "Vi Vu Truyện Hay là website tổng hợp truyện audio, truyện đọc online và phim hay với nhiều thể loại hấp dẫn như truyện ma, truyện trinh thám, truyện ngôn tình, truyện đô thị và truyện tình cảm người lớn. Nội dung trên website được cập nhật liên tục mỗi ngày giúp người nghe và người đọc có thể dễ dàng tìm thấy những câu chuyện hấp dẫn. Kho truyện audio tại Vi Vu Truyện Hay bao gồm hàng nghìn truyện mp3 với nhiều thể loại như truyện ma, truyện trinh thám, truyện ngôn tình, truyện đô thị, truyện kiếm hiệp và truyện tiên hiệp. Người dùng có thể nghe truyện online miễn phí với chất lượng âm thanh tốt và nội dung được chọn lọc.";
+  "Khám phá thế giới điện ảnh cùng The Midnight Movie Reel – website review phim, phân tích nội dung chuyên sâu, giải thích ending và gợi ý phim hay mỗi ngày. Từ phim Hollywood, Netflix đến phim indie, chúng tôi mang đến góc nhìn chân thực và chuyên sâu. Ngoài ra còn có kho truyện audio và truyện chữ đa dạng thể loại.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Vi Vu Truyện Hay – Nghe Truyện Audio, Đọc Truyện Online Và Xem Phim Hay Mỗi Ngày",
-    template: "%s | Vi Vu Truyện Hay",
+    default: "The Midnight Movie Reel – Review Phim Hay, Phân Tích Điện Ảnh Chuyên Sâu",
+    template: "%s | The Midnight Movie Reel",
   },
   description: siteDescription,
   keywords: [
-    "vivutruyenghay",
-    "vivutruyenhay.com",
-    "Vi Vu Truyện Hay",
-    "vi vu truyện hay",
-    "Kho truyen hay",
-    "web Vi Vu Truyện Hay",
-    "nghe truyện audio",
-    "nghe truyện audio hay",
-    "truyện audio hay nhất",
-    "web nghe truyện audio",
-    "truyện audio mp3",
-    "nghe truyện mp3 miễn phí",
-    "truyện audio online",
-    "nghe truyện online",
-    "truyện audio miễn phí",
-    "truyện audio mới nhất",
-    "truyện audio",
-    "truyện audio hay",
-    "truyện audio full",
-    "truyện audio chọn lọc",
-    "nghe truyện đêm khuya",
-    "truyện audio nổi tiếng",
-    "đọc truyện online",
-    "truyện chữ",
-    "truyện hay",
-    "kho truyện",
-    "truyện miễn phí",
-    "truyện full",
-    "đọc truyện miễn phí",
-    "truyện ngôn tình audio",
-    "nghe truyện ngôn tình",
-    "truyện ngôn tình hay",
-    "truyện ma audio",
-    "nghe truyện ma",
-    "truyện ma hay",
-    "truyện đô thị audio",
-    "nghe truyện đô thị",
-    "truyện đô thị hay",
-    "truyện tiên hiệp audio",
-    "nghe truyện tiên hiệp",
-    "truyện tiên hiệp hay",
-    "truyện kiếm hiệp audio",
-    "nghe truyện kiếm hiệp",
-    "truyện kiếm hiệp hay",
-    "truyện trinh thám audio",
-    "nghe truyện trinh thám",
-    "truyện trinh thám hay",
-    "truyện tình cảm audio",
-    "nghe truyện tình cảm",
-    "truyện tình cảm hay",
-    "truyện drama audio",
-    "nghe truyện drama",
-    "truyện hài hước audio",
-    "truyện lãng mạn audio",
-    "truyện thanh xuân audio",
-    "truyện kinh dị audio",
+    "The Midnight Movie Reel",
     "review phim",
+    "review phim mới",
+    "phim hay 2026",
     "đánh giá phim",
-    "phim hay",
-    "xem phim online",
-    "phim mới",
+    "giải thích phim",
+    "ending explained",
+    "phim Netflix hay",
+    "phim chiếu rạp mới",
+    "phim đáng xem",
+    "top phim hay",
+    "review phim không spoiler",
+    "phim kinh dị hay nhất",
     "phim hành động",
     "phim tình cảm",
-    "phim kinh dị",
-    "review truyện hay",
-    "review truyện audio",
-    "top truyện audio hay",
-    "truyện hay nên nghe",
+    "phim anime hay",
+    "phân tích phim",
+    "giải mã ending phim",
+    "top phim Netflix",
+    "top phim mind-blowing",
+    "truyện audio",
+    "truyện audio hay",
+    "nghe truyện audio",
+    "đọc truyện online",
+    "truyện chữ hay",
+    "kho truyện miễn phí",
   ],
-  authors: [{ name: "Evanloi9x", url: siteUrl }],
-  creator: "Evanloi9x",
-  publisher: "Evanloi9x",
+  authors: [{ name: "The Midnight Movie Reel", url: siteUrl }],
+  creator: "The Midnight Movie Reel",
+  publisher: "The Midnight Movie Reel",
   formatDetection: {
     email: false,
     address: false,
@@ -102,24 +63,24 @@ export const metadata: Metadata = {
     locale: "vi_VN",
     url: siteUrl,
     siteName: siteName,
-    title: "Vi Vu Truyện Hay – Nghe Truyện Audio, Đọc Truyện Online Và Xem Phim Hay Mỗi Ngày",
+    title: "The Midnight Movie Reel – Review Phim Hay, Phân Tích Điện Ảnh Chuyên Sâu",
     description: siteDescription,
     images: [
       {
-        url: "/khotruyen_logo.png",
+        url: "/logo_phim.png",
         width: 1200,
         height: 630,
-        alt: "Vi Vu Truyện Hay – Kho truyện audio, truyện chữ và review phim",
-        type: "image/jpeg",
+        alt: "The Midnight Movie Reel – Review phim, phân tích điện ảnh chuyên sâu",
+        type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Vi Vu Truyện Hay – Nghe Truyện Audio, Đọc Truyện Online Và Xem Phim Hay",
+    title: "The Midnight Movie Reel – Review Phim Hay, Phân Tích Điện Ảnh Chuyên Sâu",
     description: siteDescription,
-    images: ["/khotruyen_logo.png"],
-    creator: "@Evanloi9x",
+    images: ["/logo_phim.png"],
+    creator: "@MidnightMovieReel",
   },
   robots: {
     index: true,
@@ -134,19 +95,16 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/khotruyen_logo.png", type: "image/jpeg" },
+      { url: "/logo_phim.png", type: "image/png" },
     ],
-    apple: [{ url: "/khotruyen_logo.png", type: "image/jpeg" }],
+    apple: [{ url: "/logo_phim.png", type: "image/png" }],
   },
   manifest: "/manifest.json",
   alternates: {
     canonical: siteUrl,
   },
   verification: {
-    // Thêm các mã xác thực của bạn ở đây khi có
     // google: 'your-google-verification-code',
-    // yandex: 'your-yandex-verification-code',
-    // bing: 'your-bing-verification-code',
   },
   category: "entertainment",
 };
@@ -159,21 +117,23 @@ export default function RootLayout({
   return (
     <html lang="vi" suppressHydrationWarning className="dark">
       <head>
-        <meta name="theme-color" content="#1e40af" />
+        <meta name="theme-color" content="#e50914" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="vivutruyenhay.com" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Midnight Movie Reel" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="application-name" content="vivutruyenhay.com" />
+        <meta name="application-name" content="The Midnight Movie Reel" />
         <link rel="author" href={`${siteUrl}/humans.txt`} />
-        {/* Inline script to force dark theme before React hydration */}
+        {/* Inline script to restore persisted theme before React hydration */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `document.documentElement.classList.add('dark');`,
+            __html: `(function(){try{var p=JSON.parse(localStorage.getItem('persist:root')||'{}');var u=JSON.parse(p.ui||'{}');if(u.theme==='light'){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}catch(e){document.documentElement.classList.add('dark')}})();`,
           }}
         />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.variable} ${playfair.variable} font-sans`}>
+        <GoogleAnalytics />
+        <GoogleAdSense />
         <ClientProvider>
           <ThemeProvider>{children}</ThemeProvider>
         </ClientProvider>

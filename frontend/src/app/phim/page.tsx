@@ -9,7 +9,7 @@ import JsonLd, {
 
 const API_BASE_URL =
   process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "/api";
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://vivutruyenhay.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://themidnightmoviereel.io.vn";
 
 // SSR: Fetch categories and tags on server
 async function getFilmCategories() {
@@ -51,22 +51,22 @@ export async function generateMetadata({
   const tag = searchParams.tag as string;
   const search = searchParams.search as string;
 
-  let title = "Review Phim - Xem Phim Online Miễn Phí | vivutruyenhay.com";
+  let title = "Review Phim Mới Nhất 2026 – Đánh Giá Chi Tiết & Không Spoiler | The Midnight Movie Reel";
   let description =
-    "Xem phim online miễn phí với nhiều thể loại hấp dẫn như phim hành động, tình cảm, kinh dị và phim mới cập nhật mỗi ngày tại vivutruyenhay.com.";
+    "Đọc review phim mới nhất, đánh giá chi tiết nội dung, diễn xuất, kịch bản và điểm số khách quan tại The Midnight Movie Reel.";
 
   if (category) {
-    title = `Review Phim - ${category} | vivutruyenhay.com`;
+    title = `Review Phim - ${category} | The Midnight Movie Reel`;
     description = `Review phim thể loại ${category}. Xem đánh giá, xếp hạng phim mới nhất.`;
   }
 
   if (tag) {
-    title = `Review Phim - #${tag} | vivutruyenhay.com`;
+    title = `Review Phim - #${tag} | The Midnight Movie Reel`;
     description = `Review phim với tag #${tag}. Xem đánh giá, xếp hạng phim.`;
   }
 
   if (search) {
-    title = `Tìm kiếm: ${search} - Review Phim | vivutruyenhay.com`;
+    title = `Tìm kiếm: ${search} - Review Phim | The Midnight Movie Reel`;
     description = `Kết quả tìm kiếm review phim cho "${search}".`;
   }
 
@@ -80,7 +80,7 @@ export async function generateMetadata({
       locale: "vi_VN",
     },
     alternates: {
-      canonical: "/film-reviews",
+      canonical: "/phim",
     },
   };
 }
@@ -98,21 +98,20 @@ export default async function FilmReviewsPage() {
         data={getBreadcrumbSchema(
           [
             { name: "Trang chủ", url: "/" },
-            { name: "Review Phim", url: "/film-reviews" },
+            { name: "Review Phim", url: "/phim" },
           ],
           siteUrl
         )}
       />
       <Layout>
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center mb-8 hidden sm:block">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-              🎬 Review Phim
-            </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Khám phá các bài review phim hay nhất, xếp hạng và đánh giá từ cộng
-              đồng
-            </p>
+        <div className="max-w-[1400px] mx-auto px-4 lg:px-8 py-8">
+          <div className="mb-8 hidden sm:block">
+            <div className="inline-flex items-center gap-2 bg-primary-500/10 border border-primary-500/20 rounded-full px-4 py-1.5 mb-4">
+              <svg className="w-4 h-4 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h1.5C5.496 19.5 6 18.996 6 18.375m-3.75 0V5.625" /></svg>
+              <span className="text-[12px] font-medium text-primary-400 uppercase tracking-wider">Film Reviews</span>
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">Review Phim</h1>
+            <p className="text-base text-zinc-500 max-w-xl">Khám phá các bài review phim hay nhất, xếp hạng và đánh giá</p>
           </div>
 
           <FilmReviewsClient categories={categories} tags={tags} />

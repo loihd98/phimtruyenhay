@@ -38,7 +38,7 @@ const ChapterList: React.FC<ChapterListProps> = ({
   if (chapters.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-500 dark:text-gray-400">Chưa có chương nào</p>
+        <p className="text-zinc-500">Chưa có chương nào</p>
       </div>
     );
   }
@@ -52,12 +52,12 @@ const ChapterList: React.FC<ChapterListProps> = ({
         return (
           <div
             key={chapter.id}
-            className={`border border-gray-200 dark:border-gray-700 rounded-lg p-4 cursor-pointer transition-all ${
+            className={`border border-white/[0.06] rounded-lg p-4 cursor-pointer transition-all ${
               isCurrent
-                ? "bg-blue-50 dark:bg-blue-900 border-blue-200 dark:border-blue-700"
+                ? "bg-primary-500/5 border-primary-500/20 "
                 : isUnlocked
-                ? "bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
-                : "bg-gray-50 dark:bg-gray-800 opacity-75"
+                ? "bg-white/[0.02] hover:bg-white/[0.04]"
+                : "bg-gray-50  opacity-75"
             }`}
             onClick={() => handleChapterClick(chapter)}
           >
@@ -67,8 +67,8 @@ const ChapterList: React.FC<ChapterListProps> = ({
                   <span
                     className={`text-sm font-medium px-2 py-1 rounded ${
                       isCurrent
-                        ? "bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-300"
-                        : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
+                        ? "bg-primary-500/10 text-primary-400"
+                        : "bg-white/[0.04] text-zinc-500"
                     }`}
                   >
                     Chương {chapter.number}
@@ -76,16 +76,16 @@ const ChapterList: React.FC<ChapterListProps> = ({
                   <h3
                     className={`font-medium truncate ${
                       isCurrent
-                        ? "text-blue-900 dark:text-blue-100"
+                        ? "text-primary-300"
                         : isUnlocked
-                        ? "text-gray-900 dark:text-white"
-                        : "text-gray-500 dark:text-gray-400"
+                        ? "text-white"
+                        : "text-zinc-500"
                     }`}
                   >
                     {chapter.title}
                   </h3>
                 </div>
-                <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500 dark:text-gray-400">
+                <div className="flex items-center space-x-4 mt-2 text-sm text-zinc-500">
                   <span>
                     {new Date(chapter.createdAt).toLocaleDateString("vi-VN")}
                   </span>
@@ -200,11 +200,11 @@ const ChapterList: React.FC<ChapterListProps> = ({
                         d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                       />
                     </svg>
-                    <span className="text-sm text-yellow-700 dark:text-yellow-300">
+                    <span className="text-sm text-yellow-700 ">
                       Chương này cần mở khóa
                     </span>
                   </div>
-                  <button className="text-sm bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-300 px-3 py-1 rounded-lg hover:bg-yellow-200 dark:hover:bg-yellow-700">
+                  <button className="text-sm bg-yellow-100  text-yellow-700  px-3 py-1 rounded-lg hover:bg-yellow-200 ">
                     Mở khóa
                   </button>
                 </div>

@@ -18,7 +18,7 @@ const LanguageSelector: React.FC = () => {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-zinc-300 hover:bg-white/[0.04] transition-colors"
       >
         <span className="text-lg">{currentLanguage?.flag}</span>
         <span className="hidden sm:block">{currentLanguage?.nativeName}</span>
@@ -38,27 +38,27 @@ const LanguageSelector: React.FC = () => {
           />
 
           {/* Dropdown */}
-          <div className="absolute right-0 top-full mt-2 z-20 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 min-w-[200px]">
+          <div className="absolute right-0 top-full mt-2 z-20 bg-white/[0.02] rounded-lg shadow-lg border border-white/[0.06] min-w-[200px]">
             <div className="py-2">
               {languages.map((lang) => (
                 <button
                   key={lang.code}
                   onClick={() => handleLanguageChange(lang.code)}
-                  className={`w-full flex items-center space-x-3 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                  className={`w-full flex items-center space-x-3 px-4 py-2 text-sm hover:bg-white/[0.04] transition-colors ${
                     language === lang.code
-                      ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
-                      : "text-gray-700 dark:text-gray-200"
+                      ? "bg-primary-500/10 text-primary-400"
+                      : "text-zinc-300"
                   }`}
                 >
                   <span className="text-lg">{lang.flag}</span>
                   <div className="flex-1 text-left">
                     <div className="font-medium">{lang.nativeName}</div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                    <div className="text-xs text-zinc-500">
                       {lang.name}
                     </div>
                   </div>
                   {language === lang.code && (
-                    <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full" />
+                    <div className="w-2 h-2 bg-primary-500 dark:bg-primary-400 rounded-full" />
                   )}
                 </button>
               ))}

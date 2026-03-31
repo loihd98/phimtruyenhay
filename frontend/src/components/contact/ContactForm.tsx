@@ -104,7 +104,7 @@ export default function ContactForm() {
               ? "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200"
               : status.type === "error"
               ? "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200"
-              : "bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-200"
+              : "bg-primary-500/5 /20 border border-primary-500/20 text-primary-400 "
           }`}
         >
           <div className="flex items-center">
@@ -124,7 +124,7 @@ export default function ContactForm() {
       <div>
         <label
           htmlFor="name"
-          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+          className="block text-sm font-semibold text-zinc-400 mb-2"
         >
           Họ và tên <span className="text-red-500">*</span>
         </label>
@@ -135,7 +135,7 @@ export default function ContactForm() {
           value={formData.name}
           onChange={handleInputChange}
           required
-          className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+          className="w-full px-4 py-3 rounded-lg border border-white/[0.06] bg-white/[0.02] text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
           placeholder="Nhập họ và tên của bạn"
         />
       </div>
@@ -144,7 +144,7 @@ export default function ContactForm() {
       <div>
         <label
           htmlFor="email"
-          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+          className="block text-sm font-semibold text-zinc-400 mb-2"
         >
           Email <span className="text-red-500">*</span>
         </label>
@@ -155,7 +155,7 @@ export default function ContactForm() {
           value={formData.email}
           onChange={handleInputChange}
           required
-          className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+          className="w-full px-4 py-3 rounded-lg border border-white/[0.06] bg-white/[0.02] text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
           placeholder="Nhập địa chỉ email của bạn"
         />
       </div>
@@ -164,7 +164,7 @@ export default function ContactForm() {
       <div>
         <label
           htmlFor="category"
-          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+          className="block text-sm font-semibold text-zinc-400 mb-2"
         >
           Loại yêu cầu <span className="text-red-500">*</span>
         </label>
@@ -174,7 +174,7 @@ export default function ContactForm() {
           value={formData.category}
           onChange={handleInputChange}
           required
-          className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+          className="w-full px-4 py-3 rounded-lg border border-white/[0.06] bg-white/[0.02] text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
         >
           {categories.map((cat) => (
             <option key={cat.value} value={cat.value}>
@@ -188,7 +188,7 @@ export default function ContactForm() {
       <div>
         <label
           htmlFor="subject"
-          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+          className="block text-sm font-semibold text-zinc-400 mb-2"
         >
           Tiêu đề <span className="text-red-500">*</span>
         </label>
@@ -199,7 +199,7 @@ export default function ContactForm() {
           value={formData.subject}
           onChange={handleInputChange}
           required
-          className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+          className="w-full px-4 py-3 rounded-lg border border-white/[0.06] bg-white/[0.02] text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
           placeholder="Tóm tắt ngắn gọn vấn đề của bạn"
         />
       </div>
@@ -208,7 +208,7 @@ export default function ContactForm() {
       <div>
         <label
           htmlFor="message"
-          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+          className="block text-sm font-semibold text-zinc-400 mb-2"
         >
           Nội dung <span className="text-red-500">*</span>
         </label>
@@ -219,27 +219,27 @@ export default function ContactForm() {
           onChange={handleInputChange}
           required
           rows={6}
-          className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-vertical"
+          className="w-full px-4 py-3 rounded-lg border border-white/[0.06] bg-white/[0.02] text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors resize-vertical"
           placeholder="Mô tả chi tiết vấn đề hoặc yêu cầu của bạn..."
         />
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        <p className="text-xs text-zinc-500 mt-1">
           Tối thiểu 10 ký tự. Càng chi tiết càng giúp chúng tôi hỗ trợ bạn tốt
           hơn.
         </p>
       </div>
 
       {/* Privacy Notice */}
-      <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+      <div className="bg-white/[0.04] p-4 rounded-lg">
         <div className="flex items-start">
-          <span className="text-blue-500 mr-2 mt-0.5">🔒</span>
-          <div className="text-sm text-gray-600 dark:text-gray-400">
+          <span className="text-primary-400 mr-2 mt-0.5">🔒</span>
+          <div className="text-sm text-zinc-500">
             <p className="font-semibold mb-1">Quyền riêng tư được bảo vệ</p>
             <p>
               Thông tin của bạn sẽ được mã hóa và chỉ được sử dụng để phản hồi
               yêu cầu này. Xem{" "}
               <a
                 href="/privacy"
-                className="text-blue-600 dark:text-blue-400 hover:underline"
+                className="text-primary-400  hover:underline"
               >
                 Chính sách bảo mật
               </a>{" "}
@@ -256,7 +256,7 @@ export default function ContactForm() {
         className={`w-full py-3 px-6 rounded-lg font-semibold text-white transition-all duration-200 ${
           status.type === "loading"
             ? "bg-gray-400 cursor-not-allowed"
-            : "bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 hover:shadow-lg active:transform active:scale-95"
+            : "bg-primary-500 hover:bg-primary-600  hover: active:transform active:scale-95"
         }`}
       >
         {status.type === "loading" ? (
@@ -273,12 +273,12 @@ export default function ContactForm() {
       </button>
 
       {/* Alternative Contact */}
-      <div className="text-center pt-4 border-t border-gray-200 dark:border-gray-700">
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+      <div className="text-center pt-4 border-t border-white/[0.06]">
+        <p className="text-sm text-zinc-500">
           Hoặc gửi email trực tiếp đến:{" "}
           <a
             href="mailto:support@webtruyen.com"
-            className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+            className="text-primary-400  hover:underline font-medium"
           >
             support@webtruyen.com
           </a>

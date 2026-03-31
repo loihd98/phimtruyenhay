@@ -76,7 +76,7 @@ class FilmReviewsController {
                 label: true,
               },
             },
-            _count: { select: { comments: true } },
+            _count: { select: { comments: true, episodes: true } },
           },
           orderBy,
           skip,
@@ -161,7 +161,11 @@ class FilmReviewsController {
           affiliate: {
             select: { id: true, provider: true, targetUrl: true, label: true },
           },
-          _count: { select: { comments: true } },
+          episodes: {
+            orderBy: { episodeNum: "asc" },
+            select: { id: true, episodeNum: true, title: true, videoUrl: true, duration: true, language: true },
+          },
+          _count: { select: { comments: true, episodes: true } },
         },
       });
 
@@ -200,7 +204,7 @@ class FilmReviewsController {
         },
         include: {
           categories: { select: { id: true, name: true, slug: true } },
-          _count: { select: { comments: true } },
+          _count: { select: { comments: true, episodes: true } },
         },
         take: 5,
         orderBy: { createdAt: "desc" },
@@ -397,7 +401,7 @@ class FilmReviewsController {
                 label: true,
               },
             },
-            _count: { select: { comments: true } },
+            _count: { select: { comments: true, episodes: true } },
           },
           orderBy,
           skip,
@@ -440,7 +444,7 @@ class FilmReviewsController {
           affiliate: {
             select: { id: true, provider: true, targetUrl: true, label: true },
           },
-          _count: { select: { comments: true } },
+          _count: { select: { comments: true, episodes: true } },
         },
       });
 
@@ -476,6 +480,9 @@ class FilmReviewsController {
         actorNames,
         affiliateId,
         initViewCount,
+        language,
+        totalEpisodes,
+        isMovie,
       } = req.body;
 
       // Validation
@@ -535,6 +542,9 @@ class FilmReviewsController {
           status: status || "DRAFT",
           authorId: req.user.id,
           affiliateId: affiliateId || null,
+          language: language || "VIETSUB",
+          totalEpisodes: totalEpisodes ? parseInt(totalEpisodes) : 1,
+          isMovie: isMovie !== false,
           viewCount:
             initViewCount !== undefined
               ? Math.max(0, parseInt(initViewCount) || 0)
@@ -585,6 +595,9 @@ class FilmReviewsController {
         actorNames,
         affiliateId,
         viewCount,
+        language,
+        totalEpisodes,
+        isMovie,
       } = req.body;
 
       const existing = await prisma.filmReview.findUnique({ where: { id } });
@@ -657,6 +670,9 @@ class FilmReviewsController {
         ...(viewCount !== undefined && {
           viewCount: Math.max(0, parseInt(viewCount) || 0),
         }),
+        ...(language !== undefined && { language }),
+        ...(totalEpisodes !== undefined && { totalEpisodes: parseInt(totalEpisodes) || 1 }),
+        ...(isMovie !== undefined && { isMovie }),
       };
 
       // Handle category updates
@@ -1042,6 +1058,100 @@ class FilmReviewsController {
         error: "Internal Server Error",
         message: "Có lỗi xảy ra khi xóa bình luận",
       });
+    }
+  }
+
+  // ==================== EPISODE MANAGEMENT ====================
+
+  // GET /api/film-reviews/:slug/episodes
+  async getFilmEpisodes(req, res) {
+    try {
+      const { slug } = req.params;
+      const film = await prisma.filmReview.findUnique({
+        where: { slug },
+        select: { id: true },
+      });
+      if (!film) {
+        return res.status(404).json({ error: "Not Found", message: "Không tìm thấy phim" });
+      }
+      const episodes = await prisma.filmEpisode.findMany({
+        where: { filmReviewId: film.id },
+        orderBy: { episodeNum: "asc" },
+      });
+      res.json({ data: episodes });
+    } catch (error) {
+      console.error("Get film episodes error:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+
+  // POST /admin/film-reviews/:filmId/episodes
+  async adminCreateEpisode(req, res) {
+    try {
+      const { filmId } = req.params;
+      const { episodeNum, title, videoUrl, duration, language } = req.body;
+
+      if (!episodeNum || !videoUrl) {
+        return res.status(400).json({ error: "episodeNum and videoUrl are required" });
+      }
+
+      const episode = await prisma.filmEpisode.create({
+        data: {
+          episodeNum: parseInt(episodeNum),
+          title: title || null,
+          videoUrl,
+          duration: duration ? parseInt(duration) : null,
+          language: language || "VIETSUB",
+          filmReviewId: filmId,
+        },
+      });
+
+      res.status(201).json({ data: episode });
+    } catch (error) {
+      if (error.code === "P2002") {
+        return res.status(409).json({ error: "Episode number already exists for this film" });
+      }
+      console.error("Create episode error:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+
+  // PUT /admin/film-reviews/episodes/:id
+  async adminUpdateEpisode(req, res) {
+    try {
+      const { id } = req.params;
+      const { episodeNum, title, videoUrl, duration, language } = req.body;
+
+      const data = {};
+      if (episodeNum !== undefined) data.episodeNum = parseInt(episodeNum);
+      if (title !== undefined) data.title = title;
+      if (videoUrl !== undefined) data.videoUrl = videoUrl;
+      if (duration !== undefined) data.duration = duration ? parseInt(duration) : null;
+      if (language !== undefined) data.language = language;
+
+      const episode = await prisma.filmEpisode.update({
+        where: { id },
+        data,
+      });
+
+      res.json({ data: episode });
+    } catch (error) {
+      if (error.code === "P2025") return res.status(404).json({ error: "Episode not found" });
+      console.error("Update episode error:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+
+  // DELETE /admin/film-reviews/episodes/:id
+  async adminDeleteEpisode(req, res) {
+    try {
+      const { id } = req.params;
+      await prisma.filmEpisode.delete({ where: { id } });
+      res.json({ message: "Deleted" });
+    } catch (error) {
+      if (error.code === "P2025") return res.status(404).json({ error: "Episode not found" });
+      console.error("Delete episode error:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
   }
 }

@@ -12,6 +12,15 @@ interface FilmCategory {
   slug: string;
 }
 
+interface EpisodeFormData {
+  id?: string;
+  episodeNum: number;
+  title: string;
+  videoUrl: string;
+  duration: string;
+  language: string;
+}
+
 interface FilmReview {
   id: string;
   slug: string;
@@ -49,6 +58,9 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
     reviewLink: "",
     status: "DRAFT" as "DRAFT" | "PUBLISHED",
     initViewCount: 1000,
+    language: "VIETSUB",
+    totalEpisodes: 1,
+    isMovie: true,
   });
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
@@ -56,6 +68,8 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
   const [actorNames, setActorNames] = useState<string[]>([]);
   const [actorInput, setActorInput] = useState("");
   const [affiliateId, setAffiliateId] = useState<string | null>(null);
+  const [episodes, setEpisodes] = useState<EpisodeFormData[]>([]);
+  const [savingEpisodes, setSavingEpisodes] = useState(false);
 
   const [availableCategories, setAvailableCategories] = useState<
     FilmCategory[]
@@ -80,6 +94,9 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
         reviewLink: review.reviewLink,
         status: review.status,
         initViewCount: (review as any).viewCount ?? 1000,
+        language: (review as any).language || "VIETSUB",
+        totalEpisodes: (review as any).totalEpisodes || 1,
+        isMovie: (review as any).isMovie !== false,
       });
       setTags(review.tags || []);
       setSelectedCategoryIds(
@@ -87,8 +104,48 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
       );
       setActorNames(review.actors?.map((a) => a.name) || []);
       setAffiliateId(review.affiliateId || null);
+      // Fetch existing episodes
+      fetchEpisodes(review.id);
     }
   }, [review]);
+
+  const fetchEpisodes = async (filmId: string) => {
+    try {
+      const response = await apiClient.get(`/film-reviews/${filmId}/episodes`);
+      const data = response.data?.data || [];
+      setEpisodes(
+        data.map((ep: any) => ({
+          id: ep.id,
+          episodeNum: ep.episodeNum,
+          title: ep.title || "",
+          videoUrl: ep.videoUrl,
+          duration: ep.duration ? String(ep.duration) : "",
+          language: ep.language || "VIETSUB",
+        }))
+      );
+    } catch {
+      // Film may not have slug-based episode endpoint working, try by slug
+      try {
+        const slug = (review as any)?.slug;
+        if (slug) {
+          const response = await apiClient.get(`/film-reviews/${slug}/episodes`);
+          const data = response.data?.data || [];
+          setEpisodes(
+            data.map((ep: any) => ({
+              id: ep.id,
+              episodeNum: ep.episodeNum,
+              title: ep.title || "",
+              videoUrl: ep.videoUrl,
+              duration: ep.duration ? String(ep.duration) : "",
+              language: ep.language || "VIETSUB",
+            }))
+          );
+        }
+      } catch {
+        // No episodes yet
+      }
+    }
+  };
 
   const fetchCategories = async () => {
     try {
@@ -113,13 +170,15 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
       newErrors.title = "Tiêu đề phải có ít nhất 3 ký tự";
     }
 
-    if (!formData.reviewLink.trim()) {
-      newErrors.reviewLink = "Link review là bắt buộc";
-    } else {
-      try {
-        new URL(formData.reviewLink.trim());
-      } catch {
-        newErrors.reviewLink = "Link review không hợp lệ";
+    if (formData.isMovie) {
+      if (!formData.reviewLink.trim()) {
+        newErrors.reviewLink = "Link review là bắt buộc";
+      } else {
+        try {
+          new URL(formData.reviewLink.trim());
+        } catch {
+          newErrors.reviewLink = "Link review không hợp lệ";
+        }
       }
     }
 
@@ -154,12 +213,15 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
         description: formData.description.trim() || undefined,
         thumbnailUrl: formData.thumbnailUrl.trim() || undefined,
         rating: Number(formData.rating),
-        reviewLink: formData.reviewLink.trim(),
+        reviewLink: formData.reviewLink.trim() || undefined,
         status: formData.status,
         tags,
         categoryIds: selectedCategoryIds,
         actorNames,
         affiliateId: affiliateId || null,
+        language: formData.language,
+        totalEpisodes: formData.isMovie ? 1 : (episodes.length || Number(formData.totalEpisodes) || 1),
+        isMovie: formData.isMovie,
       };
 
       const viewCountValue = Math.max(0, Number(formData.initViewCount) || 0);
@@ -296,6 +358,92 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
     );
   };
 
+  // Episode management
+  const handleAddEpisode = () => {
+    const nextNum = episodes.length > 0 ? Math.max(...episodes.map(e => e.episodeNum)) + 1 : 1;
+    setEpisodes((prev) => [
+      ...prev,
+      { episodeNum: nextNum, title: "", videoUrl: "", duration: "", language: formData.language },
+    ]);
+  };
+
+  const handleRemoveEpisode = (index: number) => {
+    setEpisodes((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleEpisodeChange = (index: number, field: keyof EpisodeFormData, value: string | number) => {
+    setEpisodes((prev) =>
+      prev.map((ep, i) => (i === index ? { ...ep, [field]: value } : ep))
+    );
+  };
+
+  const handleSaveEpisodes = async () => {
+    if (!review) {
+      toast.error("Vui lòng lưu phim trước, sau đó chỉnh sửa để thêm tập");
+      return;
+    }
+
+    // Validate episodes
+    for (const ep of episodes) {
+      if (!ep.videoUrl.trim()) {
+        toast.error(`Tập ${ep.episodeNum}: Link video là bắt buộc`);
+        return;
+      }
+    }
+
+    setSavingEpisodes(true);
+    try {
+      // Get existing episode IDs
+      const existingIds = new Set(episodes.filter(e => e.id).map(e => e.id));
+
+      // Fetch current episodes from server to determine what to delete
+      let serverEpisodes: any[] = [];
+      try {
+        const slug = (review as any)?.slug || review.id;
+        const resp = await apiClient.get(`/film-reviews/${slug}/episodes`);
+        serverEpisodes = resp.data?.data || [];
+      } catch { /* no existing episodes */ }
+
+      // Delete episodes that are on server but not in our local list
+      for (const serverEp of serverEpisodes) {
+        if (!existingIds.has(serverEp.id)) {
+          await apiClient.delete(`/admin/film-reviews/episodes/${serverEp.id}`);
+        }
+      }
+
+      // Create or update episodes
+      for (const ep of episodes) {
+        const payload = {
+          episodeNum: Number(ep.episodeNum),
+          title: ep.title.trim() || null,
+          videoUrl: ep.videoUrl.trim(),
+          duration: ep.duration ? Number(ep.duration) : null,
+          language: ep.language,
+        };
+
+        if (ep.id) {
+          await apiClient.put(`/admin/film-reviews/episodes/${ep.id}`, payload);
+        } else {
+          const resp = await apiClient.post(`/admin/film-reviews/${review.id}/episodes`, payload);
+          // Update local episode with server ID
+          ep.id = resp.data?.data?.id;
+        }
+      }
+
+      // Update totalEpisodes on the film
+      await apiClient.put(`/admin/film-reviews/${review.id}`, {
+        totalEpisodes: episodes.length,
+      });
+
+      toast.success(`Đã lưu ${episodes.length} tập thành công!`);
+    } catch (error: any) {
+      console.error("Save episodes error:", error);
+      toast.error(error.response?.data?.error || "Lỗi khi lưu danh sách tập");
+    } finally {
+      setSavingEpisodes(false);
+    }
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
       <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
@@ -368,30 +516,32 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Review Link */}
-          <div>
-            <label
-              htmlFor="reviewLink"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-            >
-              Link Review (YouTube/Blog...) <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="url"
-              id="reviewLink"
-              name="reviewLink"
-              value={formData.reviewLink}
-              onChange={handleChange}
-              placeholder="https://youtube.com/watch?v=..."
-              className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${errors.reviewLink ? "border-red-500" : ""
-                }`}
-            />
-            {errors.reviewLink && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                {errors.reviewLink}
-              </p>
-            )}
-          </div>
+          {/* Review Link - only for phim lẻ (movies) */}
+          {formData.isMovie && (
+            <div>
+              <label
+                htmlFor="reviewLink"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
+                Link Review (YouTube/Blog...) <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="url"
+                id="reviewLink"
+                name="reviewLink"
+                value={formData.reviewLink}
+                onChange={handleChange}
+                placeholder="https://youtube.com/watch?v=..."
+                className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${errors.reviewLink ? "border-red-500" : ""
+                  }`}
+              />
+              {errors.reviewLink && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                  {errors.reviewLink}
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Thumbnail Upload */}
           <div>
@@ -555,6 +705,210 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
             <p className="mt-1 text-xs text-gray-500">Số view hiển thị (mặc định: 1000)</p>
           </div>
         </div>
+
+        {/* Language & Episodes Row */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Language */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              🌐 Ngôn ngữ
+            </label>
+            <select
+              name="language"
+              value={formData.language}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            >
+              <option value="VIETSUB">Vietsub</option>
+              <option value="THUYET_MINH">Thuyết Minh</option>
+              <option value="LONG_TIENG">Lồng Tiếng</option>
+              <option value="RAW">Raw</option>
+            </select>
+          </div>
+
+          {/* Type */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              🎬 Loại phim
+            </label>
+            <select
+              name="isMovie"
+              value={formData.isMovie ? "true" : "false"}
+              onChange={(e) => setFormData((prev) => ({ ...prev, isMovie: e.target.value === "true", totalEpisodes: e.target.value === "true" ? 1 : prev.totalEpisodes }))}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            >
+              <option value="true">Phim lẻ</option>
+              <option value="false">Phim bộ</option>
+            </select>
+          </div>
+
+          {/* Total Episodes */}
+          {!formData.isMovie && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                📺 Tổng số tập
+              </label>
+              <input
+                type="number"
+                min="1"
+                readOnly
+                value={episodes.length || formData.totalEpisodes}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-white cursor-not-allowed"
+              />
+              <p className="mt-1 text-xs text-gray-500">Tự động tính từ danh sách tập bên dưới</p>
+            </div>
+          )}
+        </div>
+
+        {/* Episodes Array Form */}
+        {!formData.isMovie && (
+          <div className="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
+            <div className="px-4 py-3 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 flex items-center justify-between">
+              <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                <svg className="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+                Danh sách tập phim ({episodes.length} tập)
+              </h4>
+              <div className="flex items-center gap-2">
+                {review && episodes.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleSaveEpisodes}
+                    disabled={savingEpisodes}
+                    className="px-3 py-1.5 bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors flex items-center gap-1"
+                  >
+                    {savingEpisodes ? (
+                      <>
+                        <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                        Đang lưu...
+                      </>
+                    ) : (
+                      <>💾 Lưu tập</>
+                    )}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={handleAddEpisode}
+                  className="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1"
+                >
+                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
+                  Thêm tập
+                </button>
+              </div>
+            </div>
+
+            {episodes.length === 0 ? (
+              <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+                <svg className="w-10 h-10 mx-auto mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h1.5C5.496 19.5 6 18.996 6 18.375m-3.75 0V5.625" /></svg>
+                <p className="text-sm">Chưa có tập nào. Bấm &quot;Thêm tập&quot; để bắt đầu.</p>
+                {!review && <p className="text-xs text-amber-500 mt-1">⚠ Lưu phim trước, sau đó chỉnh sửa để thêm tập</p>}
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-200 dark:divide-gray-600">
+                {episodes.map((ep, index) => (
+                  <div key={index} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
+                    <div className="flex items-start gap-3">
+                      {/* Episode Number Badge */}
+                      <div className="flex-shrink-0 w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-sm">
+                        {ep.episodeNum}
+                      </div>
+
+                      {/* Episode Fields */}
+                      <div className="flex-1 grid grid-cols-1 sm:grid-cols-12 gap-3">
+                        {/* Ep Number */}
+                        <div className="sm:col-span-1">
+                          <label className="block text-[10px] font-medium text-gray-500 mb-1">Số tập</label>
+                          <input
+                            type="number"
+                            min="1"
+                            value={ep.episodeNum}
+                            onChange={(e) => handleEpisodeChange(index, "episodeNum", Number(e.target.value))}
+                            className="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          />
+                        </div>
+
+                        {/* Title */}
+                        <div className="sm:col-span-3">
+                          <label className="block text-[10px] font-medium text-gray-500 mb-1">Tiêu đề tập</label>
+                          <input
+                            type="text"
+                            value={ep.title}
+                            onChange={(e) => handleEpisodeChange(index, "title", e.target.value)}
+                            placeholder={`Tập ${ep.episodeNum}`}
+                            className="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400"
+                          />
+                        </div>
+
+                        {/* Video URL */}
+                        <div className="sm:col-span-4">
+                          <label className="block text-[10px] font-medium text-gray-500 mb-1">Link video <span className="text-red-400">*</span></label>
+                          <input
+                            type="url"
+                            value={ep.videoUrl}
+                            onChange={(e) => handleEpisodeChange(index, "videoUrl", e.target.value)}
+                            placeholder="https://youtube.com/watch?v=..."
+                            className={`w-full px-2 py-1.5 border rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 ${!ep.videoUrl.trim() ? "border-red-400" : "border-gray-300 dark:border-gray-600"}`}
+                          />
+                        </div>
+
+                        {/* Duration */}
+                        <div className="sm:col-span-1">
+                          <label className="block text-[10px] font-medium text-gray-500 mb-1">Phút</label>
+                          <input
+                            type="number"
+                            min="0"
+                            value={ep.duration}
+                            onChange={(e) => handleEpisodeChange(index, "duration", e.target.value)}
+                            placeholder="45"
+                            className="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          />
+                        </div>
+
+                        {/* Language */}
+                        <div className="sm:col-span-2">
+                          <label className="block text-[10px] font-medium text-gray-500 mb-1">Ngôn ngữ</label>
+                          <select
+                            value={ep.language}
+                            onChange={(e) => handleEpisodeChange(index, "language", e.target.value)}
+                            className="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          >
+                            <option value="VIETSUB">Vietsub</option>
+                            <option value="THUYET_MINH">TM</option>
+                            <option value="LONG_TIENG">LT</option>
+                            <option value="RAW">Raw</option>
+                          </select>
+                        </div>
+
+                        {/* Status indicator */}
+                        <div className="sm:col-span-1 flex items-end pb-1">
+                          {ep.id ? (
+                            <span className="text-[10px] text-green-500 font-medium">✓ Đã lưu</span>
+                          ) : (
+                            <span className="text-[10px] text-amber-500 font-medium">● Mới</span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Remove button */}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveEpisode(index)}
+                        className="flex-shrink-0 mt-5 p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                        title="Xóa tập"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Categories */}
         <div>

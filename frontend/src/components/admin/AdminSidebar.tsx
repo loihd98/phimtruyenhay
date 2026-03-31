@@ -36,6 +36,8 @@ const TAB_PERMISSION_MAP: Partial<Record<AdminTab, string | "ADMIN_ONLY">> = {
   "audio-genres": "story_audio.view",
   "film-reviews": "film.view",
   "film-categories": "film.view",
+  blog: "blog.view",
+  "blog-categories": "blog.category.create",
   users: "ADMIN_ONLY",
   comments: "ADMIN_ONLY",
   media: "ADMIN_ONLY",
@@ -54,7 +56,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
   const { t } = useLanguage();
   const router = useRouter();
   const { hasPermission } = usePermissions();
-  const [expandedGroups, setExpandedGroups] = useState<string[]>(["audio", "text", "film"]);
+  const [expandedGroups, setExpandedGroups] = useState<string[]>(["audio", "text", "film", "blog"]);
 
   const isAdmin = user?.role === "ADMIN";
 
@@ -120,6 +122,19 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
       items: [
         { id: "film-reviews" as AdminTab, label: "Quản lý phim" },
         { id: "film-categories" as AdminTab, label: "Thể loại phim" },
+      ],
+    },
+    {
+      id: "blog",
+      label: "Blog",
+      icon: (
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+        </svg>
+      ),
+      items: [
+        { id: "blog" as AdminTab, label: "Quản lý bài viết" },
+        { id: "blog-categories" as AdminTab, label: "Danh mục blog" },
       ],
     },
   ];
@@ -213,8 +228,8 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
           } lg:translate-x-0`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between h-16 px-4 bg-gradient-to-r from-blue-700 to-blue-800">
-          <h2 className="text-lg font-bold text-white">📊 Admin Panel</h2>
+        <div className="flex items-center justify-between h-16 px-4 bg-gradient-to-r from-red-700 to-red-900">
+          <h2 className="text-lg font-bold text-white">🎬 Admin Panel</h2>
           <button
             onClick={onClose}
             className="lg:hidden text-white hover:text-blue-200 transition-colors"
@@ -232,10 +247,12 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
               <img
                 src={user.avatar}
                 alt={user.name}
-                className="h-12 w-12 rounded-full object-cover ring-2 ring-blue-500 ring-offset-2 ring-offset-gray-800"
+                className="h-12 w-12 rounded-full object-cover ring-2 ring-red-500 ring-offset-2 ring-offset-gray-800"
               />
             ) : (
-              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-lg font-semibold ring-2 ring-blue-500 ring-offset-2 ring-offset-gray-800">
+              <div
+                className="h-12 w-12 rounded-full bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white text-lg font-semibold ring-2 ring-red-500 ring-offset-2 ring-offset-gray-800"
+              >
                 {user?.name.charAt(0).toUpperCase()}
               </div>
             )}
@@ -243,7 +260,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
               <p className="text-sm font-semibold text-white truncate">
                 {user?.name}
               </p>
-              <p className="text-xs text-blue-400 font-medium">
+              <p className="text-xs text-red-400 font-medium">
                 {user?.role || t("admin.role")}
               </p>
             </div>
@@ -257,7 +274,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
           <button
             onClick={() => handleMenuClick("dashboard")}
             className={`group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg w-full text-left transition-all duration-200 ${activeTab === "dashboard"
-              ? "bg-blue-600 text-white shadow-md"
+              ? "bg-red-600 text-white shadow-md"
               : "text-gray-300 hover:bg-gray-800 hover:text-white"
               }`}
           >
@@ -277,7 +294,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
               <button
                 onClick={() => toggleGroup(group.id)}
                 className={`flex items-center justify-between w-full px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${isTabInGroup(group.id)
-                  ? "bg-gray-800 text-blue-400"
+                  ? "bg-gray-800 text-red-400"
                   : "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
                   }`}
               >
@@ -307,11 +324,11 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
                       key={item.id}
                       onClick={() => handleMenuClick(item.id)}
                       className={`flex items-center w-full px-3 py-2 text-sm rounded-lg transition-all duration-200 ${activeTab === item.id
-                        ? "bg-blue-600/20 text-blue-400 font-medium"
+                        ? "bg-red-600/20 text-red-400 font-medium"
                         : "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
                         }`}
                     >
-                      <span className={`w-1.5 h-1.5 rounded-full mr-3 ${activeTab === item.id ? "bg-blue-400" : "bg-gray-600"
+                      <span className={`w-1.5 h-1.5 rounded-full mr-3 ${activeTab === item.id ? "bg-red-400" : "bg-gray-600"
                         }`}></span>
                       {item.label}
                     </button>
@@ -331,7 +348,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
               key={item.id}
               onClick={() => handleMenuClick(item.id)}
               className={`group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg w-full text-left transition-all duration-200 ${activeTab === item.id
-                ? "bg-blue-600 text-white shadow-md"
+                ? "bg-red-600 text-white shadow-md"
                 : "text-gray-300 hover:bg-gray-800 hover:text-white"
                 }`}
             >
@@ -344,7 +361,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
         {/* Footer */}
         <div className="p-4 border-t border-gray-700 bg-gray-800">
           <div className="text-xs text-gray-500 text-center">
-            <div className="font-medium text-gray-400">vivutruyenhay.com Admin</div>
+            <div className="font-medium text-gray-400">The Midnight Movie Reel Admin</div>
             <div className="mt-1">Version 1.0.0</div>
           </div>
         </div>

@@ -16,25 +16,13 @@ const LayoutContent: React.FC<LayoutContentProps> = ({ children }) => {
   const theme = useSelector((state: RootState) => state.ui.theme);
   const audioPlayerOpen = useSelector((state: RootState) => state.ui.audioPlayerOpen);
 
-  // Apply theme on mount and when it changes
-  useEffect(() => {
-    const root = document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-  }, [theme]);
-
   return (
     <div
-      className={`min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200 ${theme}`}
+      className="min-h-screen transition-colors duration-200"
     >
       <Navbar />
 
-      <main className="flex-1">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">{children}</div>
-      </main>
+      <main className="flex-1">{children}</main>
 
       <Footer />
 
@@ -47,9 +35,9 @@ const LayoutContent: React.FC<LayoutContentProps> = ({ children }) => {
         className="fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center"
         style={{ display: "none" }}
       >
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 flex items-center space-x-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span className="text-gray-900 dark:text-white">Đang tải...</span>
+        <div className="bg-cinema-card border border-cinema-border rounded-lg p-6 flex items-center space-x-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+          <span className="text-white">Đang tải...</span>
         </div>
       </div>
 

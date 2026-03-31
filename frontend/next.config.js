@@ -47,6 +47,41 @@ const nextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      // Old URL redirects for SEO
+      {
+        source: "/truyen_audio",
+        destination: "/truyen-audio",
+        permanent: true,
+      },
+      {
+        source: "/truyen_audio/:path*",
+        destination: "/truyen-audio/:path*",
+        permanent: true,
+      },
+      {
+        source: "/truyen_text",
+        destination: "/truyen-text",
+        permanent: true,
+      },
+      {
+        source: "/truyen_text/:path*",
+        destination: "/truyen-text/:path*",
+        permanent: true,
+      },
+      {
+        source: "/film-reviews",
+        destination: "/phim",
+        permanent: true,
+      },
+      {
+        source: "/film-reviews/:path*",
+        destination: "/phim/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

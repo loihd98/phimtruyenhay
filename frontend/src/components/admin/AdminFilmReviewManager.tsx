@@ -680,7 +680,7 @@ const AdminFilmReviewManager: React.FC = () => {
                         <div className="flex items-center justify-end space-x-2">
                           {/* View on site */}
                           <a
-                            href={`/film-reviews/${review.slug}`}
+                            href={`/phim/${review.slug}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 p-1 rounded transition-colors"

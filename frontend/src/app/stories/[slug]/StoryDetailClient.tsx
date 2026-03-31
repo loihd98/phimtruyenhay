@@ -275,20 +275,20 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
   if (loading) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-          <div className="container mx-auto px-4 py-8">
+        <div className="min-h-screen">
+          <div className="max-w-[1400px] mx-auto px-4 lg:px-8 py-8">
             <div className="max-w-6xl mx-auto">
               {/* Loading skeleton */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 animate-pulse">
+              <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 animate-pulse">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                   <div className="lg:col-span-1">
-                    <div className="w-full aspect-[3/2] bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+                    <div className="w-full aspect-[3/2] bg-white/[0.04] rounded-xl"></div>
                   </div>
                   <div className="lg:col-span-3">
-                    <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
-                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                    <div className="h-8 bg-white/[0.06] rounded mb-4"></div>
+                    <div className="h-4 bg-white/[0.06] rounded mb-2"></div>
+                    <div className="h-4 bg-white/[0.06] rounded mb-2"></div>
+                    <div className="h-4 bg-white/[0.06] rounded w-3/4"></div>
                   </div>
                 </div>
               </div>
@@ -302,15 +302,17 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
   if (error || !story) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <div className="text-6xl mb-4">📚</div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            <div className="w-16 h-16 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+            </div>
+            <h1 className="text-2xl font-bold text-white mb-4">
               {error || "Truyện không tồn tại"}
             </h1>
             <button
               onClick={() => router.push("/stories")}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="bg-primary-500 text-white px-6 py-2.5 rounded-xl hover:bg-primary-600 transition-colors text-sm"
             >
               Về trang danh sách truyện
             </button>
@@ -330,14 +332,14 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
         />
       )}
 
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className={`container mx-auto ${!isAudioStory ? 'px-4' : ''} py-8`}>
+      <div className="min-h-screen">
+        <div className={`max-w-[1400px] mx-auto ${!isAudioStory ? 'px-4 lg:px-8' : ''} py-8`}>
           <div className="max-w-6xl mx-auto">
             {/* Chapter Content */}
             {isAudioStory && (
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-5">
-                <div className="border-gray-200 dark:border-gray-700 mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 mb-5">
+                <div className="border-white/[0.06] mb-6">
+                  <h2 className="text-2xl font-bold text-white">
                     {story.title}
                   </h2>
                 </div>
@@ -348,7 +350,7 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                     alt={story.title}
                     width={600}
                     height={400}
-                    className="w-full h-auto rounded-lg object-contain bg-gray-200 dark:bg-gray-700"
+                    className="w-full h-auto rounded-xl object-contain bg-white/[0.04]"
                   />
                   {currentChapter?.audioUrl ? (
                     <div className="mb-6 mt-4">
@@ -362,16 +364,13 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                   {/* Deal Hot Section */}
                   {story.affiliate?.targetUrl && (
                     <div
-
-                      className="block my-6 p-4 bg-gradient-to-r from-orange-50 via-red-50 to-orange-50 dark:from-orange-900/30 dark:via-red-900/30 dark:to-orange-900/30 border-2 border-orange-400 dark:border-orange-600 rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-300"
+                      className="block my-6 p-4 bg-primary-500/10 border border-primary-500/20 rounded-2xl"
                     >
-                      <p className=" font-bold items-center flex-wrap text-center">
-                        <span className="text-2xl animate-bounce">🔥</span>
-                        <span className="text-orange-600 dark:text-orange-400 animate-pulse"> Cảm ơn bạn đã ghé thăm Kho Truyện Hay
-                          Nếu bạn thấy những câu chuyện ở đây thú vị, hãy bấm vào đây để ủng hộ tụi mình nhé. Mỗi lượt click của bạn là một nguồn động lực lớn để website tiếp tục chia sẻ thêm nhiều truyện hay mỗi ngày!</span>
+                      <p className="font-bold items-center flex-wrap text-center">
+                        <span className="text-primary-400 text-sm">Cảm ơn bạn đã ghé thăm The Midnight Movie Reel! Nếu bạn thấy những câu chuyện ở đây thú vị, hãy bấm vào đây để ủng hộ tụi mình nhé. Mỗi lượt click của bạn là một nguồn động lực lớn!</span>
                         <a href={story.affiliate.targetUrl}
                           target="_blank"
-                          rel="noopener noreferrer" className="underline text-blue-600 block"> 👉Click giúp tụi mình tại đây</a>
+                          rel="noopener noreferrer" className="underline text-primary-400 hover:text-primary-300 block mt-2 text-sm">Click ủng hộ tại đây</a>
                       </p>
                     </div>
                   )}
@@ -380,11 +379,11 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
               </div>
             )}
             {/* Story Header */}
-            {!isAudioStory && <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+            {!isAudioStory && <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 mb-6">
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 {/* Thumbnail */}
                 <div className="lg:col-span-1">
-                  <div className="w-full rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700">
+                  <div className="w-full rounded-xl overflow-hidden bg-white/[0.04]">
                     {story.thumbnailUrl ? (
                       <Image
                         src={getMediaUrl(story.thumbnailUrl)}
@@ -395,7 +394,7 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                       />
                     ) : (
                       <div className="w-full aspect-[3/2] flex items-center justify-center">
-                        <span className="text-gray-400 text-lg">📚</span>
+                        <svg className="w-8 h-8 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                       </div>
                     )}
                   </div>
@@ -404,23 +403,22 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                   <div className="mt-4 space-y-2">
                     <button
                       onClick={toggleBookmark}
-                      className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${isBookmarked
-                        ? "bg-red-100 text-red-700 hover:bg-red-200"
-                        : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                      className={`w-full py-2.5 px-4 rounded-xl font-medium transition-colors text-sm ${isBookmarked
+                        ? "bg-primary-500/10 text-primary-400 border border-primary-500/20"
+                        : "bg-white/[0.04] text-zinc-400 border border-white/[0.06] hover:text-white hover:bg-white/[0.08]"
                         }`}
                     >
-                      {isBookmarked ? "❤️ Đã yêu thích" : "🤍 Yêu thích"}
+                      {isBookmarked ? "\u2764 \u0110\u00e3 y\u00eau th\u00edch" : "Y\u00eau th\u00edch"}
                     </button>
 
                     {story.affiliate && (
                       <a
                         href={story.affiliate.targetUrl}
                         target="_blank"
-                        className="w-full py-2 px-4 bg-green-100 text-green-700 hover:bg-green-200 rounded-lg font-medium transition-colors text-center block"
+                        className="w-full py-2.5 px-4 bg-cinema-neon/10 text-cinema-neon border border-cinema-neon/20 hover:bg-cinema-neon/20 rounded-xl font-medium transition-colors text-center block text-sm"
                       >
-                        📥{" "}
                         {story.affiliate.label ||
-                          `Tải từ ${story.affiliate.provider}`}
+                          `T\u1ea3i t\u1eeb ${story.affiliate.provider}`}
                       </a>
                     )}
                   </div>
@@ -430,19 +428,25 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                 <div className="lg:col-span-3">
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                      <h1 className="text-3xl font-bold text-white mb-2">
                         {story.title}
                       </h1>
-                      <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-                        <span>👤 {story.author.name}</span>
-                        <span>👁️ {formatViewCount(story.viewCount)}</span>
+                      <div className="flex items-center gap-4 text-sm text-zinc-500">
+                        <span className="flex items-center gap-1.5">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                          {story.author.name}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                          {formatViewCount(story.viewCount)}
+                        </span>
                         <span
-                          className={`px-2 py-1 rounded-full text-xs ${isAudioStory
-                            ? "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
-                            : "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                          className={`px-2.5 py-0.5 rounded-full text-xs border ${isAudioStory
+                            ? "bg-cinema-purple/10 text-cinema-purple border-cinema-purple/20"
+                            : "bg-cinema-neon/10 text-cinema-neon border-cinema-neon/20"
                             }`}
                         >
-                          {isAudioStory ? "🎧 Audio" : "📖 Text"}
+                          {isAudioStory ? "Audio" : "Text"}
                         </span>
                       </div>
                     </div>
@@ -453,7 +457,7 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                     {story.genres.map((genre) => (
                       <span
                         key={genre.id}
-                        className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm"
+                        className="px-3 py-1 bg-white/[0.04] border border-white/[0.06] text-zinc-400 rounded-full text-sm"
                       >
                         {genre.name}
                       </span>
@@ -461,30 +465,30 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                   </div>
 
                   {/* Description */}
-                  <div className="text-gray-700 dark:text-gray-300">
-                    <h3 className="text-lg font-semibold mb-2">Mô tả</h3>
+                  <div className="text-zinc-400">
+                    <h3 className="text-base font-semibold text-zinc-300 mb-2">M\u00f4 t\u1ea3</h3>
                     <div
-                      className={`${!showFullDescription ? "line-clamp-4" : ""
+                      className={`text-sm ${!showFullDescription ? "line-clamp-4" : ""
                         }`}
                     >
-                      {story.description || "Chưa có mô tả"}
+                      {story.description || "Ch\u01b0a c\u00f3 m\u00f4 t\u1ea3"}
                     </div>
                     {story.description && story.description.length > 200 && (
                       <button
                         onClick={() =>
                           setShowFullDescription(!showFullDescription)
                         }
-                        className="text-blue-600 dark:text-blue-400 hover:underline mt-2"
+                        className="text-primary-400 hover:text-primary-300 mt-2 text-sm"
                       >
-                        {showFullDescription ? "Thu gọn" : "Xem thêm"}
+                        {showFullDescription ? "Thu g\u1ecdn" : "Xem th\u00eam"}
                       </button>
                     )}
                   </div>
 
                   {/* Chapter Statistics */}
-                  <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      {!isAudioStory && `📚 ${story.chapters.length} chương •`}  📅 Cập nhật:{" "}
+                  <div className="mt-6 pt-4 border-t border-white/[0.06]">
+                    <div className="text-sm text-zinc-500">
+                      {!isAudioStory && `${story.chapters.length} ch\u01b0\u01a1ng \u2022 `}C\u1eadp nh\u1eadt:{" "}
                       {new Date(story.updatedAt).toLocaleDateString("vi-VN")}
                     </div>
                   </div>
@@ -493,8 +497,8 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
             </div>}
             {/* Chapter Navigation */}
             {story.chapters.length > 0 && story.type === "TEXT" && (
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+              <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 mb-6">
+                <h2 className="text-lg font-bold text-white mb-4">
                   Danh sách chương
                 </h2>
 
@@ -506,7 +510,7 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                       onChange={(e) =>
                         handleChapterChange(Number(e.target.value))
                       }
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                      className="w-full p-2.5 border border-white/[0.06] rounded-xl bg-white/[0.02] text-white focus:outline-none focus:border-primary-500/50 text-sm"
                     >
                       {story.chapters.map((chapter) => (
                         <option key={chapter.id} value={chapter.number}>
@@ -522,14 +526,14 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                     <button
                       onClick={handlePrevChapter}
                       disabled={selectedChapter <= 1}
-                      className="text-sm sm:text-base flex-1 py-2 px-4 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="text-sm flex-1 py-2.5 px-4 bg-white/[0.04] border border-white/[0.06] text-zinc-400 rounded-xl hover:bg-white/[0.08] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
                       ← Chương trước
                     </button>
                     <button
                       onClick={handleNextChapter}
                       disabled={selectedChapter >= story.chapters.length}
-                      className="text-sm sm:text-base flex-1 py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="text-sm flex-1 py-2.5 px-4 bg-primary-500 text-white rounded-xl hover:bg-primary-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
                       Chương tiếp →
                     </button>
@@ -540,13 +544,12 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
 
             {/* Chapter Content */}
             {currentChapter && story.type === "TEXT" && (
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-                <div className="border-b border-gray-200 dark:border-gray-700 pb-4 mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6">
+                <div className="border-b border-white/[0.06] pb-4 mb-6">
+                  <h2 className="text-2xl font-bold text-white">
                     Chương {currentChapter.number}: {currentChapter.title}
                   </h2>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                    📅{" "}
+                  <div className="text-sm text-zinc-500 mt-2">
                     {new Date(currentChapter.createdAt).toLocaleDateString(
                       "vi-VN"
                     )}
@@ -555,16 +558,18 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
 
                 {currentChapter.isLocked && !user ? (
                   <div className="text-center py-12">
-                    <div className="text-6xl mb-4">🔒</div>
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                    <div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mx-auto mb-4">
+                      <svg className="w-7 h-7 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                    </div>
+                    <h3 className="text-lg font-semibold text-white mb-2">
                       Chương này cần đăng nhập
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
+                    <p className="text-zinc-500 text-sm mb-4">
                       Vui lòng đăng nhập để đọc chương này
                     </p>
                     <button
                       onClick={() => router.push("/auth/login")}
-                      className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                      className="bg-primary-500 text-white px-6 py-2.5 rounded-xl hover:bg-primary-600 transition-colors text-sm"
                     >
                       Đăng nhập
                     </button>
@@ -581,9 +586,9 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                     ) : null}
 
                     {currentChapter.content && (
-                      <div className="prose prose-lg dark:prose-invert max-w-none">
+                      <div className="prose prose-lg prose-invert max-w-none">
                         <div
-                          className="text-gray-700 dark:text-gray-300 leading-relaxed"
+                          className="text-zinc-300 leading-relaxed"
                           dangerouslySetInnerHTML={{
                             __html: currentChapter.content.replace(
                               /\n/g,
@@ -595,9 +600,11 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                     )}
 
                     {!currentChapter.content && story.type === "TEXT" && (
-                      <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-                        <div className="text-4xl mb-4">📝</div>
-                        <p>Nội dung chương đang được cập nhật...</p>
+                      <div className="text-center py-12 text-zinc-500">
+                        <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mx-auto mb-4">
+                          <svg className="w-6 h-6 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                        </div>
+                        <p className="text-sm">Nội dung chương đang được cập nhật...</p>
                       </div>
                     )}
 
@@ -606,23 +613,23 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                 )}
 
                 {/* Chapter Navigation Footer */}
-                <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex justify-between items-center mt-8 pt-6 border-t border-white/[0.06]">
                   <button
                     onClick={handlePrevChapter}
                     disabled={selectedChapter <= 1}
-                    className="flex items-center gap-2 py-2 px-4 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center gap-2 py-2.5 px-4 bg-white/[0.04] border border-white/[0.06] text-zinc-400 rounded-xl hover:bg-white/[0.08] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-sm"
                   >
                     ← Chương trước
                   </button>
 
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                  <span className="text-sm text-zinc-500">
                     {selectedChapter} / {story.chapters.length}
                   </span>
 
                   <button
                     onClick={handleNextChapter}
                     disabled={selectedChapter >= story.chapters.length}
-                    className="flex items-center gap-2 py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center gap-2 py-2.5 px-4 bg-primary-500 text-white rounded-xl hover:bg-primary-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-sm"
                   >
                     {(() => {
                       const nextChapter = story.chapters.find(
@@ -645,18 +652,21 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
             )}
 
             {/* Trending Stories Section */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mt-6">
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
-                🔥 <span className="ml-2">{t("home.trending")}</span>
+            <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 mt-6">
+              <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-primary-500/10 border border-primary-500/20 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                </div>
+                {t("home.trending")}
               </h3>
 
               {isLoadingTrending ? (
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   {Array.from({ length: 8 }).map((_, index) => (
-                    <div key={index} className="flex flex-col space-y-2">
-                      <div className="w-full h-48 bg-gray-300 dark:bg-gray-600 rounded"></div>
-                      <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded"></div>
-                      <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded w-2/3"></div>
+                    <div key={index} className="flex flex-col space-y-2 animate-pulse">
+                      <div className="w-full h-48 bg-white/[0.04] rounded-xl"></div>
+                      <div className="h-4 bg-white/[0.06] rounded"></div>
+                      <div className="h-3 bg-white/[0.06] rounded w-2/3"></div>
                     </div>
                   ))}
                 </div>
@@ -671,7 +681,7 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                       <div className="relative">
                         {/* Ranking Badge */}
                         <div className="absolute top-2 left-2 z-10">
-                          <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg">
+                          <div className="w-7 h-7 bg-white/[0.08] backdrop-blur-sm border border-white/[0.12] rounded-lg flex items-center justify-center text-white text-xs font-bold">
                             {index + 1}
                           </div>
                         </div>
@@ -683,19 +693,19 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                             alt={trendingStory.title}
                             width={300}
                             height={200}
-                            className="w-full h-48 object-cover rounded-lg mb-3 group-hover:opacity-90 transition-opacity"
+                            className="w-full h-48 object-cover rounded-xl mb-3 group-hover:opacity-90 transition-opacity"
                           />
                         ) : (
-                          <div className="w-full h-48 bg-gray-200 dark:bg-gray-700 rounded-lg mb-3 flex items-center justify-center">
-                            <span className="text-4xl">📚</span>
+                          <div className="w-full h-48 bg-white/[0.04] rounded-xl mb-3 flex items-center justify-center">
+                            <svg className="w-8 h-8 text-zinc-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                           </div>
                         )}
 
                         {/* Story Info */}
-                        <h4 className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 line-clamp-2 mb-1">
+                        <h4 className="text-sm font-medium text-white group-hover:text-primary-400 line-clamp-2 mb-1">
                           {trendingStory.title}
                         </h4>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                        <p className="text-xs text-zinc-500 mb-2">
                           {trendingStory.author?.name || "Tác giả không xác định"}
                         </p>
                         <div className="flex items-center text-xs text-gray-400">
@@ -725,7 +735,7 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 dark:text-gray-400 text-center py-8">
+                <p className="text-zinc-500 text-center py-8 text-sm">
                   Chưa có truyện trending.
                 </p>
               )}
@@ -736,7 +746,7 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
               <div className="mt-6">
                 <CommentSection
                   chapterId={currentChapter.id}
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6"
+                  className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6"
                 />
               </div>
             )}

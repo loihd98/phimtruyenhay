@@ -29,7 +29,7 @@ docker exec -t <postgres_container> pg_dump -U <user> -d <dbname> > backup_$(dat
 docker-compose exec db pg_dump -U postgres -d vivutruyenghay > backup_pre_rbac.sql
 
 # Backup toàn bộ volumes
-docker run --rm -v vivutruyenhay_pgdata:/data -v $(pwd):/backup alpine tar czf /backup/pgdata_backup.tar.gz /data
+docker run --rm -v themidnightmoviereel_pgdata:/data -v $(pwd):/backup alpine tar czf /backup/pgdata_backup.tar.gz /data
 ```
 
 ---

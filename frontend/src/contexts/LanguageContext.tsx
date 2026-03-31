@@ -58,9 +58,9 @@ const translations: Record<Language, TranslationKeys> = {
     "common.audio": "Audio",
 
     // Home page
-    "home.hero.title": "Khám phá thế giới truyện",
-    "home.hero.subtitle": "Hàng nghìn câu chuyện hấp dẫn đang chờ bạn khám phá",
-    "home.hero.cta": "Bắt đầu đọc",
+    "home.hero.title": "Khám phá thế giới điện ảnh",
+    "home.hero.subtitle": "Review phim, phân tích nội dung chuyên sâu và gợi ý phim hay mỗi ngày",
+    "home.hero.cta": "Xem Review",
     "home.featured.text": "Truyện văn bản mới nhất",
     "home.featured.audio": "Truyện audio nổi bật",
     "home.featured.recent": "Vừa cập nhật",
@@ -72,7 +72,7 @@ const translations: Record<Language, TranslationKeys> = {
     "home.ongoing_stories": "Đang cập nhật",
 
     // Stories page
-    "stories.title": "Vi Vu Truyện Hay",
+    "stories.title": "The Midnight Movie Reel",
     "stories.filter.all": "Tất cả",
     "stories.filter.text": "Văn bản",
     "stories.filter.audio": "Audio",

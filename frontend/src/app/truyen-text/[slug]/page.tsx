@@ -28,15 +28,15 @@ export async function generateMetadata({
 
   if (!story) {
     return {
-      title: "Truyện không tồn tại – Kho Truyện Hay",
+      title: "Truyện không tồn tại – The Midnight Movie Reel",
       description: "Truyện bạn tìm kiếm không tồn tại hoặc đã bị xóa.",
     };
   }
 
-  const title = `${story.title} – Đọc Truyện Online | Kho Truyện Hay`;
+  const title = `${story.title} – Đọc Truyện Online | The Midnight Movie Reel`;
   const description =
     story.description?.substring(0, 160) ||
-    `Đọc ${story.title} – Truyện Chữ miễn phí tại Kho Truyện Hay. ${story.chapters?.length || 0} chương.`;
+    `Đọc ${story.title} – Truyện Chữ miễn phí tại The Midnight Movie Reel. ${story.chapters?.length || 0} chương.`;
 
   return {
     title,
@@ -53,13 +53,13 @@ export async function generateMetadata({
       description,
       type: "article",
       locale: "vi_VN",
-      siteName: "Kho Truyện Hay",
+      siteName: "The Midnight Movie Reel",
       ...(story.thumbnailUrl && {
         images: [
           {
             url: story.thumbnailUrl.startsWith("http")
               ? story.thumbnailUrl
-              : `${process.env.NEXT_PUBLIC_SITE_URL || "https://vivutruyenhay.com"}${story.thumbnailUrl}`,
+              : `${process.env.NEXT_PUBLIC_SITE_URL || "https://themidnightmoviereel.io.vn"}${story.thumbnailUrl}`,
             width: 1200,
             height: 630,
             alt: story.title,
@@ -68,7 +68,7 @@ export async function generateMetadata({
       }),
     },
     alternates: {
-      canonical: `/truyen_text/${params.slug}`,
+      canonical: `/truyen-text/${params.slug}`,
     },
   };
 }

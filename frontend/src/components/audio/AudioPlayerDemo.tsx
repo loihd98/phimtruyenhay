@@ -10,35 +10,35 @@ const AudioPlayerDemo: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <h1 className="text-3xl font-bold text-white mb-2">
           🎵 Enhanced Audio Player
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-zinc-500">
           Với các tính năng mới: Tốc độ phát, Skip, Loop, Phím tắt
         </p>
       </div>
 
       {/* Feature list */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+      <div className="bg-white/[0.02] rounded-lg p-6 shadow-md">
+        <h2 className="text-xl font-semibold mb-4 text-white">
           ✨ Tính năng mới
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="text-blue-500">⚡</span>
+              <span className="text-primary-400">⚡</span>
               <span>Tốc độ phát: 0.5x, 0.75x, 1x, 1.25x, 1.5x, 2x</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-blue-500">⏭️</span>
+              <span className="text-primary-400">⏭️</span>
               <span>Skip ±10 giây</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-blue-500">🔄</span>
+              <span className="text-primary-400">🔄</span>
               <span>Lặp lại audio</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-blue-500">🎛️</span>
+              <span className="text-primary-400">🎛️</span>
               <span>Thanh tiến trình cải tiến</span>
             </div>
           </div>
@@ -70,11 +70,11 @@ const AudioPlayerDemo: React.FC = () => {
       />
 
       {/* Usage instructions */}
-      <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
-        <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+      <div className="bg-primary-500/5 /20 rounded-lg p-4 border border-primary-500/20">
+        <h3 className="font-semibold text-primary-300  mb-2">
           📖 Hướng dẫn sử dụng
         </h3>
-        <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+        <ul className="text-sm text-primary-400  space-y-1">
           <li>• Click vào số tốc độ để thay đổi tốc độ phát</li>
           <li>• Sử dụng nút skip để tua lại/tới 10 giây</li>
           <li>

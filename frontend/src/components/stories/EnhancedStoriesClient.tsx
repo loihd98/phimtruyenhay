@@ -177,7 +177,7 @@ const EnhancedStoriesClient: React.FC<EnhancedStoriesClientProps> = ({
     setSortBy("newest");
     setMinChapters("");
     setAuthorSearch("");
-    router.push("/truyen_text");
+    router.push("/truyen-text");
   };
 
   const getActiveFiltersCount = () => {
@@ -195,27 +195,27 @@ const EnhancedStoriesClient: React.FC<EnhancedStoriesClientProps> = ({
   return (
     <div className="space-y-6">
       {/* Header with Stats */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-5">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h2 className="text-xl font-bold text-white">
               {t("stories.title")}
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-zinc-500 text-sm">
               {t("stories.total_found")}:{" "}
-              <span className="font-semibold">{pagination.total}</span>{" "}
+              <span className="font-semibold text-zinc-300">{pagination.total}</span>{" "}
               {t("stories.stories")}
             </p>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             {/* View Mode Toggle */}
-            <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+            <div className="flex bg-white/[0.04] border border-white/[0.06] rounded-xl p-1">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`p-2 rounded ${viewMode === "grid"
-                    ? "bg-white dark:bg-gray-600 shadow-sm text-blue-600 dark:text-blue-400"
-                    : "text-gray-500 dark:text-gray-400"
+                className={`p-2 rounded-lg ${viewMode === "grid"
+                    ? "bg-white/[0.08] text-primary-400"
+                    : "text-zinc-500"
                   }`}
               >
                 <svg
@@ -228,9 +228,9 @@ const EnhancedStoriesClient: React.FC<EnhancedStoriesClientProps> = ({
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-2 rounded ${viewMode === "list"
-                    ? "bg-white dark:bg-gray-600 shadow-sm text-blue-600 dark:text-blue-400"
-                    : "text-gray-500 dark:text-gray-400"
+                className={`p-2 rounded-lg ${viewMode === "list"
+                    ? "bg-white/[0.08] text-primary-400"
+                    : "text-zinc-500"
                   }`}
               >
                 <svg
@@ -250,7 +250,7 @@ const EnhancedStoriesClient: React.FC<EnhancedStoriesClientProps> = ({
             {/* Filter Toggle */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-medium transition-colors text-sm"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path
@@ -272,23 +272,23 @@ const EnhancedStoriesClient: React.FC<EnhancedStoriesClientProps> = ({
 
       {/* Advanced Filters Panel */}
       {showFilters && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 space-y-6">
+        <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-5 space-y-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <h3 className="text-base font-semibold text-white">
               {t("stories.advanced_filters")}
             </h3>
             <button
               onClick={clearAllFilters}
-              className="text-red-600 hover:text-red-700 dark:text-red-400 font-medium"
+              className="text-primary-400 hover:text-primary-300 font-medium text-sm"
             >
               {t("stories.clear_all")}
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Search */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-xs font-medium text-zinc-500 mb-1.5">
                 {t("stories.search_title")}
               </label>
               <input
@@ -296,13 +296,13 @@ const EnhancedStoriesClient: React.FC<EnhancedStoriesClientProps> = ({
                 placeholder={t("stories.search_placeholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                className="w-full px-3 py-2 border border-white/[0.06] rounded-xl bg-white/[0.02] text-white placeholder-zinc-600 focus:outline-none focus:border-primary-500/50 text-sm"
               />
             </div>
 
             {/* Author Search */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-xs font-medium text-zinc-500 mb-1.5">
                 {t("stories.search_author")}
               </label>
               <input
@@ -310,35 +310,35 @@ const EnhancedStoriesClient: React.FC<EnhancedStoriesClientProps> = ({
                 placeholder={t("stories.author_placeholder")}
                 value={authorSearch}
                 onChange={(e) => setAuthorSearch(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                className="w-full px-3 py-2 border border-white/[0.06] rounded-xl bg-white/[0.02] text-white placeholder-zinc-600 focus:outline-none focus:border-primary-500/50 text-sm"
               />
             </div>
 
             {/* Type Filter */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-xs font-medium text-zinc-500 mb-1.5">
                 {t("stories.type")}
               </label>
               <select
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value as any)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                className="w-full px-3 py-2 border border-white/[0.06] rounded-xl bg-white/[0.02] text-white focus:outline-none focus:border-primary-500/50 text-sm"
               >
                 <option value="">{t("stories.all_types")}</option>
-                <option value="TEXT">📖 {t("stories.text_stories")}</option>
-                <option value="AUDIO">🎧 {t("stories.audio_stories")}</option>
+                <option value="TEXT">{t("stories.text_stories")}</option>
+                <option value="AUDIO">{t("stories.audio_stories")}</option>
               </select>
             </div>
 
             {/* Status Filter */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-xs font-medium text-zinc-500 mb-1.5">
                 {t("stories.status")}
               </label>
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value as any)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                className="w-full px-3 py-2 border border-white/[0.06] rounded-xl bg-white/[0.02] text-white focus:outline-none focus:border-primary-500/50 text-sm"
               >
                 <option value="">{t("stories.all_statuses")}</option>
                 <option value="PUBLISHED">{t("stories.published")}</option>
@@ -348,13 +348,13 @@ const EnhancedStoriesClient: React.FC<EnhancedStoriesClientProps> = ({
 
             {/* Sort By */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-xs font-medium text-zinc-500 mb-1.5">
                 {t("stories.sort_by")}
               </label>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                className="w-full px-3 py-2 border border-white/[0.06] rounded-xl bg-white/[0.02] text-white focus:outline-none focus:border-primary-500/50 text-sm"
               >
                 <option value="newest">{t("stories.sort_newest")}</option>
                 <option value="oldest">{t("stories.sort_oldest")}</option>
@@ -366,7 +366,7 @@ const EnhancedStoriesClient: React.FC<EnhancedStoriesClientProps> = ({
 
             {/* Min Chapters */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-xs font-medium text-zinc-500 mb-1.5">
                 {t("stories.min_chapters")}
               </label>
               <input
@@ -375,14 +375,14 @@ const EnhancedStoriesClient: React.FC<EnhancedStoriesClientProps> = ({
                 min="0"
                 value={minChapters}
                 onChange={(e) => setMinChapters(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                className="w-full px-3 py-2 border border-white/[0.06] rounded-xl bg-white/[0.02] text-white focus:outline-none focus:border-primary-500/50 text-sm"
               />
             </div>
           </div>
 
           {/* Genres Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            <label className="block text-xs font-medium text-zinc-500 mb-2">
               {t("stories.genres")} ({selectedGenres.length}{" "}
               {t("stories.selected")})
             </label>
@@ -391,9 +391,9 @@ const EnhancedStoriesClient: React.FC<EnhancedStoriesClientProps> = ({
                 <button
                   key={genre.id}
                   onClick={() => handleGenreToggle(genre.slug)}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${selectedGenres.includes(genre.slug)
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                  className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-colors ${selectedGenres.includes(genre.slug)
+                      ? "bg-primary-500 text-white"
+                      : "bg-white/[0.04] border border-white/[0.06] text-zinc-400 hover:bg-white/[0.08] hover:text-white"
                     }`}
                 >
                   {genre.name} ({genre._count?.stories || 0})
@@ -405,24 +405,26 @@ const EnhancedStoriesClient: React.FC<EnhancedStoriesClientProps> = ({
       )}
 
       {/* Stories Grid/List */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-5">
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="ml-3">{t("common.loading")}</span>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+            <span className="ml-3 text-zinc-400 text-sm">{t("common.loading")}</span>
           </div>
         ) : stories.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-gray-400 text-6xl mb-4">📚</div>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            <div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mx-auto mb-4">
+              <svg className="w-7 h-7 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+            </div>
+            <h3 className="text-base font-medium text-white mb-2">
               {t("stories.no_stories_found")}
             </h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-4">
+            <p className="text-zinc-500 text-sm mb-4">
               {t("stories.try_different_filters")}
             </p>
             <button
               onClick={clearAllFilters}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2.5 rounded-xl font-medium transition-colors text-sm"
             >
               {t("stories.clear_filters")}
             </button>
@@ -440,7 +442,7 @@ const EnhancedStoriesClient: React.FC<EnhancedStoriesClientProps> = ({
                 {stories.map((story) => (
                   <div
                     key={story.id}
-                    className="flex items-center space-x-4 p-4 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    className="flex items-center space-x-4 p-4 border border-white/[0.06] rounded-xl hover:bg-white/[0.04] transition-colors"
                   >
                     <img
                       src={
@@ -448,28 +450,29 @@ const EnhancedStoriesClient: React.FC<EnhancedStoriesClientProps> = ({
                         "https://via.placeholder.com/80x120?text=No+Image"
                       }
                       alt={story.title}
-                      className="w-16 h-24 object-cover rounded"
+                      className="w-16 h-24 object-cover rounded-lg"
                     />
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
+                      <h3 className="text-base font-semibold text-white truncate">
                         {story.title}
                       </h3>
                       {story.description && (
-                        <p className="text-gray-600 dark:text-gray-400 text-sm mt-1 line-clamp-2">
+                        <p className="text-zinc-500 text-sm mt-1 line-clamp-2">
                           {story.description}
                         </p>
                       )}
-                      <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center space-x-4 mt-2 text-xs text-zinc-500">
                         <span>{story.author?.name}</span>
-                        <span>👁️ {formatViewCount(story.viewCount)}</span>
-                        <span>📖 {story._count?.chapters || 0}</span>
+                        <span>{formatViewCount(story.viewCount)} views</span>
+                        <span>{story._count?.chapters || 0} ch.</span>
                         <span
-                          className={`px-2 py-1 rounded text-xs ${story.type === "AUDIO"
-                              ? "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
-                              : "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-                            }`}
+                          className={`px-2 py-0.5 rounded-full text-xs border ${
+                            story.type === "AUDIO"
+                              ? "bg-cinema-purple/10 text-cinema-purple border-cinema-purple/20"
+                              : "bg-cinema-neon/10 text-cinema-neon border-cinema-neon/20"
+                          }`}
                         >
-                          {story.type === "AUDIO" ? "🎧 Audio" : "📖 Text"}
+                          {story.type === "AUDIO" ? "Audio" : "Text"}
                         </span>
                       </div>
                     </div>
@@ -484,7 +487,7 @@ const EnhancedStoriesClient: React.FC<EnhancedStoriesClientProps> = ({
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="px-3 py-2 text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-2 text-zinc-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed text-sm"
                 >
                   ← {t("common.previous")}
                 </button>
@@ -497,9 +500,9 @@ const EnhancedStoriesClient: React.FC<EnhancedStoriesClientProps> = ({
                     <button
                       key={page}
                       onClick={() => handlePageChange(page)}
-                      className={`px-3 py-2 rounded ${page === currentPage
-                          ? "bg-blue-600 text-white"
-                          : "text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className={`w-10 h-10 rounded-xl text-sm font-medium transition-colors ${page === currentPage
+                          ? "bg-primary-500 text-white"
+                          : "bg-white/[0.02] border border-white/[0.06] text-zinc-400 hover:bg-white/[0.06] hover:text-white"
                         }`}
                     >
                       {page}
@@ -510,7 +513,7 @@ const EnhancedStoriesClient: React.FC<EnhancedStoriesClientProps> = ({
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="px-3 py-2 text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-2 text-zinc-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed text-sm"
                 >
                   {t("common.next")} →
                 </button>

@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import AdminGuard from "../../components/admin/AdminGuard";
 
 export const metadata: Metadata = {
-  title: "Admin Panel - vivutruyenhay.com",
+  title: "Admin Panel - The Midnight Movie Reel",
   description: "Admin panel for managing stories, users, and system settings",
   robots: "noindex, nofollow",
 };

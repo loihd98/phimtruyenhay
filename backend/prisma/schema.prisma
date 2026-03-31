@@ -60,6 +60,8 @@ model User {
   filmReviews  FilmReview[]
   filmComments FilmComment[]
   refreshTokens RefreshToken[]
+  blogPosts    BlogPost[]
+  blogComments BlogComment[]
   
   @@map("users")
 }
@@ -266,6 +268,13 @@ enum FilmReviewStatus {
   PUBLISHED
 }
 
+enum FilmLanguage {
+  VIETSUB
+  THUYET_MINH
+  LONG_TIENG
+  RAW
+}
+
 model FilmCategory {
   id        String   @id @default(cuid())
   name      String   @unique
@@ -304,6 +313,11 @@ model FilmReview {
   status        FilmReviewStatus @default(DRAFT)
   viewCount     Int              @default(0)
 
+  // Episode & language fields
+  language      FilmLanguage     @default(VIETSUB)
+  totalEpisodes Int              @default(1)    // Total episodes (1 for movies)
+  isMovie       Boolean          @default(true) // true = single movie, false = series
+
   // Author relationship
   authorId      String
   author        User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
@@ -325,8 +339,29 @@ model FilmReview {
   // Relations
   comments      FilmComment[]
   bookmarks     Bookmark[]
+  episodes      FilmEpisode[]
 
   @@map("film_reviews")
+}
+
+model FilmEpisode {
+  id           String     @id @default(cuid())
+  episodeNum   Int        // Episode number (1, 2, 3...)
+  title        String?    // Optional episode title
+  videoUrl     String     // URL to the video source
+  duration     Int?       // Duration in minutes
+  language     FilmLanguage @default(VIETSUB)
+
+  // Film relationship
+  filmReviewId String
+  filmReview   FilmReview @relation(fields: [filmReviewId], references: [id], onDelete: Cascade)
+
+  // Timestamps
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([filmReviewId, episodeNum])
+  @@map("film_episodes")
 }
 
 model FilmComment {
@@ -352,6 +387,76 @@ model FilmComment {
   updatedAt    DateTime @updatedAt
 
   @@map("film_comments")
+}
+
+// ===== RBAC Permission System =====
+
+// ===== Blog Feature =====
+
+enum BlogPostStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model BlogCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  posts     BlogPost[]
+
+  @@map("blog_categories")
+}
+
+model BlogPost {
+  id           String         @id @default(cuid())
+  slug         String         @unique
+  title        String
+  content      String         @db.Text
+  excerpt      String?
+  thumbnailUrl String?
+  tags         String[]
+  status       BlogPostStatus @default(DRAFT)
+  viewCount    Int            @default(0)
+
+  // Author
+  authorId     String
+  author       User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  // Categories (many-to-many)
+  categories   BlogCategory[]
+
+  // Timestamps
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  // Relations
+  comments     BlogComment[]
+
+  @@map("blog_posts")
+}
+
+model BlogComment {
+  id         String   @id @default(cuid())
+  content    String
+  isApproved Boolean  @default(false)
+
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  blogPostId String
+  blogPost   BlogPost @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
+
+  parentId   String?
+  parent     BlogComment?  @relation("BlogCommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies    BlogComment[] @relation("BlogCommentReplies")
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("blog_comments")
 }
 
 // ===== RBAC Permission System =====

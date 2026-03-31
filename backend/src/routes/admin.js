@@ -87,6 +87,11 @@ router.put("/film-reviews/:id", requirePermission("film.update")[1], filmReviews
 router.patch("/film-reviews/:id", requirePermission("film.update")[1], filmReviewsController.adminUpdateFilmReview);
 router.delete("/film-reviews/:id", requirePermission("film.delete")[1], filmReviewsController.adminDeleteFilmReview);
 
+// Film Episode management
+router.post("/film-reviews/:filmId/episodes", requirePermission("film.create")[1], filmReviewsController.adminCreateEpisode);
+router.put("/film-reviews/episodes/:id", requirePermission("film.update")[1], filmReviewsController.adminUpdateEpisode);
+router.delete("/film-reviews/episodes/:id", requirePermission("film.delete")[1], filmReviewsController.adminDeleteEpisode);
+
 // Film Category management
 router.get("/film-categories", requirePermission("film.view")[1], filmReviewsController.adminGetFilmCategories);
 router.post("/film-categories", requirePermission("film.genre.create")[1], filmReviewsController.adminCreateFilmCategory);

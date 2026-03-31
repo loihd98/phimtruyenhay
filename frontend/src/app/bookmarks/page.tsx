@@ -136,17 +136,17 @@ export default function BookmarksPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen bg-[#08080d]">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-6xl mx-auto">
             {/* Header */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+            <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 mb-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                  <h1 className="text-3xl font-bold text-white">
                     {activeTab === "STORIES" ? "📚 Truyện đã yêu thích" : "🎬 Phim đã yêu thích"}
                   </h1>
-                  <p className="text-gray-600 dark:text-gray-400 mt-2">
+                  <p className="text-zinc-500 mt-2">
                     {totalBookmarks} {activeTab === "STORIES" ? "truyện" : "phim"} đã được đánh dấu yêu thích
                   </p>
                 </div>
@@ -154,7 +154,7 @@ export default function BookmarksPage() {
                 {/* Filter - only show for stories tab */}
                 {activeTab === "STORIES" && (
                   <div className="flex items-center space-x-2">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="text-sm text-zinc-500">
                       Lọc:
                     </span>
                     <select
@@ -163,7 +163,7 @@ export default function BookmarksPage() {
                         setFilter(e.target.value as "ALL" | "TEXT" | "AUDIO");
                         setCurrentPage(1);
                       }}
-                      className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                      className="px-3 py-2 border border-white/[0.06] rounded-2xl bg-white/[0.02] text-white focus:ring-2 focus:ring-primary-500"
                     >
                       <option value="ALL">Tất cả</option>
                       <option value="TEXT">📖 Text</option>
@@ -174,13 +174,13 @@ export default function BookmarksPage() {
               </div>
 
               {/* Tabs */}
-              <div className="flex border-b border-gray-200 dark:border-gray-700">
+              <div className="flex border-b border-white/[0.06]">
                 <button
                   onClick={() => { setActiveTab("STORIES"); setCurrentPage(1); setFilter("ALL"); }}
                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                     activeTab === "STORIES"
-                      ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                      : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                      ? "border-primary-500 text-primary-400"
+                      : "border-transparent text-zinc-500 hover:text-gray-700 "
                   }`}
                 >
                   📚 Truyện
@@ -189,8 +189,8 @@ export default function BookmarksPage() {
                   onClick={() => { setActiveTab("FILMS"); setCurrentPage(1); }}
                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                     activeTab === "FILMS"
-                      ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                      : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                      ? "border-primary-500 text-primary-400"
+                      : "border-transparent text-zinc-500 hover:text-gray-700 "
                   }`}
                 >
                   🎬 Phim
@@ -204,13 +204,13 @@ export default function BookmarksPage() {
                 {[...Array(8)].map((_, i) => (
                   <div
                     key={i}
-                    className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden animate-pulse"
+                    className="bg-white/[0.02] border border-white/[0.06] rounded-2xl overflow-hidden animate-pulse"
                   >
-                    <div className="w-full h-48 bg-gray-200 dark:bg-gray-700"></div>
+                    <div className="w-full h-48 bg-white/[0.04]"></div>
                     <div className="p-4">
-                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                      <div className="h-4 bg-white/[0.04] rounded mb-2"></div>
+                      <div className="h-3 bg-white/[0.04] rounded mb-2"></div>
+                      <div className="h-3 bg-white/[0.04] rounded w-3/4"></div>
                     </div>
                   </div>
                 ))}
@@ -221,13 +221,13 @@ export default function BookmarksPage() {
             {error && !loading && (
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">😞</div>
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg font-medium text-white mb-2">
                   Có lỗi xảy ra
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
+                <p className="text-zinc-500 mb-4">{error}</p>
                 <button
                   onClick={fetchBookmarks}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 bg-primary-500 text-white rounded-2xl hover:bg-primary-600 transition-colors"
                 >
                   Thử lại
                 </button>
@@ -238,17 +238,17 @@ export default function BookmarksPage() {
             {!loading && !error && bookmarks?.length === 0 && (
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">{activeTab === "STORIES" ? "📚" : "🎬"}</div>
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg font-medium text-white mb-2">
                   {activeTab === "STORIES" ? "Chưa có truyện yêu thích" : "Chưa có phim yêu thích"}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                <p className="text-zinc-500 mb-4">
                   {activeTab === "STORIES"
                     ? "Hãy khám phá và đánh dấu những truyện bạn yêu thích!"
                     : "Hãy khám phá và đánh dấu những phim bạn yêu thích!"}
                 </p>
                 <button
-                  onClick={() => router.push(activeTab === "STORIES" ? "/truyen_text" : "/film-reviews")}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  onClick={() => router.push(activeTab === "STORIES" ? "/truyen-text" : "/phim")}
+                  className="px-4 py-2 bg-primary-500 text-white rounded-2xl hover:bg-primary-600 transition-colors"
                 >
                   {activeTab === "STORIES" ? "Khám phá truyện" : "Khám phá phim"}
                 </button>
@@ -265,7 +265,7 @@ export default function BookmarksPage() {
                       return (
                         <div
                           key={bookmark.id}
-                          className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow group"
+                          className="bg-white/[0.02] border border-white/[0.06] rounded-2xl overflow-hidden hover:shadow-none transition-shadow group"
                         >
                           <div className="relative aspect-[3/4] overflow-hidden">
                             {bookmark.filmReview.thumbnailUrl ? (
@@ -276,7 +276,7 @@ export default function BookmarksPage() {
                                 className="object-cover group-hover:scale-105 transition-transform duration-300"
                               />
                             ) : (
-                              <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                              <div className="w-full h-full bg-white/[0.04] flex items-center justify-center">
                                 <div className="text-4xl text-gray-400">🎬</div>
                               </div>
                             )}
@@ -308,34 +308,34 @@ export default function BookmarksPage() {
 
                           <div className="p-4">
                             <h3
-                              className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400"
-                              onClick={() => router.push(`/film-reviews/${bookmark.filmReview!.slug}`)}
+                              className="font-semibold text-white mb-2 line-clamp-2 cursor-pointer hover:text-primary-400"
+                              onClick={() => router.push(`/phim/${bookmark.filmReview!.slug}`)}
                             >
                               {bookmark.filmReview.title}
                             </h3>
 
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                            <p className="text-sm text-zinc-500 mb-2">
                               👤 {bookmark.filmReview.author?.name}
                             </p>
 
-                            <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
+                            <p className="text-sm text-zinc-500 line-clamp-2 mb-3">
                               {bookmark.filmReview.description || "Chưa có mô tả"}
                             </p>
 
                             <div className="flex flex-wrap gap-1 mb-3">
                               {bookmark.filmReview.categories?.slice(0, 2).map((cat) => (
-                                <span key={cat.id} className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded text-xs">
+                                <span key={cat.id} className="px-2 py-1 bg-white/[0.04] text-zinc-500 rounded text-xs">
                                   {cat.name}
                                 </span>
                               ))}
                               {(bookmark.filmReview.categories?.length || 0) > 2 && (
-                                <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded text-xs">
+                                <span className="px-2 py-1 bg-white/[0.04] text-zinc-500 rounded text-xs">
                                   +{bookmark.filmReview.categories!.length - 2}
                                 </span>
                               )}
                             </div>
 
-                            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                            <div className="flex items-center justify-between text-xs text-zinc-500">
                               <span>👁️ {formatViewCount(bookmark.filmReview.viewCount)}</span>
                               <span>📅 {new Date(bookmark.createdAt).toLocaleDateString("vi-VN")}</span>
                             </div>
@@ -348,7 +348,7 @@ export default function BookmarksPage() {
                     return (
                     <div
                       key={bookmark?.id}
-                      className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow group"
+                      className="bg-white/[0.02] border border-white/[0.06] rounded-2xl overflow-hidden hover:shadow-none transition-shadow group"
                     >
                       {/* Thumbnail */}
                       <div className="relative aspect-[3/4] overflow-hidden">
@@ -360,7 +360,7 @@ export default function BookmarksPage() {
                             className="object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         ) : (
-                          <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                          <div className="w-full h-full bg-white/[0.04] flex items-center justify-center">
                             <div className="text-4xl text-gray-400">
                               {bookmark?.story?.type === "AUDIO" ? "🎧" : "📖"}
                             </div>
@@ -372,7 +372,7 @@ export default function BookmarksPage() {
                           <span
                             className={`px-2 py-1 rounded-full text-xs font-medium ${bookmark?.story?.type === "AUDIO"
                                 ? "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
-                                : "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                                : "bg-primary-500/10 text-primary-400 "
                               }`}
                           >
                             {bookmark?.story?.type === "AUDIO"
@@ -406,7 +406,7 @@ export default function BookmarksPage() {
                       {/* Content */}
                       <div className="p-4">
                         <h3
-                          className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400"
+                          className="font-semibold text-white mb-2 line-clamp-2 cursor-pointer hover:text-primary-400"
                           onClick={() =>
                             router.push(
                               `/stories/${bookmark?.story?.slug}?from=bookmarks`
@@ -416,11 +416,11 @@ export default function BookmarksPage() {
                           {bookmark?.story?.title}
                         </h3>
 
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                        <p className="text-sm text-zinc-500 mb-2">
                           👤 {bookmark?.story?.author?.name}
                         </p>
 
-                        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
+                        <p className="text-sm text-zinc-500 line-clamp-2 mb-3">
                           {bookmark?.story?.description || "Chưa có mô tả"}
                         </p>
 
@@ -435,13 +435,13 @@ export default function BookmarksPage() {
                                 {genres.slice(0, 2).map((genre) => (
                                   <span
                                     key={genre.id}
-                                    className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded text-xs"
+                                    className="px-2 py-1 bg-white/[0.04] text-zinc-500 rounded text-xs"
                                   >
                                     {genre.name}
                                   </span>
                                 ))}
                                 {genres.length > 2 && (
-                                  <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded text-xs">
+                                  <span className="px-2 py-1 bg-white/[0.04] text-zinc-500 rounded text-xs">
                                     +{genres.length - 2}
                                   </span>
                                 )}
@@ -451,7 +451,7 @@ export default function BookmarksPage() {
                         </div>
 
                         {/* Stats */}
-                        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                        <div className="flex items-center justify-between text-xs text-zinc-500">
                           <span>
                             👁️ {formatViewCount(bookmark?.story?.viewCount || 0)}
                           </span>
@@ -474,7 +474,7 @@ export default function BookmarksPage() {
                     <button
                       onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage <= 1}
-                      className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-3 py-2 border border-white/[0.06] rounded-2xl text-zinc-400 hover:bg-white/[0.04] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       ← Trước
                     </button>
@@ -487,9 +487,9 @@ export default function BookmarksPage() {
                         <button
                           key={page}
                           onClick={() => handlePageChange(page)}
-                          className={`px-3 py-2 rounded-lg ${currentPage === page
-                              ? "bg-blue-600 text-white"
-                              : "border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                          className={`px-3 py-2 rounded-2xl ${currentPage === page
+                              ? "bg-primary-500 text-white"
+                              : "border border-white/[0.06] text-zinc-400 hover:bg-white/[0.04]"
                             }`}
                         >
                           {page}
@@ -500,7 +500,7 @@ export default function BookmarksPage() {
                     <button
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage >= totalPages}
-                      className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-3 py-2 border border-white/[0.06] rounded-2xl text-zinc-400 hover:bg-white/[0.04] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Sau →
                     </button>

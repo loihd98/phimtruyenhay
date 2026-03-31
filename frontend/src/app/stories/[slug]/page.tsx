@@ -25,17 +25,17 @@ export async function generateMetadata({
 
   if (!story) {
     return {
-      title: "Truyện không tồn tại - vivutruyenhay.com",
+      title: "Truyện không tồn tại - The Midnight Movie Reel",
       description: "Truyện bạn tìm kiếm không tồn tại hoặc đã bị xóa.",
     };
   }
 
   const isAudio = story.type === "AUDIO";
   const typeLabel = isAudio ? "Truyện Audio" : "Truyện Chữ";
-  const title = `${story.title} - ${typeLabel} | vivutruyenhay.com`;
+  const title = `${story.title} - ${typeLabel} | The Midnight Movie Reel`;
   const description =
     story.description?.substring(0, 160) ||
-    `Đọc ${story.title} - ${typeLabel} miễn phí tại vivutruyenhay.com. ${story.chapters?.length || 0} chương.`;
+    `Đọc ${story.title} - ${typeLabel} miễn phí tại The Midnight Movie Reel. ${story.chapters?.length || 0} chương.`;
 
   const genres = story.genres?.map((g: any) => g.name).join(", ") || "";
 
@@ -49,20 +49,20 @@ export async function generateMetadata({
       "đọc truyện online",
       "nghe truyện audio",
       "truyện hay",
-      "vivutruyenhay.com",
+      "The Midnight Movie Reel",
     ],
     openGraph: {
       title,
       description,
       type: "article",
       locale: "vi_VN",
-      siteName: "vivutruyenhay.com",
+      siteName: "The Midnight Movie Reel",
       ...(story.thumbnailUrl && {
         images: [
           {
             url: story.thumbnailUrl.startsWith("http")
               ? story.thumbnailUrl
-              : `${process.env.NEXT_PUBLIC_SITE_URL || "https://vivutruyenhay.com"}${story.thumbnailUrl}`,
+              : `${process.env.NEXT_PUBLIC_SITE_URL || "https://themidnightmoviereel.io.vn"}${story.thumbnailUrl}`,
             width: 1200,
             height: 630,
             alt: story.title,
@@ -74,7 +74,7 @@ export async function generateMetadata({
       canonical: `/stories/${params.slug}`,
     },
     other: {
-      "article:author": story.author?.name || "vivutruyenhay.com",
+      "article:author": story.author?.name || "The Midnight Movie Reel",
       ...(genres && { "article:tag": genres }),
     },
   };

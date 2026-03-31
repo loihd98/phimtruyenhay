@@ -43,7 +43,7 @@ async function fetchAllFilmReviewSlugs(): Promise<
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://vivutruyenhay.com";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://themidnightmoviereel.io.vn";
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
@@ -54,19 +54,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     {
-      url: `${baseUrl}/truyen_text`,
+      url: `${baseUrl}/truyen-text`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/truyen_audio`,
+      url: `${baseUrl}/truyen-audio`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/film-reviews`,
+      url: `${baseUrl}/phim`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.9,
@@ -127,7 +127,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Dynamic film review pages
   const filmReviews = await fetchAllFilmReviewSlugs();
   const filmReviewPages: MetadataRoute.Sitemap = filmReviews.map((review) => ({
-    url: `${baseUrl}/film-reviews/${review.slug}`,
+    url: `${baseUrl}/phim/${review.slug}`,
     lastModified: new Date(review.updatedAt),
     changeFrequency: "weekly" as const,
     priority: 0.8,

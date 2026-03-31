@@ -9,7 +9,7 @@ import JsonLd, {
 
 const API_BASE_URL =
   process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "/api";
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://vivutruyenhay.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://themidnightmoviereel.io.vn";
 
 // SSR: Fetch film review on server for SEO
 async function getFilmReview(slug: string) {
@@ -34,15 +34,32 @@ export async function generateMetadata({
 
   if (!filmReview) {
     return {
-      title: "Không tìm thấy review phim | vivutruyenhay.com",
+      title: "Không tìm thấy review phim | The Midnight Movie Reel",
       description: "Bài review phim không tồn tại hoặc đã bị xóa.",
     };
   }
 
-  const title = `${filmReview.title} - Review Phim | vivutruyenhay.com`;
-  const description = filmReview.description
-    ? filmReview.description.substring(0, 160)
-    : `Review phim ${filmReview.title}. Đánh giá: ${filmReview.rating}/10`;
+  const episodeCount = filmReview.episodes?.length || filmReview.totalEpisodes || 1;
+  const isMultiEpisode = episodeCount > 1;
+  const langLabel =
+    filmReview.language === "VIETSUB" ? "Vietsub" :
+    filmReview.language === "THUYET_MINH" ? "Thuyết Minh" :
+    filmReview.language === "LONG_TIENG" ? "Lồng Tiếng" :
+    filmReview.language === "RAW" ? "Raw" : "";
+
+  const titleParts = [filmReview.title];
+  if (langLabel) titleParts.push(langLabel);
+  if (isMultiEpisode) titleParts.push(`${episodeCount} Tập`);
+  const title = `${titleParts.join(" - ")} | The Midnight Movie Reel`;
+
+  const descParts: string[] = [];
+  if (filmReview.description) {
+    descParts.push(filmReview.description.replace(/<[^>]*>/g, "").substring(0, 120));
+  }
+  descParts.push(`Đánh giá: ${filmReview.rating}/10`);
+  if (langLabel) descParts.push(langLabel);
+  if (isMultiEpisode) descParts.push(`${episodeCount} tập`);
+  const description = descParts.join(". ");
 
   return {
     title,
@@ -57,7 +74,7 @@ export async function generateMetadata({
         : undefined,
     },
     alternates: {
-      canonical: `/film-reviews/${params.slug}`,
+      canonical: `/phim/${params.slug}`,
     },
   };
 }
@@ -78,10 +95,10 @@ export default async function FilmReviewPage({
             data={getBreadcrumbSchema(
               [
                 { name: "Trang chủ", url: "/" },
-                { name: "Review Phim", url: "/film-reviews" },
+                { name: "Review Phim", url: "/phim" },
                 {
                   name: filmReview.title,
-                  url: `/film-reviews/${params.slug}`,
+                  url: `/phim/${params.slug}`,
                 },
               ],
               siteUrl

@@ -6,11 +6,12 @@ const API_URL =
     process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost/api";
 
 export const metadata: Metadata = {
-    title: "Thể Loại Truyện – vivutruyenhay.com",
+    title: "Thể Loại Truyện & Phim – The Midnight Movie Reel",
     description:
-        "Khám phá tất cả thể loại truyện audio và truyện đọc online tại vivutruyenhay.com. Truyện ma, trinh thám, ngôn tình, đô thị, tiên hiệp, kiếm hiệp, huyền huyễn, truyện người lớn và nhiều thể loại hấp dẫn khác.",
+        "Khám phá tất cả thể loại truyện audio, truyện đọc online và review phim tại The Midnight Movie Reel.",
     keywords: [
         "thể loại truyện",
+        "thể loại phim",
         "tiên hiệp",
         "kiếm hiệp",
         "đô thị",
@@ -18,12 +19,13 @@ export const metadata: Metadata = {
         "huyền huyễn",
         "truyện audio",
         "đọc truyện online",
-        "vivutruyenhay.com",
+        "review phim",
+        "The Midnight Movie Reel",
     ],
     openGraph: {
-        title: "Thể Loại Truyện – vivutruyenhay.com",
+        title: "Thể Loại Truyện & Phim – The Midnight Movie Reel",
         description:
-            "Khám phá tất cả thể loại truyện tại vivutruyenhay.com.",
+            "Khám phá tất cả thể loại truyện và phim tại The Midnight Movie Reel.",
         type: "website",
         locale: "vi_VN",
     },
@@ -45,7 +47,23 @@ async function fetchGenres() {
     }
 }
 
+async function fetchFilmCategories() {
+    try {
+        const res = await fetch(`${API_URL}/film-reviews/categories`, {
+            next: { revalidate: 300 },
+        });
+        if (!res.ok) return [];
+        const data = await res.json();
+        return data.categories || data.data || data || [];
+    } catch {
+        return [];
+    }
+}
+
 export default async function TheLoaiPage() {
-    const genres = await fetchGenres();
-    return <GenresClient initialGenres={genres} />;
+    const [genres, filmCategories] = await Promise.all([
+        fetchGenres(),
+        fetchFilmCategories(),
+    ]);
+    return <GenresClient initialGenres={genres} initialFilmCategories={filmCategories} />;
 }

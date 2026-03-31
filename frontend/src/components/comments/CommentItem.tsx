@@ -127,7 +127,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
       className={`comment-item ${className}`}
       style={{ marginLeft: `${depth * 20}px` }}
     >
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-4 shadow-sm">
+      <div className="bg-white/[0.02] border border-white/[0.06] rounded-lg p-4 ">
         {/* User info and actions */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3">
@@ -147,7 +147,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
             {/* User name and time */}
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-medium text-gray-900 dark:text-white">
+                <span className="font-medium text-white">
                   {comment.user?.name || "Người dùng"}
                 </span>
                 {comment.user?.role === "ADMIN" && (
@@ -156,7 +156,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
                   </span>
                 )}
               </div>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-sm text-zinc-500">
                 {timeAgo}
                 {comment.updatedAt !== comment.createdAt && (
                   <span className="ml-1">(đã chỉnh sửa)</span>
@@ -171,7 +171,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
               <button
                 onClick={() => setIsEditing(!isEditing)}
                 disabled={loading}
-                className="p-1 text-gray-400 hover:text-blue-500 transition-colors"
+                className="p-1 text-gray-400 hover:text-primary-400 transition-colors"
                 title="Chỉnh sửa"
               >
                 <FaEdit className="w-4 h-4" />
@@ -212,7 +212,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
               <textarea
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 border border-white/[0.06] rounded-lg bg-white/[0.02] text-white resize-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 rows={3}
                 placeholder="Nhập nội dung bình luận..."
                 maxLength={1000}
@@ -227,14 +227,14 @@ const CommentItem: React.FC<CommentItemProps> = ({
                       setIsEditing(false);
                       setEditContent(comment.content);
                     }}
-                    className="px-3 py-1 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
+                    className="px-3 py-1 text-zinc-500 hover:text-zinc-300 "
                   >
                     <FaTimes className="w-4 h-4" />
                   </button>
                   <button
                     onClick={handleEditSubmit}
                     disabled={loading || !editContent.trim()}
-                    className="px-3 py-1 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white rounded transition-colors"
+                    className="px-3 py-1 bg-primary-500 hover:bg-primary-600 disabled:bg-zinc-600 text-white rounded transition-colors"
                   >
                     {loading ? (
                       <FaSpinner className="w-4 h-4 animate-spin" />
@@ -246,7 +246,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
               </div>
             </div>
           ) : (
-            <div className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
+            <div className="text-zinc-300 whitespace-pre-wrap">
               {comment.content}
             </div>
           )}
@@ -254,15 +254,15 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
         {/* Report form */}
         {showReportForm && (
-          <div className="mb-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-            <h4 className="font-medium text-gray-900 dark:text-white mb-2">
+          <div className="mb-3 p-3 bg-yellow-50  border border-yellow-200 dark:border-yellow-800 rounded-lg">
+            <h4 className="font-medium text-white mb-2">
               Báo cáo bình luận
             </h4>
             <textarea
               value={reportReason}
               onChange={(e) => setReportReason(e.target.value)}
               placeholder="Lý do báo cáo..."
-              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+              className="w-full p-2 border border-white/[0.06] rounded bg-white/[0.02] text-white text-sm"
               rows={2}
               maxLength={500}
             />
@@ -283,7 +283,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
                 <button
                   onClick={handleReport}
                   disabled={loading || !reportReason.trim()}
-                  className="px-3 py-1 text-sm bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-300 text-white rounded transition-colors"
+                  className="px-3 py-1 text-sm bg-yellow-500 hover:bg-yellow-600 disabled:bg-zinc-600 text-white rounded transition-colors"
                 >
                   Gửi báo cáo
                 </button>
@@ -297,7 +297,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
           {isAuthenticated && depth < maxDepth && (
             <button
               onClick={() => setShowReplyForm(!showReplyForm)}
-              className="flex items-center gap-1 text-gray-500 hover:text-blue-500 transition-colors"
+              className="flex items-center gap-1 text-gray-500 hover:text-primary-400 transition-colors"
             >
               <FaReply className="w-3 h-3" />
               Trả lời
@@ -313,7 +313,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
         {/* Reply form */}
         {showReplyForm && isAuthenticated && (
-          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+          <div className="mt-4 pt-4 border-t border-white/[0.06]">
             <CommentForm
               chapterId={comment.chapterId}
               parentId={comment.id}
@@ -326,7 +326,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
         {/* Replies */}
         {comment.replies && comment.replies.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600 space-y-4">
+          <div className="mt-4 pt-4 border-t border-white/[0.06] space-y-4">
             {comment.replies.map((reply) => (
               <CommentItem
                 key={reply.id}

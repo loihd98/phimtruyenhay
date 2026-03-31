@@ -1,75 +1,101 @@
 {
-  "name": "vivutruyenhay.com",
-  "short_name": "vivutruyenghay",
-  "description": "Vi Vu Truyện Hay là website tổng hợp truyện audio, truyện đọc online và phim hay với nhiều thể loại hấp dẫn. Nghe truyện audio miễn phí, đọc truyện online và xem phim hay mỗi ngày.",
+  "name": "The Midnight Movie Reel",
+  "short_name": "MidnightReel",
+  "description": "Khám phá thế giới điện ảnh cùng The Midnight Movie Reel – website review phim, phân tích nội dung, giải thích ending và gợi ý phim hay mỗi ngày.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#111827",
-  "theme_color": "#1e40af",
+  "background_color": "#0a0a0f",
+  "theme_color": "#e50914",
   "orientation": "portrait-primary",
   "scope": "/",
-  "categories": ["entertainment", "books", "education"],
+  "categories": ["entertainment", "movies", "reviews"],
   "lang": "vi",
   "dir": "ltr",
   "icons": [
     {
-      "src": "/khotruyen_logo.png",
+      "src": "/logo_phim.png",
       "sizes": "192x192",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/khotruyen_logo.png",
+      "src": "/logo_phim.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],
   "screenshots": [
     {
-      "src": "/khotruyen_logo.png",
+      "src": "/logo_phim.png",
       "sizes": "1200x630",
-      "type": "image/jpeg",
+      "type": "image/png",
       "form_factor": "wide"
     }
   ],
   "shortcuts": [
     {
-      "name": "Truyện chữ",
-      "short_name": "Chữ",
-      "description": "Xem danh sách truyện chữ",
-      "url": "/truyen_text",
+      "name": "Review Phim",
+      "short_name": "Review",
+      "description": "Xem bài review phim mới nhất",
+      "url": "/phim",
       "icons": [
         {
-          "src": "/khotruyen_logo.png",
+          "src": "/logo_phim.png",
           "sizes": "96x96",
-          "type": "image/jpeg"
+          "type": "image/png"
         }
       ]
     },
     {
-      "name": "Truyện audio",
-      "short_name": "Audio",
-      "description": "Xem danh sách truyện audio",
-      "url": "/truyen_audio",
+      "name": "Giải Thích Phim",
+      "short_name": "Ending",
+      "description": "Giải thích ending các bộ phim",
+      "url": "/phim?tag=ending-explained",
       "icons": [
         {
-          "src": "/khotruyen_logo.png",
+          "src": "/logo_phim.png",
           "sizes": "96x96",
-          "type": "image/jpeg"
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Top Phim Hay",
+      "short_name": "Top",
+      "description": "Danh sách phim hay nhất",
+      "url": "/phim?sort=rating",
+      "icons": [
+        {
+          "src": "/logo_phim.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Truyện",
+      "short_name": "Truyện",
+      "description": "Đọc và nghe truyện online",
+      "url": "/truyen-text",
+      "icons": [
+        {
+          "src": "/logo_phim.png",
+          "sizes": "96x96",
+          "type": "image/png"
         }
       ]
     },
     {
       "name": "Bookmark",
       "short_name": "Yêu thích",
-      "description": "Xem truyện đã lưu",
+      "description": "Xem nội dung đã lưu",
       "url": "/bookmarks",
       "icons": [
         {
-          "src": "/khotruyen_logo.png",
+          "src": "/logo_phim.png",
           "sizes": "96x96",
-          "type": "image/jpeg"
+          "type": "image/png"
         }
       ]
     }

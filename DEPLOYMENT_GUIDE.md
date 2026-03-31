@@ -1,6 +1,6 @@
-# Deployment Guide — vivutruyenhay.com
+# Deployment Guide — themidnightmoviereel.io.vn
 
-Complete A-to-Z guide for deploying the website to a fresh **Ubuntu 20.04 VPS** with IP `103.199.18.123` and domain `vivutruyenhay.com`.
+Complete A-to-Z guide for deploying the website to a fresh **Ubuntu 20.04 VPS** with IP `103.199.17.168` and domain `themidnightmoviereel.io.vn`.
 
 ---
 
@@ -28,9 +28,9 @@ Complete A-to-Z guide for deploying the website to a fresh **Ubuntu 20.04 VPS** 
 
 Before starting, ensure you have:
 
-- A VPS with Ubuntu 20.04 LTS (IP: `103.199.18.123`)
+- A VPS with Ubuntu 20.04 LTS (IP: `103.199.17.168`)
 - Root SSH access to the VPS
-- Domain `vivutruyenhay.com` registered and ready to configure
+- Domain `themidnightmoviereel.io.vn` registered and ready to configure
 - Your project code pushed to GitHub at `https://github.com/loihd98/vivutruyenghay.git`
 
 ---
@@ -41,18 +41,18 @@ At your domain registrar (e.g., Namecheap, GoDaddy, Cloudflare), create these DN
 
 | Type | Host | Value          | TTL |
 | ---- | ---- | -------------- | --- |
-| A    | @    | 103.199.18.123 | 300 |
-| A    | www  | 103.199.18.123 | 300 |
+| A    | @    | 103.199.17.168 | 300 |
+| A    | www  | 103.199.17.168 | 300 |
 
 Wait 5-15 minutes for DNS propagation, then verify:
 
 ```bash
 # From your local machine
-nslookup vivutruyenhay.com
-ping vivutruyenhay.com
+nslookup themidnightmoviereel.io.vn
+ping themidnightmoviereel.io.vn
 ```
 
-Both should resolve to `103.199.18.123`.
+Both should resolve to `103.199.17.168`.
 
 ---
 
@@ -60,22 +60,22 @@ Both should resolve to `103.199.18.123`.
 
 ### 3.1 Connect to VPS
 
-**VPS IP:** `103.199.16.250`  
+**VPS IP:** `103.199.17.168`  
 **Default user:** `root` (or `deploy` if you created one in step 3.5)
 
 #### From Linux / macOS
 
 ```bash
-ssh root@103.199.18.123
+ssh root@103.199.17.168
 ```
 
 #### From Windows (PowerShell or CMD)
 
 ```powershell
-ssh root@103.199.16.250
+ssh root@103.199.17.168
 ```
 
-If PowerShell OpenSSH is not available, install [PuTTY](https://www.putty.org/) and connect to `103.199.16.250` port `22`.
+If PowerShell OpenSSH is not available, install [PuTTY](https://www.putty.org/) and connect to `103.199.17.168` port `22`.
 
 #### Set up SSH Key (recommended — skip password every time)
 
@@ -86,12 +86,12 @@ Run this **once** from your local machine:
 ssh-keygen -t ed25519 -C "khotruyen-vps"
 
 # Copy your public key to the VPS (enter VPS password when prompted)
-ssh-copy-id root@103.199.16.250
+ssh-copy-id root@103.199.17.168
 ```
 
-After this, `ssh root@103.199.16.250` will log in without a password.
+After this, `ssh root@103.199.17.168` will log in without a password.
 
-> **Windows alternative:** Use `type $HOME\.ssh\id_ed25519.pub | ssh root@103.199.16.250 "cat >> ~/.ssh/authorized_keys"` in PowerShell.
+> **Windows alternative:** Use `type $HOME\.ssh\id_ed25519.pub | ssh root@103.199.17.168 "cat >> ~/.ssh/authorized_keys"` in PowerShell.
 
 ### 3.2 Update System
 
@@ -135,7 +135,7 @@ cp -r ~/.ssh /home/deploy/
 chown -R deploy:deploy /home/deploy/.ssh
 ```
 
-From now on, you can SSH as `deploy@103.199.18.123` (optional — using root is fine for single-admin setups).
+From now on, you can SSH as `deploy@103.199.17.168` (optional — using root is fine for single-admin setups).
 
 ---
 
@@ -192,7 +192,7 @@ systemctl start docker
 ```bash
 mkdir -p /opt
 cd /opt
-git clone https://github.com/loihd98/vivutruyenhay.com.git webtruyen
+git clone https://github.com/loihd98/themidnightmoviereel.io.vn.git webtruyen
 cd /opt/webtruyen
 ```
 
@@ -217,17 +217,17 @@ JWT_SECRET=PASTE_GENERATED_SECRET_HERE
 JWT_REFRESH_SECRET=PASTE_DIFFERENT_GENERATED_SECRET_HERE
 
 # URLs
-BASE_URL=https://vivutruyenhay.com
-CORS_ORIGIN=https://vivutruyenhay.com
-FRONTEND_URL=https://vivutruyenhay.com
-BACKEND_URL=https://vivutruyenhay.com
-DOMAIN=vivutruyenhay.com
+BASE_URL=https://themidnightmoviereel.io.vn
+CORS_ORIGIN=https://themidnightmoviereel.io.vn
+FRONTEND_URL=https://themidnightmoviereel.io.vn
+BACKEND_URL=https://themidnightmoviereel.io.vn
+DOMAIN=themidnightmoviereel.io.vn
 
 # Frontend
-NEXT_PUBLIC_API_URL=https://vivutruyenhay.com/api
-NEXT_PUBLIC_BASE_URL=https://vivutruyenhay.com
-NEXT_PUBLIC_MEDIA_URL=https://vivutruyenhay.com
-NEXT_PUBLIC_SITE_URL=https://vivutruyenhay.com
+NEXT_PUBLIC_API_URL=https://themidnightmoviereel.io.vn/api
+NEXT_PUBLIC_BASE_URL=https://themidnightmoviereel.io.vn
+NEXT_PUBLIC_MEDIA_URL=https://themidnightmoviereel.io.vn
+NEXT_PUBLIC_SITE_URL=https://themidnightmoviereel.io.vn
 API_URL=http://backend:5000/api
 
 # File upload
@@ -268,7 +268,7 @@ Create a temporary HTTP-only Nginx config:
 cat > /opt/webtruyen/nginx/prod.conf << 'EOF'
 server {
     listen 80;
-    server_name vivutruyenhay.com www.vivutruyenhay.com;
+    server_name themidnightmoviereel.io.vn www.themidnightmoviereel.io.vn;
 
     location /.well-known/acme-challenge/ {
         root /var/www/certbot;
@@ -335,8 +335,8 @@ nginx         Up
 ### 5.7 Verify HTTP Access
 
 ```bash
-curl -I http://vivutruyenhay.com
-curl http://vivutruyenhay.com/api/health
+curl -I http://themidnightmoviereel.io.vn
+curl http://themidnightmoviereel.io.vn/api/health
 ```
 
 If the site is accessible via HTTP, proceed to SSL setup.
@@ -352,7 +352,7 @@ cd /opt/webtruyen
 
 docker compose -f docker-compose.prod.yml run --rm certbot certonly \
   --webroot --webroot-path=/var/www/certbot \
-  -d vivutruyenhay.com -d www.vivutruyenhay.com \
+  -d themidnightmoviereel.io.vn -d www.themidnightmoviereel.io.vn \
   --email your-email@gmail.com \
   --agree-tos --no-eff-email
 ```
@@ -361,8 +361,8 @@ Expected output:
 
 ```
 Successfully received certificate.
-Certificate is saved at: /etc/letsencrypt/live/vivutruyenhay.com/fullchain.pem
-Key is saved at: /etc/letsencrypt/live/vivutruyenhay.com/privkey.pem
+Certificate is saved at: /etc/letsencrypt/live/themidnightmoviereel.io.vn/fullchain.pem
+Key is saved at: /etc/letsencrypt/live/themidnightmoviereel.io.vn/privkey.pem
 ```
 
 ### 6.2 Restore the Full HTTPS Nginx Config
@@ -391,12 +391,12 @@ docker compose -f docker-compose.prod.yml restart nginx
 ### 6.4 Verify HTTPS
 
 ```bash
-curl -I https://vivutruyenhay.com
+curl -I https://themidnightmoviereel.io.vn
 ```
 
 Expected: HTTP 200 with security headers (`Strict-Transport-Security`, `X-Frame-Options`, etc.).
 
-Open in a browser: **https://vivutruyenhay.com** — you should see a green padlock.
+Open in a browser: **https://themidnightmoviereel.io.vn** — you should see a green padlock.
 
 ---
 
@@ -445,14 +445,14 @@ SELECT id, email, name, role FROM users;
 
 ```bash
 # Register a user
-curl -X POST https://vivutruyenhay.com/api/auth/register \
+curl -X POST https://themidnightmoviereel.io.vn/api/auth/register \
   -H "Content-Type: application/json" \
-  -d '{"email": "admin@vivutruyenhay.com", "password": "YourStrongPassword123", "name": "Admin"}'
+  -d '{"email": "admin@themidnightmoviereel.io.vn", "password": "YourStrongPassword123", "name": "Admin"}'
 
 # Then promote to admin via database
 docker compose -f docker-compose.prod.yml exec postgres \
   psql -U webtruyen_user -d web_truyen -c \
-  "UPDATE users SET role = 'ADMIN' WHERE email = 'admin@vivutruyenhay.com';"
+  "UPDATE users SET role = 'ADMIN' WHERE email = 'admin@themidnightmoviereel.io.vn';"
 ```
 
 ### 7.5 Seed RBAC Permissions
@@ -504,26 +504,26 @@ docker compose -f docker-compose.prod.yml exec backend npx prisma db push
 docker compose -f docker-compose.prod.yml ps
 
 # Backend health
-curl https://vivutruyenhay.com/api/health
+curl https://themidnightmoviereel.io.vn/api/health
 
 # Frontend loads
-curl -s -o /dev/null -w "%{http_code}" https://vivutruyenhay.com
+curl -s -o /dev/null -w "%{http_code}" https://themidnightmoviereel.io.vn
 
 # SSL certificate info
-curl -vI https://vivutruyenhay.com 2>&1 | grep -E "expire|subject|issuer"
+curl -vI https://themidnightmoviereel.io.vn 2>&1 | grep -E "expire|subject|issuer"
 ```
 
 ### 8.2 Feature Checklist
 
 | Feature      | URL                                     | Expected                               |
 | ------------ | --------------------------------------- | -------------------------------------- |
-| Homepage     | https://vivutruyenhay.com               | Loads with stories                     |
-| API Health   | https://vivutruyenhay.com/api/health    | `{"status":"OK"}`                      |
-| Registration | https://vivutruyenhay.com/auth/register | Registration form                      |
-| Login        | https://vivutruyenhay.com/auth/login    | Login form                             |
-| Admin Panel  | https://vivutruyenhay.com/admin         | Admin dashboard (requires admin login) |
-| Sitemap      | https://vivutruyenhay.com/sitemap.xml   | XML sitemap                            |
-| SSL          | https://vivutruyenhay.com               | Green padlock                          |
+| Homepage     | https://themidnightmoviereel.io.vn               | Loads with stories                     |
+| API Health   | https://themidnightmoviereel.io.vn/api/health    | `{"status":"OK"}`                      |
+| Registration | https://themidnightmoviereel.io.vn/auth/register | Registration form                      |
+| Login        | https://themidnightmoviereel.io.vn/auth/login    | Login form                             |
+| Admin Panel  | https://themidnightmoviereel.io.vn/admin         | Admin dashboard (requires admin login) |
+| Sitemap      | https://themidnightmoviereel.io.vn/sitemap.xml   | XML sitemap                            |
+| SSL          | https://themidnightmoviereel.io.vn               | Green padlock                          |
 
 ### 8.3 Check Logs If Issues
 
@@ -582,7 +582,7 @@ docker compose -f docker-compose.prod.yml restart nginx
 
 ```bash
 docker run --rm -v webtruyen_certbot-certs:/certs alpine/openssl x509 \
-  -in /certs/live/vivutruyenhay.com/fullchain.pem -noout -dates
+  -in /certs/live/themidnightmoviereel.io.vn/fullchain.pem -noout -dates
 ```
 
 ---
@@ -666,7 +666,7 @@ docker compose -f docker-compose.prod.yml up -d
 #### Step 1 — SSH into VPS
 
 ```bash
-ssh root@103.199.16.250
+ssh root@103.199.17.168
 cd /opt/webtruyen
 ```
 
@@ -700,7 +700,7 @@ docker compose -f docker-compose.prod.yml up -d --build --no-deps frontend
 docker compose -f docker-compose.prod.yml ps
 
 # Quick API test
-curl https://vivutruyenhay.com/api/health
+curl https://themidnightmoviereel.io.vn/api/health
 ```
 
 #### What each flag does
@@ -805,7 +805,7 @@ docker compose -f docker-compose.prod.yml up -d --build frontend
 ```bash
 # Check if certificates exist
 docker run --rm -v webtruyen_certbot-certs:/certs alpine \
-  ls -la /certs/live/vivutruyenhay.com/
+  ls -la /certs/live/themidnightmoviereel.io.vn/
 
 # If missing, re-run the SSL setup from Section 6
 ```
@@ -852,7 +852,7 @@ docker compose -f docker-compose.prod.yml exec backend node src/scripts/seed.js
 Đây là trường hợp phổ biến nhất — sửa giao diện, thêm trang, fix bug UI. **Web vẫn chạy bình thường** trong lúc deploy.
 
 ```bash
-ssh root@103.199.18.123
+ssh root@103.199.17.168
 cd /opt/webtruyen
 
 # 1. Pull code mới
@@ -881,7 +881,7 @@ docker compose -f docker-compose.prod.yml logs -f frontend --tail=20
 Ví dụ: sửa logic API, thêm route mới, fix bug controller.
 
 ```bash
-ssh root@103.199.18.123
+ssh root@103.199.17.168
 cd /opt/webtruyen
 
 # 1. Pull code mới
@@ -905,7 +905,7 @@ Khi bạn sửa `backend/prisma/schema.prisma` — thêm bảng, thêm cột, đ
 #### Bước 1: Backup database TRƯỚC (bắt buộc!)
 
 ```bash
-ssh root@103.199.18.123
+ssh root@103.199.17.168
 cd /opt/webtruyen
 
 # Backup toàn bộ database
@@ -954,7 +954,7 @@ git push origin master
 #### Bước 3: Deploy migration trên VPS
 
 ```bash
-ssh root@103.199.18.123
+ssh root@103.199.17.168
 cd /opt/webtruyen
 
 # Pull code mới (chứa file migration)
@@ -1003,7 +1003,7 @@ docker compose -f docker-compose.prod.yml exec postgres \
   psql -U webtruyen_user -d web_truyen -c "\d stories"
 
 # Test API
-curl https://vivutruyenhay.com/api/health
+curl https://themidnightmoviereel.io.vn/api/health
 ```
 
 ### 13.4 Rollback nếu migration lỗi

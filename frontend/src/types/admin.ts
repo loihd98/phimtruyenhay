@@ -11,4 +11,6 @@ export type AdminTab =
   | "settings"
   | "film-reviews"
   | "film-categories"
-  | "roles";
+  | "roles"
+  | "blog"
+  | "blog-categories";

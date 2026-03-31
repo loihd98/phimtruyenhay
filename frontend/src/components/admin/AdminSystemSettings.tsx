@@ -30,8 +30,8 @@ interface SystemSettings {
 const AdminSystemSettings: React.FC = () => {
   const { t } = useLanguage();
   const [settings, setSettings] = useState<SystemSettings>({
-    siteName: "vivutruyenhay.com",
-    siteDescription: "Nền tảng đọc truyện online hàng đầu",
+    siteName: "The Midnight Movie Reel",
+    siteDescription: "Nền tảng review phim và đọc truyện online hàng đầu",
     contactEmail: "admin@webtruyen.com",
     maxFileSize: 10,
     allowedFileTypes: ["jpg", "jpeg", "png", "gif", "mp3", "wav"],
@@ -47,7 +47,7 @@ const AdminSystemSettings: React.FC = () => {
       discord: "",
     },
     seoSettings: {
-      metaTitle: "vivutruyenhay.com - Đọc truyện online miễn phí",
+      metaTitle: "The Midnight Movie Reel - Review phim và đọc truyện online miễn phí",
       metaDescription:
         "Đọc truyện online miễn phí với hàng ngàn đầu truyện hay nhất",
       keywords: ["truyện", "đọc truyện", "truyện online", "light novel"],

@@ -120,11 +120,11 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-4">
-          <FaComments className="text-blue-500 text-xl" />
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+          <FaComments className="text-primary-400 text-xl" />
+          <h3 className="text-xl font-semibold text-white">
             Bình luận
           </h3>
-          <span className="px-2 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full">
+          <span className="px-2 py-1 text-sm bg-white/[0.04] text-gray-600  rounded-full">
             {totalComments}
           </span>
         </div>
@@ -137,13 +137,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             placeholder="Viết bình luận của bạn..."
           />
         ) : (
-          <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-4 text-center">
-            <p className="text-gray-600 dark:text-gray-400 mb-3">
+          <div className="bg-white/[0.02] border border-white/[0.06] rounded-lg p-4 text-center">
+            <p className="text-zinc-500 mb-3">
               Đăng nhập để tham gia bình luận
             </p>
             <button
               onClick={() => (window.location.href = "/auth/login")}
-              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+              className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors"
             >
               Đăng nhập
             </button>
@@ -156,7 +156,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         {loading && comments.length === 0 ? (
           <div className="flex items-center justify-center py-8">
             <FaSpinner className="animate-spin text-gray-400 text-xl mr-2" />
-            <span className="text-gray-600 dark:text-gray-400">
+            <span className="text-zinc-500">
               Đang tải bình luận...
             </span>
           </div>
@@ -165,18 +165,18 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             <p className="text-red-500 mb-4">{error}</p>
             <button
               onClick={() => loadComments()}
-              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+              className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors"
             >
               Thử lại
             </button>
           </div>
         ) : comments.length === 0 ? (
           <div className="text-center py-12">
-            <FaComments className="text-gray-300 dark:text-gray-600 text-4xl mx-auto mb-4" />
-            <p className="text-gray-500 dark:text-gray-400 text-lg">
+            <FaComments className="text-zinc-600 text-4xl mx-auto mb-4" />
+            <p className="text-zinc-500 text-lg">
               Chưa có bình luận nào
             </p>
-            <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">
+            <p className="text-zinc-500 text-sm mt-2">
               Hãy là người đầu tiên bình luận!
             </p>
           </div>
@@ -195,7 +195,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                 <button
                   onClick={loadMore}
                   disabled={loading}
-                  className="px-6 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-2 bg-white/[0.04] hover:bg-gray-200   text-zinc-400 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>

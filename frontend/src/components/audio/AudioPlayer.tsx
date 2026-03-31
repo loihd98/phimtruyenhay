@@ -141,7 +141,7 @@ const AudioPlayer: React.FC = () => {
   if (!currentAudio) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-40">
+    <div className="fixed bottom-0 left-0 right-0 bg-white/[0.02] border-t border-white/[0.06] z-40">
       <audio ref={audioRef} preload="metadata" />
 
       <div className="max-w-7xl mx-auto px-4 py-3">
@@ -149,10 +149,10 @@ const AudioPlayer: React.FC = () => {
           {/* Story Info */}
           <div className="flex items-center space-x-3 min-w-0 flex-1">
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+              <p className="text-sm font-medium text-white truncate">
                 {currentAudio.title}
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+              <p className="text-sm text-zinc-500 truncate">
                 {currentAudio.storyTitle}
               </p>
             </div>
@@ -163,11 +163,11 @@ const AudioPlayer: React.FC = () => {
             {/* Skip backward */}
             <button
               onClick={() => skip(-15)}
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="p-2 rounded-full hover:bg-white/[0.04]  focus:outline-none focus:ring-2 focus:ring-primary-500"
               disabled={isLoading}
             >
               <svg
-                className="h-5 w-5 text-gray-600 dark:text-gray-300"
+                className="h-5 w-5 text-zinc-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -184,7 +184,7 @@ const AudioPlayer: React.FC = () => {
             {/* Play/Pause */}
             <button
               onClick={togglePlay}
-              className="p-3 rounded-full bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+              className="p-3 rounded-full bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -223,11 +223,11 @@ const AudioPlayer: React.FC = () => {
             {/* Skip forward */}
             <button
               onClick={() => skip(15)}
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="p-2 rounded-full hover:bg-white/[0.04]  focus:outline-none focus:ring-2 focus:ring-primary-500"
               disabled={isLoading}
             >
               <svg
-                className="h-5 w-5 text-gray-600 dark:text-gray-300"
+                className="h-5 w-5 text-zinc-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -246,7 +246,7 @@ const AudioPlayer: React.FC = () => {
           <div className="flex items-center space-x-3 flex-1 justify-end">
             {/* Playback Rate */}
             <div className="hidden md:flex items-center space-x-2">
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-sm text-zinc-500">
                 Tốc độ:
               </span>
               <select
@@ -254,7 +254,7 @@ const AudioPlayer: React.FC = () => {
                 onChange={(e) =>
                   handlePlaybackRateChange(parseFloat(e.target.value))
                 }
-                className="text-sm bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="text-sm bg-white/[0.04] border border-white/[0.06] rounded px-2 py-1 text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value={0.5}>0.5x</option>
                 <option value={0.75}>0.75x</option>
@@ -268,7 +268,7 @@ const AudioPlayer: React.FC = () => {
             {/* Volume */}
             <div className="hidden md:flex items-center space-x-2">
               <svg
-                className="h-4 w-4 text-gray-500 dark:text-gray-400"
+                className="h-4 w-4 text-zinc-500"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -294,10 +294,10 @@ const AudioPlayer: React.FC = () => {
             {/* Close */}
             <button
               onClick={() => dispatch(closeAudioPlayer())}
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="p-2 rounded-full hover:bg-white/[0.04]  focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               <svg
-                className="h-5 w-5 text-gray-600 dark:text-gray-300"
+                className="h-5 w-5 text-zinc-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -315,7 +315,7 @@ const AudioPlayer: React.FC = () => {
 
         {/* Progress Bar */}
         <div className="mt-3 flex items-center space-x-3">
-          <span className="text-sm text-gray-500 dark:text-gray-400 min-w-[3rem]">
+          <span className="text-sm text-zinc-500 min-w-[3rem]">
             {formatTime(currentTime)}
           </span>
           <input
@@ -327,7 +327,7 @@ const AudioPlayer: React.FC = () => {
             className="flex-1"
             disabled={isLoading}
           />
-          <span className="text-sm text-gray-500 dark:text-gray-400 min-w-[3rem]">
+          <span className="text-sm text-zinc-500 min-w-[3rem]">
             {formatTime(duration)}
           </span>
         </div>

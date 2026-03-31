@@ -87,7 +87,7 @@ router.post("/", contactLimiter, async (req, res) => {
     const adminEmailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px;">
-          Tin nhắn mới từ vivutruyenhay.com Contact Form
+          Tin nhắn mới từ The Midnight Movie Reel Contact Form
         </h2>
         
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -120,7 +120,7 @@ router.post("/", contactLimiter, async (req, res) => {
     const userEmailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 10px;">
-          Cảm ơn bạn đã liên hệ với vivutruyenhay.com
+          Cảm ơn bạn đã liên hệ với The Midnight Movie Reel
         </h2>
         
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -153,7 +153,7 @@ router.post("/", contactLimiter, async (req, res) => {
         <div style="text-align: center; margin: 30px 0;">
           <p style="color: #666; font-size: 14px;">
             Trân trọng,<br>
-            <strong>Đội ngũ vivutruyenhay.com</strong>
+            <strong>Đội ngũ The Midnight Movie Reel</strong>
           </p>
         </div>
       </div>
@@ -164,13 +164,13 @@ router.post("/", contactLimiter, async (req, res) => {
       from: `"${name}" <${process.env.SMTP_USER}>`,
       to: process.env.ADMIN_EMAIL || process.env.SMTP_USER,
       replyTo: email,
-      subject: `[vivutruyenhay.com Contact] ${subject}`,
+      subject: `[The Midnight Movie Reel Contact] ${subject}`,
       html: adminEmailHtml,
     };
 
     // Send confirmation email to user
     const userMailOptions = {
-      from: `"vivutruyenhay.com Support" <${process.env.SMTP_USER}>`,
+      from: `"The Midnight Movie Reel Support" <${process.env.SMTP_USER}>`,
       to: email,
       subject: `Xác nhận tin nhắn: ${subject}`,
       html: userEmailHtml,

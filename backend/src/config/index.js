@@ -37,7 +37,7 @@ module.exports = {
   maxFileSize: 1536 * 1024 * 1024, // 1.5GB
 
   // CORS
-  corsOrigin: process.env.FRONTEND_URL || "https://vivutruyenhay.com",
+  corsOrigin: process.env.FRONTEND_URL || "https://themidnightmoviereel.io.vn",
 
   // Base URL
   baseUrl: process.env.BASE_URL || "http://localhost:3000",

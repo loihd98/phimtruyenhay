@@ -363,6 +363,20 @@ export interface FilmActor {
   createdAt: string;
 }
 
+export type FilmLanguage = "VIETSUB" | "THUYET_MINH" | "LONG_TIENG" | "RAW";
+
+export interface FilmEpisode {
+  id: string;
+  episodeNum: number;
+  title?: string;
+  videoUrl: string;
+  duration?: number;
+  language: FilmLanguage;
+  filmReviewId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface FilmReview {
   id: string;
   slug: string;
@@ -376,6 +390,9 @@ export interface FilmReview {
   viewCount: number;
   authorId: string;
   affiliateId?: string;
+  language?: FilmLanguage;
+  totalEpisodes?: number;
+  isMovie?: boolean;
   createdAt: string;
   updatedAt: string;
 
@@ -389,8 +406,10 @@ export interface FilmReview {
   actors?: FilmActor[];
   affiliate?: AffiliateLink;
   relatedReviews?: FilmReview[];
+  episodes?: FilmEpisode[];
   _count?: {
     comments: number;
+    episodes?: number;
   };
 }
 

@@ -20,4 +20,7 @@ router.post(
   filmReviewsController.createFilmComment,
 );
 
+// Episodes (public)
+router.get("/:slug/episodes", filmReviewsController.getFilmEpisodes);
+
 module.exports = router;

@@ -19,6 +19,8 @@ import AdminFilmReviewManager from "./AdminFilmReviewManager";
 import AdminFilmCategoriesManager from "./AdminFilmCategoriesManager";
 import AdminSidebar from "./AdminSidebar";
 import RoleManagement from "./RoleManagement";
+import AdminBlogManager from "./AdminBlogManager";
+import AdminBlogCategoryManager from "./AdminBlogCategoryManager";
 import { AdminTab } from "../../types/admin";
 
 const AdminDashboard: React.FC = () => {
@@ -89,7 +91,7 @@ const AdminDashboard: React.FC = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
         <span className="ml-3 text-lg text-gray-600 dark:text-gray-400">
           {t("common.loading")}
         </span>
@@ -125,6 +127,10 @@ const AdminDashboard: React.FC = () => {
         return <AdminFilmCategoriesManager />;
       case "roles":
         return <RoleManagement />;
+      case "blog":
+        return <AdminBlogManager />;
+      case "blog-categories":
+        return <AdminBlogCategoryManager />;
       default:
         return <AdminStats />;
     }
@@ -195,10 +201,10 @@ const AdminDashboard: React.FC = () => {
                         <img
                           src={user.avatar}
                           alt={user.name}
-                          className="h-8 w-8 rounded-full object-cover ring-2 ring-blue-500"
+                          className="h-8 w-8 rounded-full object-cover ring-2 ring-red-500"
                         />
                       ) : (
-                        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-medium">
+                        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white text-sm font-medium">
                           {user?.name.charAt(0).toUpperCase()}
                         </div>
                       )}
@@ -206,7 +212,7 @@ const AdminDashboard: React.FC = () => {
                         <p className="text-sm font-medium text-gray-900 dark:text-white">
                           {user?.name}
                         </p>
-                        <p className="text-xs text-blue-600 dark:text-blue-400">
+                        <p className="text-xs text-red-600 dark:text-red-400">
                           {t("admin.role")}
                         </p>
                       </div>

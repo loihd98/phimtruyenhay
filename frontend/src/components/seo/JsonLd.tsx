@@ -1,4 +1,4 @@
-interface JsonLdProps {
+﻿interface JsonLdProps {
   data: any;
 }
 
@@ -16,21 +16,16 @@ export function getOrganizationSchema(siteUrl: string) {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "vivutruyenhay.com",
+    name: "The Midnight Movie Reel",
     url: siteUrl,
-    logo: `${siteUrl}/logo.svg`,
+    logo: `${siteUrl}/logo_phim.png`,
     description:
-      "Kho truyện online miễn phí với hàng ngàn truyện chữ và truyện audio hấp dẫn",
+      "Website review phim chuyên sâu, phân tích nội dung điện ảnh, giải thích ending và gợi ý phim hay.",
     founder: {
       "@type": "Person",
-      name: "Evanloi9x",
+      name: "The Midnight Movie Reel",
     },
-    sameAs: [
-      // Thêm các social media links của bạn
-      // "https://facebook.com/yourpage",
-      // "https://twitter.com/yourhandle",
-      // "https://instagram.com/yourhandle",
-    ],
+    sameAs: [],
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "Customer Service",
@@ -44,23 +39,23 @@ export function getWebsiteSchema(siteUrl: string) {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "vivutruyenhay.com",
+    name: "The Midnight Movie Reel",
     url: siteUrl,
     description:
-      "Kho truyện online miễn phí - Đọc và nghe truyện mọi lúc mọi nơi",
+      "Review phim hay, phân tích điện ảnh chuyên sâu, giải thích ending và gợi ý phim đáng xem mỗi ngày",
     publisher: {
       "@type": "Organization",
-      name: "vivutruyenhay.com",
+      name: "The Midnight Movie Reel",
       logo: {
         "@type": "ImageObject",
-        url: `${siteUrl}/logo.svg`,
+        url: `${siteUrl}/logo_phim.png`,
       },
     },
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: `${siteUrl}/stories?search={search_term_string}`,
+        urlTemplate: `${siteUrl}/phim?search={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },
@@ -76,14 +71,14 @@ export function getBookSchema(story: any, siteUrl: string) {
     name: story.title,
     description: story.description,
     url: `${siteUrl}/stories/${story.slug}`,
-    image: story.coverImage || `${siteUrl}/khotruyen_logo.png`,
+    image: story.coverImage || `${siteUrl}/logo_phim.png`,
     author: {
       "@type": "Person",
       name: story.author || "Anonymous",
     },
     publisher: {
       "@type": "Organization",
-      name: "vivutruyenhay.com",
+      name: "The Midnight Movie Reel",
     },
     datePublished: story.createdAt,
     dateModified: story.updatedAt,
@@ -109,17 +104,17 @@ export function getArticleSchema(chapter: any, story: any, siteUrl: string) {
     headline: chapter.title,
     description: story.description,
     url: `${siteUrl}/stories/${story.slug}/${chapter.slug}`,
-    image: story.coverImage || `${siteUrl}/khotruyen_logo.png`,
+    image: story.coverImage || `${siteUrl}/logo_phim.png`,
     author: {
       "@type": "Person",
       name: story.author || "Anonymous",
     },
     publisher: {
       "@type": "Organization",
-      name: "vivutruyenhay.com",
+      name: "The Midnight Movie Reel",
       logo: {
         "@type": "ImageObject",
-        url: `${siteUrl}/khotruyen_logo.png`,
+        url: `${siteUrl}/logo_phim.png`,
       },
     },
     datePublished: chapter.createdAt,
@@ -145,7 +140,7 @@ export function getAudioBookSchema(story: any, siteUrl: string) {
     name: story.title,
     description: story.description,
     url: `${siteUrl}/stories/${story.slug}`,
-    thumbnail: story.coverImage || `${siteUrl}/khotruyen_logo.png`,
+    thumbnail: story.coverImage || `${siteUrl}/logo_phim.png`,
     contentUrl: story.audioUrl,
     encodingFormat: "audio/mpeg",
     author: {
@@ -154,7 +149,7 @@ export function getAudioBookSchema(story: any, siteUrl: string) {
     },
     publisher: {
       "@type": "Organization",
-      name: "vivutruyenhay.com",
+      name: "The Midnight Movie Reel",
     },
     datePublished: story.createdAt,
     inLanguage: "vi-VN",
@@ -180,21 +175,25 @@ export function getBreadcrumbSchema(
 
 // Schema for Film Review (Review + Movie)
 export function getFilmReviewSchema(review: any, siteUrl: string) {
+  const episodeCount = review.episodes?.length || review.totalEpisodes || 1;
+  const isMultiEpisode = episodeCount > 1;
+  const isTVSeries = isMultiEpisode || review.isMovie === false;
+
   return {
     "@context": "https://schema.org",
     "@type": "Review",
     name: review.title,
     reviewBody: review.description,
-    url: `${siteUrl}/film-reviews/${review.slug}`,
+    url: `${siteUrl}/phim/${review.slug}`,
     datePublished: review.createdAt,
     dateModified: review.updatedAt,
     author: {
       "@type": "Person",
-      name: review.author?.name || "vivutruyenhay.com",
+      name: review.author?.name || "The Midnight Movie Reel",
     },
     publisher: {
       "@type": "Organization",
-      name: "vivutruyenhay.com",
+      name: "The Midnight Movie Reel",
       url: siteUrl,
     },
     reviewRating: review.rating
@@ -206,14 +205,29 @@ export function getFilmReviewSchema(review: any, siteUrl: string) {
       }
       : undefined,
     itemReviewed: {
-      "@type": "Movie",
+      "@type": isTVSeries ? "TVSeries" : "Movie",
       name: review.title,
-      image: review.thumbnailUrl || `${siteUrl}/khotruyen_logo.png`,
+      image: review.thumbnailUrl || `${siteUrl}/logo_phim.png`,
       genre: review.categories?.map((c: any) => c.name) || [],
       actor: review.actors?.map((a: any) => ({
         "@type": "Person",
         name: a.name,
       })) || [],
+      ...(isTVSeries && episodeCount > 0 ? { numberOfEpisodes: episodeCount } : {}),
+      ...(review.episodes && review.episodes.length > 0 ? {
+        containsSeason: [{
+          "@type": "TVSeason",
+          seasonNumber: 1,
+          numberOfEpisodes: review.episodes.length,
+          episode: review.episodes.map((ep: any) => ({
+            "@type": "TVEpisode",
+            episodeNumber: ep.episodeNum,
+            name: ep.title || `Tập ${ep.episodeNum}`,
+            ...(ep.duration ? { duration: `PT${ep.duration}M` } : {}),
+            url: ep.videoUrl,
+          })),
+        }],
+      } : {}),
     },
     inLanguage: "vi-VN",
   };
@@ -224,13 +238,13 @@ export function getFilmReviewsListSchema(siteUrl: string) {
   return {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Review Phim - vivutruyenhay.com",
+    name: "Review Phim - The Midnight Movie Reel",
     description:
       "Xem các bài review phim hay nhất. Đánh giá phim, xếp hạng và nhận xét từ cộng đồng.",
-    url: `${siteUrl}/film-reviews`,
+    url: `${siteUrl}/phim`,
     publisher: {
       "@type": "Organization",
-      name: "vivutruyenhay.com",
+      name: "The Midnight Movie Reel",
       url: siteUrl,
     },
     inLanguage: "vi-VN",

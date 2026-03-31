@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useRouter, usePathname } from "next/navigation";
 import { logoutUser } from "../../store/slices/authSlice";
@@ -9,6 +9,7 @@ import Image from "next/image";
 import { AppDispatch } from "../../store";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
+import { useTheme } from "@/components/layout/ThemeProvider";
 
 const Navbar: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -17,34 +18,52 @@ const Navbar: React.FC = () => {
   const { t } = useLanguage();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isScrolled, setIsScrolled] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const { user, isAuthenticated, isAdmin, hasAdminAccess, isReady } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   const isStoriesPage = useMemo(() => {
     return (
       pathName?.startsWith("/stories") ||
-      pathName?.startsWith("/truyen_text") ||
-      pathName?.startsWith("/truyen_audio") ||
+      pathName?.startsWith("/truyen-text") ||
+      pathName?.startsWith("/truyen-audio") ||
       pathName?.startsWith("/the-loai")
     );
   }, [pathName]);
 
-  // Close user menu when clicking outside
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        userMenuRef.current &&
-        !userMenuRef.current.contains(event.target as Node)
-      ) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
         setIsUserMenuOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (isSearchOpen && searchInputRef.current) searchInputRef.current.focus();
+  }, [isSearchOpen]);
+
+  // Keyboard shortcut
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") { e.preventDefault(); setIsSearchOpen(true); }
+      if (e.key === "Escape") setIsSearchOpen(false);
     };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
   }, []);
 
   const handleLogout = () => {
@@ -54,472 +73,209 @@ const Navbar: React.FC = () => {
   };
 
   const handleProfileClick = () => {
-    if (hasAdminAccess) {
-      router.push("/admin");
-    } else {
-      router.push("/profile");
-    }
+    router.push(hasAdminAccess ? "/admin" : "/profile");
     setIsUserMenuOpen(false);
   };
 
+  const handleSearch = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/phim?search=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+      setSearchQuery("");
+    }
+  }, [searchQuery, router]);
+
+  const navLinks = [
+    { href: "/", label: t("nav.home") },
+    { href: "/phim", label: "Review Phim" },
+    { href: "/blog", label: "Blog" },
+    { href: "/truyen-audio", label: t("nav.audio") },
+    { href: "/truyen-text", label: t("nav.stories") },
+    { href: "/the-loai", label: "Thể loại" },
+  ];
+
+  const isActive = (href: string) => (href === "/" ? pathName === "/" : pathName?.startsWith(href));
+
   return (
-    <nav className={`bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 z-50 ${isMobileMenuOpen ? 'relative' : 'sticky top-0'}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          {/* Left side */}
-          <div className="flex items-center">
+    <>
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-[#08080d]/95 backdrop-blur-xl shadow-lg shadow-black/20 border-b border-white/[0.04]" : "bg-transparent"}`}>
+        <div className="max-w-[1400px] mx-auto px-4 lg:px-8">
+          <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link
-              href="/"
-              className="flex-shrink-0 flex items-center group"
-            >
-              <div className="hidden md:flex items-center text-lg font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent group-hover:scale-105 transition-transform duration-300">
-                <Image
-                  src="/khotruyen_logo.png"
-                  alt="Kho Truyện Hay"
-                  width={36}
-                  height={36}
-                  className="rounded-lg mr-2"
-                  priority
-                />
+            <Link href="/" className="flex items-center gap-2.5 group shrink-0">
+              <Image src="/logo_phim.png" alt="The Midnight Movie Reel" width={34} height={34} className="rounded-lg group-hover:rotate-[-4deg] transition-transform duration-300" priority />
+              <div className="hidden sm:block">
+                <span className="text-[15px] font-bold tracking-tight">
+                  <span className="text-white/90">MIDNIGHT</span>
+                  <span className="text-primary-500 ml-1">REEL</span>
+                </span>
               </div>
             </Link>
 
-            {/* Desktop navigation */}
-            <div className="hidden lg:ml-10 lg:flex lg:space-x-1">
-              <Link
-                href="/"
-                className="relative text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 text-xs font-medium transition-all duration-200 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md"
-              >
-                <span className="relative">
-                  {t("nav.home")}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
-                </span>
-              </Link>
-              <Link
-                href="/truyen_audio"
-                className="relative text-gray-500 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 text-xs font-medium transition-all duration-200 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md group"
-              >
-                <span className="relative">
-                  {t("nav.audio")}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
-                </span>
-              </Link>
-              <Link
-                href="/film-reviews"
-                className="relative text-gray-500 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 text-xs font-medium transition-all duration-200 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md group"
-              >
-                <span className="relative">
-                  🎬 Review Phim
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
-                </span>
-              </Link>
-              <Link
-                href="/truyen_text"
-                className="relative text-gray-500 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 text-xs font-medium transition-all duration-200 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md group"
-              >
-                <span className="relative">
-                  {t("nav.stories")}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
-                </span>
-              </Link>
-              {/* <Link
-                href="/the-loai"
-                className="relative text-gray-500 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 text-xs font-medium transition-all duration-200 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md group"
-              >
-                <span className="relative">
-                  {t("nav.genres")}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
-                </span>
-              </Link> */}
-              {/* Search icon - Desktop */}
-              {!isStoriesPage && (
-                <Link
-                  href="/truyen_audio"
-                  className="p-2 rounded-lg text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 flex items-center"
-                  title="Tìm kiếm"
-                >
-                  <svg
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
+            {/* Center nav - Desktop */}
+            <div className="hidden lg:flex items-center gap-1 bg-white/[0.04] rounded-full px-1.5 py-1">
+              {navLinks.map((link) => (
+                <Link key={link.href} href={link.href} className={`relative px-4 py-1.5 text-[13px] font-medium rounded-full transition-all duration-200 ${isActive(link.href) ? "bg-primary-500 text-white shadow-md shadow-primary-500/20" : "text-zinc-400 hover:text-white hover:bg-white/[0.06]"}`}>
+                  {link.label}
                 </Link>
-              )}
+              ))}
             </div>
-          </div>
-          {/* Logo */}
-          <Link
-            href="/"
-            className="flex-shrink-0 flex items-center ml-4 md:ml-0 group"
-          >
-            <div className="flex sm:hidden items-center text-lg font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent group-hover:scale-105 transition-transform duration-300">
-              <Image
-                src="/khotruyen_logo.png"
-                alt="Kho Truyện Hay"
-                width={32}
-                height={32}
-                className="rounded-lg mr-2"
-                priority
-              />
-              vivutruyenhay.com
-            </div>
-          </Link>
 
-          {/* Hamburger button - Mobile only */}
-          <div className="flex lg:hidden items-center">
-            <button
-              onClick={() => { if (!isMobileMenuOpen) window.scrollTo({ top: 0, behavior: 'instant' }); setIsMobileMenuOpen(!isMobileMenuOpen); }}
-              className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
-              aria-label="Toggle menu"
-            >
-              {isMobileMenuOpen ? (
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            {/* Right side */}
+            <div className="flex items-center gap-2">
+              {/* Search */}
+              <button onClick={() => setIsSearchOpen(!isSearchOpen)} className="flex items-center gap-2 px-3 py-1.5 rounded-full text-zinc-500 hover:text-white bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.04] transition-all duration-200 text-[13px] dark:text-zinc-500 dark:hover:text-white dark:bg-white/[0.03] dark:hover:bg-white/[0.06]" aria-label="Tìm kiếm">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                 </svg>
-              ) : (
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              )}
-            </button>
-          </div>
+                <span className="hidden md:inline">Tìm kiếm</span>
+                <kbd className="hidden md:inline text-[10px] text-zinc-600 bg-white/[0.04] px-1.5 py-0.5 rounded border border-white/[0.06]">⌘K</kbd>
+              </button>
 
-          {/* Right side - Desktop */}
-          <div className="hidden lg:flex items-center space-x-4">
-
-            {!isReady ? (
-              // Loading state while auth is initializing
-              <div className="flex items-center space-x-3">
-                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-8 w-20 rounded"></div>
-                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-8 w-20 rounded"></div>
-              </div>
-            ) : isAuthenticated && user ? (
-              <div className="flex items-center space-x-3">
-                {/* Bookmarks */}
-                <Link
-                  href="/bookmarks"
-                  className="group p-3 rounded-xl text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gradient-to-br hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 hover:shadow-lg hover:scale-110 transform"
-                  title="Bookmarks"
-                >
-                  <svg
-                    className="h-5 w-5 group-hover:scale-110 transition-transform duration-300"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-                    />
-                  </svg>
-                </Link>
-
-                {/* User menu */}
-                <div className="relative" ref={userMenuRef}>
-                  <button
-                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                    className="flex items-center space-x-2 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 hover:bg-gray-100 dark:hover:bg-gray-700 p-1 transition-colors duration-200"
-                  >
-                    {user.avatar ? (
-                      <img
-                        className="h-8 w-8 rounded-full object-cover ring-2 ring-blue-500"
-                        src={user.avatar}
-                        alt={user.name}
-                      />
-                    ) : (
-                      <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-medium ring-2 ring-blue-500">
-                        {user.name.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-
-                    <svg
-                      className={`h-4 w-4 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${isUserMenuOpen ? "rotate-180" : ""
-                        }`}
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </button>
-
-                  {/* Dropdown menu */}
-                  {isUserMenuOpen && (
-                    <div className="absolute right-0 mt-2 w-56 rounded-lg shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-50">
-                      <div className="py-1">
-                        {/* Menu Items */}
-                        <button
-                          onClick={handleProfileClick}
-                          className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 flex items-center space-x-3"
-                        >
-                          <svg
-                            className="h-4 w-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                            />
-                          </svg>
-                          <span>
-                            {hasAdminAccess ? t("nav.admin") : t("nav.profile")}
-                          </span>
-                        </button>
-
-                        <Link
-                          href="/bookmarks"
-                          onClick={() => setIsUserMenuOpen(false)}
-                          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
-                        >
-                          <div className="flex items-center space-x-3">
-                            <svg
-                              className="h-4 w-4"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-                              />
-                            </svg>
-                            <span>{t("nav.bookmarks")}</span>
-                          </div>
-                        </Link>
-
-                        <Link
-                          href="/settings"
-                          onClick={() => setIsUserMenuOpen(false)}
-                          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
-                        >
-                          <div className="flex items-center space-x-3">
-                            <svg
-                              className="h-4 w-4"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                              />
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                              />
-                            </svg>
-                            <span>{t("nav.settings")}</span>
-                          </div>
-                        </Link>
-
-                        <div className="border-t border-gray-200 dark:border-gray-700">
-                          <button
-                            onClick={handleLogout}
-                            className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900 dark:hover:bg-opacity-20 transition-colors duration-200 flex items-center space-x-3"
-                          >
-                            <svg
-                              className="h-4 w-4"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                              />
-                            </svg>
-                            <span>{t("auth.logout")}</span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Admin link */}
-                {hasAdminAccess && (
-                  <Link
-                    href="/admin"
-                    className="group relative text-gray-500 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 hover:shadow-md hover:scale-105"
-                  >
-                    <span className="flex items-center gap-2">⚙️ Admin</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                  </Link>
+              {/* Dark mode toggle */}
+              <button onClick={toggleTheme} className="p-2 rounded-full text-zinc-400 hover:text-white bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.04] dark:text-zinc-400 dark:hover:text-white transition-all duration-200" aria-label="Toggle theme">
+                {theme === "dark" ? (
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" /></svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" /></svg>
                 )}
+              </button>
 
-                {/* Logout */}
-                <button
-                  onClick={handleLogout}
-                  className="group relative text-gray-500 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 dark:hover:from-red-900/20 dark:hover:to-pink-900/20 hover:shadow-md hover:scale-105"
-                >
-                  <span className="flex items-center gap-2">
-                    🚪 {t("nav.logout")}
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-pink-600 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                </button>
+              {/* Desktop auth */}
+              <div className="hidden lg:flex items-center gap-2">
+                {!isReady ? (
+                  <div className="animate-pulse bg-white/5 h-8 w-20 rounded-full" />
+                ) : isAuthenticated && user ? (
+                  <>
+                    <Link href="/bookmarks" className="p-2 rounded-full text-zinc-400 hover:text-accent-400 hover:bg-accent-500/10 transition-all" title="Bookmarks">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                      </svg>
+                    </Link>
+                    {hasAdminAccess && (
+                      <Link href="/admin" className="p-2 rounded-full text-zinc-400 hover:text-accent-400 hover:bg-accent-500/10 transition-all" title="Admin">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                      </Link>
+                    )}
+                    <div className="relative" ref={userMenuRef}>
+                      <button onClick={() => setIsUserMenuOpen(!isUserMenuOpen)} className="flex items-center gap-2 p-1 rounded-full hover:bg-white/[0.06] transition-all">
+                        {user.avatar ? (
+                          <img className="h-8 w-8 rounded-full object-cover ring-2 ring-white/10" src={user.avatar} alt={user.name} />
+                        ) : (
+                          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary-500 to-cinema-purple flex items-center justify-center text-white text-sm font-bold ring-2 ring-white/10">
+                            {user.name.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                      </button>
+                      {isUserMenuOpen && (
+                        <div className="absolute right-0 mt-3 w-52 rounded-2xl bg-[#141420] border border-white/[0.06] shadow-2xl shadow-black/40 overflow-hidden">
+                          <div className="px-4 py-3 border-b border-white/[0.04]">
+                            <p className="text-sm font-medium text-white truncate">{user.name}</p>
+                            <p className="text-xs text-zinc-500 truncate">{user.email}</p>
+                          </div>
+                          <div className="py-1">
+                            <button onClick={handleProfileClick} className="w-full text-left px-4 py-2.5 text-sm text-zinc-300 hover:bg-white/[0.04] hover:text-white transition-colors flex items-center gap-3">
+                              <svg className="w-4 h-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+                              {hasAdminAccess ? t("nav.admin") : t("nav.profile")}
+                            </button>
+                            <Link href="/bookmarks" onClick={() => setIsUserMenuOpen(false)} className="px-4 py-2.5 text-sm text-zinc-300 hover:bg-white/[0.04] hover:text-white transition-colors flex items-center gap-3">
+                              <svg className="w-4 h-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" /></svg>
+                              {t("nav.bookmarks")}
+                            </Link>
+                          </div>
+                          <div className="border-t border-white/[0.04] py-1">
+                            <button onClick={handleLogout} className="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors flex items-center gap-3">
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" /></svg>
+                              {t("auth.logout")}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/auth/login" className="text-[13px] font-medium text-zinc-400 hover:text-white px-4 py-2 rounded-full hover:bg-white/[0.06] transition-all">{t("nav.login")}</Link>
+                    <Link href="/auth/register" className="text-[13px] font-medium text-white bg-primary-500 hover:bg-primary-600 px-5 py-2 rounded-full transition-all shadow-lg shadow-primary-500/20">{t("nav.register")}</Link>
+                  </>
+                )}
               </div>
-            ) : (
-              <div className="flex items-center space-x-3">
-                <Link
-                  href="/auth/login"
-                  className="group relative text-gray-500 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 hover:shadow-md hover:scale-105 border border-transparent hover:border-blue-200 dark:hover:border-blue-700"
-                >
-                  <span className="flex items-center gap-2">
-                    🔑 {t("nav.login")}
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                </Link>
-                <Link
-                  href="/auth/register"
-                  className="group relative bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 transform"
-                >
-                  <span className="flex items-center gap-2">
-                    ✨ {t("nav.register")}
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-white to-blue-100 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-                </Link>
-              </div>
-            )}
+
+              {/* Hamburger */}
+              <button onClick={() => { if (!isMobileMenuOpen) window.scrollTo({ top: 0, behavior: "instant" }); setIsMobileMenuOpen(!isMobileMenuOpen); }} className="lg:hidden p-2 rounded-full text-zinc-400 hover:text-white hover:bg-white/[0.06] transition-all" aria-label="Menu">
+                {isMobileMenuOpen ? (
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                ) : (
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" /></svg>
+                )}
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Mobile menu - toggleable hamburger dropdown */}
-        {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
-
-            {/* Featured 3 categories block */}
-            <div className="px-4 pt-4 pb-2">
-              <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Khám phá</p>
-              <div className="flex flex-col gap-2">
-                <Link
-                  href="/truyen_text"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
-                >
-                  <span className="text-2xl">📚</span>
-                  <div>
-                    <div className="font-semibold text-sm">{t("nav.stories")}</div>
-                    <div className="text-xs text-blue-500 dark:text-blue-400">Đọc truyện chữ</div>
-                  </div>
-                </Link>
-                <Link
-                  href="/truyen_audio"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/40 transition-colors"
-                >
-                  <span className="text-2xl">🎧</span>
-                  <div>
-                    <div className="font-semibold text-sm">{t("nav.audio")}</div>
-                    <div className="text-xs text-purple-500 dark:text-purple-400">Nghe truyện audio</div>
-                  </div>
-                </Link>
-                <Link
-                  href="/film-reviews"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-colors"
-                >
-                  <span className="text-2xl">🎬</span>
-                  <div>
-                    <div className="font-semibold text-sm">Review Phim</div>
-                    <div className="text-xs text-rose-500 dark:text-rose-400">Đánh giá phim hay</div>
-                  </div>
-                </Link>
-                <Link
-                  href="/"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
-                >
-                  <span className="text-2xl">🏠</span>
-                  <div>
-                    <div className="font-semibold text-sm">Trang chủ</div>
-                    <div className="text-xs text-blue-500 dark:text-blue-400">Về trang chủ</div>
-                  </div>
-                </Link>
+        {/* Search overlay */}
+        {isSearchOpen && (
+          <div className="absolute top-full left-0 right-0 bg-[#0c0c14]/98 backdrop-blur-xl border-b border-white/[0.04] shadow-2xl">
+            <div className="max-w-2xl mx-auto px-4 py-5">
+              <form onSubmit={handleSearch} className="relative">
+                <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+                <input ref={searchInputRef} type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Tìm review phim, truyện audio, truyện chữ..." className="w-full bg-white/[0.04] border border-white/[0.06] rounded-2xl pl-12 pr-4 py-3.5 text-white placeholder-zinc-600 focus:outline-none focus:border-primary-500/50 focus:ring-1 focus:ring-primary-500/20 transition-all text-sm" />
+                <button type="button" onClick={() => setIsSearchOpen(false)} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white text-xs bg-white/[0.06] px-2 py-1 rounded-lg">ESC</button>
+              </form>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <span className="text-[11px] text-zinc-600">Gợi ý:</span>
+                {["Phim hay 2026", "Ending explained", "Truyện audio", "Top IMDB"].map((tag) => (
+                  <button key={tag} onClick={() => { setSearchQuery(tag); router.push(`/phim?search=${encodeURIComponent(tag)}`); setIsSearchOpen(false); }} className="text-[11px] text-zinc-500 hover:text-primary-400 bg-white/[0.03] hover:bg-primary-500/10 border border-white/[0.04] px-2.5 py-1 rounded-full transition-all">{tag}</button>
+                ))}
               </div>
             </div>
+          </div>
+        )}
 
-            {/* Divider */}
-            <div className="border-t border-gray-100 dark:border-gray-700 mx-4 my-2" />
-
-            {/* Auth row */}
-            <div className="px-4 pb-4 flex items-center gap-2">
+        {/* Mobile menu */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden bg-[#0c0c14]/98 backdrop-blur-xl border-t border-white/[0.04] max-h-[calc(100vh-4rem)] overflow-y-auto">
+            <div className="px-4 py-4 space-y-1">
+              {navLinks.map((link) => (
+                <Link key={link.href} href={link.href} onClick={() => setIsMobileMenuOpen(false)} className={`block px-4 py-3 rounded-xl text-sm font-medium transition-all ${isActive(link.href) ? "bg-primary-500/10 text-primary-400 border border-primary-500/20" : "text-zinc-400 hover:text-white hover:bg-white/[0.04]"}`}>
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+            <div className="border-t border-white/[0.04] px-4 py-4">
               {isReady && isAuthenticated && user ? (
-                <>
-                  <Link
-                    href="/bookmarks"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="px-3 py-1.5 rounded-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-                  >
-                    🔖 {t("nav.bookmarks")}
-                  </Link>
-                  {hasAdminAccess && (
-                    <Link
-                      href="/admin"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="px-3 py-1.5 rounded-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-                    >
-                      ⚙️ Admin
-                    </Link>
-                  )}
-                  <button
-                    onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
-                    className="px-3 py-1.5 rounded-full text-sm font-medium text-red-500 dark:text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                  >
-                    🚪 {t("nav.logout")}
-                  </button>
-                </>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-3 px-4 py-3">
+                    {user.avatar ? (
+                      <img className="h-9 w-9 rounded-full object-cover ring-2 ring-white/10" src={user.avatar} alt={user.name} />
+                    ) : (
+                      <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary-500 to-cinema-purple flex items-center justify-center text-white text-sm font-bold ring-2 ring-white/10">{user.name.charAt(0).toUpperCase()}</div>
+                    )}
+                    <div>
+                      <p className="text-sm font-medium text-white">{user.name}</p>
+                      <p className="text-xs text-zinc-500">{user.role}</p>
+                    </div>
+                  </div>
+                  <Link href="/bookmarks" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-white hover:bg-white/[0.04] transition-colors">Bookmarks</Link>
+                  {hasAdminAccess && <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-white hover:bg-white/[0.04] transition-colors">Admin Panel</Link>}
+                  <button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} className="w-full text-left px-4 py-2.5 rounded-xl text-sm text-red-400 hover:bg-red-500/10 transition-colors">{t("auth.logout")}</button>
+                </div>
               ) : isReady ? (
-                <>
-                  <Link
-                    href="/auth/login"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="px-3 py-1.5 rounded-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-                  >
-                    🔑 {t("nav.login")}
-                  </Link>
-                  <Link
-                    href="/auth/register"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="px-3 py-1.5 rounded-full text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                  >
-                    ✨ {t("nav.register")}
-                  </Link>
-                </>
+                <div className="flex gap-2">
+                  <Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 text-center text-sm font-medium text-zinc-300 py-2.5 rounded-xl border border-white/[0.06] hover:bg-white/[0.04] transition-colors">{t("nav.login")}</Link>
+                  <Link href="/auth/register" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 text-center text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 py-2.5 rounded-xl transition-colors">{t("nav.register")}</Link>
+                </div>
               ) : null}
             </div>
           </div>
-        )
-        }
-      </div>
-    </nav>
+        )}
+      </nav>
+      <div className="h-16" />
+    </>
   );
 };
 

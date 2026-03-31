@@ -4,13 +4,13 @@ import Layout from "../../components/layout/Layout";
 
 // Generate metadata for SEO
 export const metadata: Metadata = {
-  title: "DMCA - Báo cáo vi phạm bản quyền - vivutruyenhay.com",
+  title: "DMCA - Báo cáo vi phạm bản quyền - The Midnight Movie Reel",
   description:
-    "Chính sách DMCA và hướng dẫn báo cáo vi phạm bản quyền tại vivutruyenhay.com. Chúng tôi tôn trọng quyền sở hữu trí tuệ.",
+    "Chính sách DMCA và hướng dẫn báo cáo vi phạm bản quyền tại The Midnight Movie Reel. Chúng tôi tôn trọng quyền sở hữu trí tuệ.",
   openGraph: {
-    title: "DMCA - Báo cáo vi phạm bản quyền - vivutruyenhay.com",
+    title: "DMCA - Báo cáo vi phạm bản quyền - The Midnight Movie Reel",
     description:
-      "Chính sách DMCA và hướng dẫn báo cáo vi phạm bản quyền tại vivutruyenhay.com. Chúng tôi tôn trọng quyền sở hữu trí tuệ.",
+      "Chính sách DMCA và hướng dẫn báo cáo vi phạm bản quyền tại The Midnight Movie Reel. Chúng tôi tôn trọng quyền sở hữu trí tuệ.",
     type: "website",
     locale: "vi_VN",
   },
@@ -22,21 +22,21 @@ export const metadata: Metadata = {
 export default function DMCAPage() {
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-[1400px] mx-auto px-4 lg:px-8 py-8">
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 animate-slide-up">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 animate-slide-up">
             Chính sách DMCA
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto animate-slide-up animation-delay-200">
-            vivutruyenhay.com tôn trọng quyền sở hữu trí tuệ và tuân thủ Đạo luật Bản
+          <p className="text-lg text-zinc-500 max-w-3xl mx-auto animate-slide-up animation-delay-200">
+            The Midnight Movie Reel tôn trọng quyền sở hữu trí tuệ và tuân thủ Đạo luật Bản
             quyền Thiên niên kỷ số (DMCA)
           </p>
         </div>
 
         <div className="max-w-4xl mx-auto">
           {/* Quick Report Section */}
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 mb-8 animate-slide-up animation-delay-300">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6 mb-8 animate-slide-up animation-delay-300">
             <h2 className="text-xl font-bold text-red-800 dark:text-red-200 mb-4 flex items-center">
               <span className="mr-2">⚠️</span>
               Báo cáo vi phạm bản quyền nhanh
@@ -48,13 +48,13 @@ export default function DMCAPage() {
             <div className="flex flex-col sm:flex-row gap-4">
               <a
                 href="/contact"
-                className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 hover:scale-105 text-center"
+                className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-2xl transition-all duration-300 hover:scale-105 text-center"
               >
                 📧 Gửi báo cáo
               </a>
               <a
                 href="mailto:dmca@webtruyen.com"
-                className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 hover:scale-105 text-center"
+                className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-2xl transition-all duration-300 hover:scale-105 text-center"
               >
                 ✉️ dmca@webtruyen.com
               </a>
@@ -62,24 +62,24 @@ export default function DMCAPage() {
           </div>
 
           {/* Main Content */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-8 animate-slide-up animation-delay-400">
+          <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-8 mb-8 animate-slide-up animation-delay-400">
             <div className="prose prose-lg dark:prose-invert max-w-none">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+              <h2 className="text-2xl font-bold text-white mb-6">
                 1. Cam kết của chúng tôi
               </h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
-                vivutruyenhay.com cam kết tôn trọng quyền tác giả và quyền sở hữu trí
+              <p className="text-zinc-500 mb-6 leading-relaxed">
+                The Midnight Movie Reel cam kết tôn trọng quyền tác giả và quyền sở hữu trí
                 tuệ. Chúng tôi nghiêm túc đối phó với mọi vi phạm bản quyền và
                 sẽ xử lý nhanh chóng các báo cáo hợp lệ theo DMCA.
               </p>
 
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+              <h2 className="text-2xl font-bold text-white mb-6">
                 2. Cách báo cáo vi phạm bản quyền
               </h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
+              <p className="text-zinc-500 mb-4">
                 Để gửi báo cáo DMCA hợp lệ, vui lòng cung cấp các thông tin sau:
               </p>
-              <ul className="list-disc list-inside text-gray-600 dark:text-gray-400 mb-6 space-y-2">
+              <ul className="list-disc list-inside text-zinc-500 mb-6 space-y-2">
                 <li>
                   Chữ ký điện tử hoặc chữ ký vật lý của chủ sở hữu bản quyền
                 </li>
@@ -94,71 +94,71 @@ export default function DMCAPage() {
                 <li>Tuyên bố rằng thông tin trong báo cáo là chính xác</li>
               </ul>
 
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+              <h2 className="text-2xl font-bold text-white mb-6">
                 3. Quy trình xử lý
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg text-center">
+                <div className="bg-primary-500/10 p-4 rounded-2xl text-center">
                   <div className="text-2xl mb-2">📨</div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                  <h3 className="font-semibold text-white mb-2">
                     Bước 1
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-zinc-500">
                     Nhận và xem xét báo cáo trong 24h
                   </p>
                 </div>
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg text-center">
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-2xl text-center">
                   <div className="text-2xl mb-2">🔍</div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                  <h3 className="font-semibold text-white mb-2">
                     Bước 2
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-zinc-500">
                     Điều tra và xác minh tính hợp lệ
                   </p>
                 </div>
-                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg text-center">
+                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-2xl text-center">
                   <div className="text-2xl mb-2">✅</div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                  <h3 className="font-semibold text-white mb-2">
                     Bước 3
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-zinc-500">
                     Gỡ bỏ nội dung và thông báo kết quả
                   </p>
                 </div>
               </div>
 
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+              <h2 className="text-2xl font-bold text-white mb-6">
                 4. Counter-Notice (Phản đối gỡ bỏ)
               </h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
+              <p className="text-zinc-500 mb-6 leading-relaxed">
                 Nếu bạn tin rằng nội dung của mình bị gỡ bỏ một cách sai trái,
                 bạn có thể gửi counter-notice theo quy định của DMCA. Chúng tôi
                 sẽ xem xét và có thể khôi phục nội dung nếu hợp lệ.
               </p>
 
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+              <h2 className="text-2xl font-bold text-white mb-6">
                 5. Chính sách vi phạm nhiều lần
               </h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
+              <p className="text-zinc-500 mb-6 leading-relaxed">
                 Tài khoản vi phạm bản quyền nhiều lần sẽ bị đình chỉ hoặc khóa
                 vĩnh viễn. Chúng tôi duy trì danh sách các tài khoản vi phạm để
                 thực thi chính sách này.
               </p>
 
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+              <h2 className="text-2xl font-bold text-white mb-6">
                 6. Thông tin liên hệ DMCA
               </h2>
-              <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
-                <p className="text-gray-600 dark:text-gray-400 mb-2">
-                  <strong>DMCA Agent:</strong> vivutruyenhay.com Legal Team
+              <div className="bg-gray-50 bg-white/[0.04] p-6 rounded-2xl">
+                <p className="text-zinc-500 mb-2">
+                  <strong>DMCA Agent:</strong> The Midnight Movie Reel Legal Team
                 </p>
-                <p className="text-gray-600 dark:text-gray-400 mb-2">
+                <p className="text-zinc-500 mb-2">
                   <strong>Email:</strong> dmca@webtruyen.com
                 </p>
-                <p className="text-gray-600 dark:text-gray-400 mb-2">
+                <p className="text-zinc-500 mb-2">
                   <strong>Địa chỉ:</strong> [Địa chỉ công ty]
                 </p>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-zinc-500">
                   <strong>Điện thoại:</strong> [Số điện thoại hỗ trợ]
                 </p>
               </div>
@@ -166,7 +166,7 @@ export default function DMCAPage() {
           </div>
 
           {/* Disclaimer */}
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 animate-slide-up animation-delay-500">
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-2xl p-6 animate-slide-up animation-delay-500">
             <h3 className="text-lg font-bold text-yellow-800 dark:text-yellow-200 mb-3">
               ⚠️ Lưu ý quan trọng
             </h3>

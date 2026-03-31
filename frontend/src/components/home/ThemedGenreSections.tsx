@@ -108,10 +108,10 @@ const ThemedGenreSections: React.FC<ThemedGenreSectionsProps> = ({ initialSectio
   const renderStoryCard = (story: Story) => (
     <Link
       key={story.id}
-      href={`${story.type === "AUDIO" ? "/truyen_audio" : "/truyen_text"}/${story.slug}`}
-      className="group bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+      href={`${story.type === "AUDIO" ? "/truyen-audio" : "/truyen-text"}/${story.slug}`}
+      className="group bg-white/[0.02] rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
     >
-      <div className="relative aspect-[3/4] bg-gray-200 dark:bg-gray-700 overflow-hidden">
+      <div className="relative aspect-[3/4] bg-white/[0.04] overflow-hidden">
         {story.thumbnailUrl ? (
           <Image
             src={getMediaUrl(story.thumbnailUrl)}
@@ -131,10 +131,10 @@ const ThemedGenreSections: React.FC<ThemedGenreSectionsProps> = ({ initialSectio
         </div>
       </div>
       <div className="p-2.5">
-        <h3 className="font-semibold text-gray-900 dark:text-white text-sm line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight">
+        <h3 className="font-semibold text-white text-sm line-clamp-2 group-hover:text-primary-400 transition-colors leading-tight">
           {story.title}
         </h3>
-        <div className="flex items-center justify-between text-[10px] text-gray-500 dark:text-gray-400 mt-1.5">
+        <div className="flex items-center justify-between text-[10px] text-zinc-500 mt-1.5">
           <span className="flex items-center gap-0.5">
             👁 {formatViewCount(story.viewCount || 0)}
           </span>
@@ -153,12 +153,12 @@ const ThemedGenreSections: React.FC<ThemedGenreSectionsProps> = ({ initialSectio
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden animate-pulse"
+          className="bg-white/[0.02] rounded-xl shadow overflow-hidden animate-pulse"
         >
-          <div className="aspect-[3/4] bg-gray-300 dark:bg-gray-700" />
+          <div className="aspect-[3/4] bg-gray-300 " />
           <div className="p-2.5 space-y-1.5">
-            <div className="h-3.5 bg-gray-300 dark:bg-gray-700 rounded w-3/4" />
-            <div className="h-2.5 bg-gray-300 dark:bg-gray-700 rounded w-1/2" />
+            <div className="h-3.5 bg-gray-300  rounded w-3/4" />
+            <div className="h-2.5 bg-gray-300  rounded w-1/2" />
           </div>
         </div>
       ))}
@@ -181,13 +181,13 @@ const ThemedGenreSections: React.FC<ThemedGenreSectionsProps> = ({ initialSectio
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <span className="text-xl sm:text-2xl">{section.emoji}</span>
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
+                <h2 className="text-lg sm:text-xl font-bold text-white">
                   {section.title}
                 </h2>
               </div>
               <Link
                 href={section.linkAll}
-                className="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium text-sm transition-colors"
+                className="flex items-center gap-1 text-primary-400 hover:text-primary-500 hover:text-primary-300 font-medium text-sm transition-colors"
               >
                 Xem tất cả
                 <svg

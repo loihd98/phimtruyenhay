@@ -9,6 +9,7 @@ import { RootState } from "../../../store";
 import { getMediaUrl, formatViewCount } from "../../../utils/media";
 import apiClient from "../../../utils/api";
 import { FilmReview, FilmComment } from "../../../types";
+import { AdInArticle } from "../../../components/seo/AdBanner";
 
 interface FilmReviewDetailProps {
   initialData: FilmReview | null;
@@ -28,6 +29,8 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
   const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [activeEpisode, setActiveEpisode] = useState<number>(0); // index into episodes array
+  const [filterLanguage, setFilterLanguage] = useState<string | null>(null); // null = all
 
   // Comments state
   const [comments, setComments] = useState<FilmComment[]>([]);
@@ -140,7 +143,7 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
             key={star}
             className={`w-6 h-6 ${star <= stars
                 ? "text-yellow-400"
-                : "text-gray-300 dark:text-gray-600"
+                : "text-zinc-600"
               }`}
             fill="currentColor"
             viewBox="0 0 20 20"
@@ -159,13 +162,13 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto animate-pulse">
-          <div className="h-64 md:h-96 bg-gray-300 dark:bg-gray-700 rounded-xl mb-6" />
-          <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-3/4 mb-4" />
-          <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-1/3 mb-6" />
+          <div className="h-64 md:h-96 bg-gray-300 bg-white/[0.04] rounded-xl mb-6" />
+          <div className="h-8 bg-gray-300 bg-white/[0.04] rounded w-3/4 mb-4" />
+          <div className="h-6 bg-gray-300 bg-white/[0.04] rounded w-1/3 mb-6" />
           <div className="space-y-3">
-            <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded" />
-            <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded" />
-            <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-2/3" />
+            <div className="h-4 bg-gray-300 bg-white/[0.04] rounded" />
+            <div className="h-4 bg-gray-300 bg-white/[0.04] rounded" />
+            <div className="h-4 bg-gray-300 bg-white/[0.04] rounded w-2/3" />
           </div>
         </div>
       </div>
@@ -176,15 +179,15 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <div className="text-6xl mb-4">😔</div>
-        <h1 className="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-2">
+        <h1 className="text-2xl font-bold text-zinc-400 mb-2">
           Không tìm thấy review phim
         </h1>
-        <p className="text-gray-500 dark:text-gray-400 mb-6">
+        <p className="text-zinc-500 mb-6">
           {error || "Bài review phim không tồn tại hoặc đã bị xóa."}
         </p>
         <Link
-          href="/film-reviews"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          href="/phim"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-2xl hover:bg-primary-600 transition-colors"
         >
           ← Quay lại danh sách
         </Link>
@@ -197,40 +200,55 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
       {/* Back button */}
       <div className="max-w-4xl mx-auto">
         <Link
-          href="/film-reviews"
-          className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline mb-6 text-sm"
+          href="/phim"
+          className="inline-flex items-center gap-1.5 text-zinc-500 hover:text-white text-sm transition-colors mb-6 group"
         >
-          ← Quay lại danh sách review phim
+          <svg className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+          Danh sách review phìm
         </Link>
       </div>
 
       {/* 1. Video embed / Thumbnail */}
       {(() => {
-        const youtubeId = getYouTubeId(filmReview.reviewLink);
+        const hasEpisodes = filmReview.episodes && filmReview.episodes.length > 1;
+        const currentVideoUrl = hasEpisodes
+          ? filmReview.episodes![activeEpisode]?.videoUrl || filmReview.reviewLink
+          : filmReview.reviewLink;
+        const youtubeId = getYouTubeId(currentVideoUrl);
+        const currentEp = hasEpisodes ? filmReview.episodes![activeEpisode] : null;
+
         if (isVideoPlaying && youtubeId) {
           return (
-            <div className="w-full bg-black mb-0" style={{ aspectRatio: "16/9" }}>
-              <iframe
-                src={`https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&controls=1&rel=0&modestbranding=1`}
-                width="100%"
-                height="100%"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                title={filmReview.title}
-                style={{ border: 0, display: "block" }}
-              />
+            <div className="w-full bg-black mb-0">
+              <div style={{ aspectRatio: "16/9" }}>
+                <iframe
+                  src={`https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&controls=1&rel=0&modestbranding=1`}
+                  width="100%"
+                  height="100%"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  title={currentEp?.title || filmReview.title}
+                  style={{ border: 0, display: "block" }}
+                />
+              </div>
+              {hasEpisodes && currentEp && (
+                <div className="bg-zinc-900 px-4 py-2 text-sm text-zinc-400 flex items-center justify-between">
+                  <span>Đang xem: <span className="text-white font-medium">Tập {currentEp.episodeNum}</span>{currentEp.title ? ` - ${currentEp.title}` : ""}</span>
+                  {currentEp.duration && <span>{currentEp.duration} phút</span>}
+                </div>
+              )}
             </div>
           );
         }
         return (
           <div className="max-w-4xl mx-auto">
             <div
-              className="relative w-full h-64 md:h-[450px] rounded-xl overflow-hidden mb-6 bg-gray-200 dark:bg-gray-700 cursor-pointer group"
+              className="relative w-full h-64 md:h-[460px] rounded-2xl overflow-hidden mb-6 bg-white/[0.04] cursor-pointer group shadow-2xl"
               onClick={() => {
                 if (youtubeId) {
                   setIsVideoPlaying(true);
-                } else if (filmReview.reviewLink) {
-                  window.open(filmReview.reviewLink, "_blank", "noopener,noreferrer");
+                } else if (currentVideoUrl) {
+                  window.open(currentVideoUrl, "_blank", "noopener,noreferrer");
                 }
               }}
               title={youtubeId ? "Nhấn để xem video" : "Nhấn để xem trên YouTube"}
@@ -251,7 +269,7 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
               )}
               {/* Play overlay */}
               <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors duration-300">
-                <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-red-600/90 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-red-600/90 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-2xl shadow-red-600/50">
                   <svg className="w-8 h-8 md:w-10 md:h-10 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z" />
                   </svg>
@@ -273,24 +291,166 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
 
       <div className="max-w-4xl mx-auto pt-6">
         {/* 2. Title */}
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 leading-tight">
           {filmReview.title}
         </h1>
 
-        {/* 3. Rating */}
-        <div className="mb-6">{renderStars(filmReview.rating)}</div>
+        {/* 3. Rating + Language Badge */}
+        <div className="flex items-center gap-4 mb-6">
+          {renderStars(filmReview.rating)}
+          {filmReview.language && (
+            <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${
+              filmReview.language === "VIETSUB" ? "bg-blue-500/15 text-blue-400 border border-blue-500/20" :
+              filmReview.language === "THUYET_MINH" ? "bg-green-500/15 text-green-400 border border-green-500/20" :
+              filmReview.language === "LONG_TIENG" ? "bg-purple-500/15 text-purple-400 border border-purple-500/20" :
+              "bg-zinc-500/15 text-zinc-400 border border-zinc-500/20"
+            }`}>
+              {filmReview.language === "VIETSUB" ? "Vietsub" :
+               filmReview.language === "THUYET_MINH" ? "Thuyết Minh" :
+               filmReview.language === "LONG_TIENG" ? "Lồng Tiếng" : "Raw"}
+            </span>
+          )}
+          {filmReview.totalEpisodes && filmReview.totalEpisodes > 1 && (
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-accent-500/15 text-accent-400 border border-accent-500/20">
+              {filmReview.totalEpisodes} tập
+            </span>
+          )}
+        </div>
+
+        {/* 3b. Episode List - Switchable with Language Filter */}
+        {filmReview.episodes && filmReview.episodes.length > 1 && (() => {
+          const allEpisodes = filmReview.episodes!;
+          const availableLanguages = Array.from(new Set(allEpisodes.map(ep => ep.language))).filter(Boolean);
+          const filteredEpisodes = filterLanguage
+            ? allEpisodes.filter(ep => ep.language === filterLanguage)
+            : allEpisodes;
+          const langLabel = (lang: string) =>
+            lang === "VIETSUB" ? "Vietsub" :
+            lang === "THUYET_MINH" ? "Thuyết Minh" :
+            lang === "LONG_TIENG" ? "Lồng Tiếng" : "Raw";
+          const langColor = (lang: string, active: boolean) =>
+            active
+              ? lang === "VIETSUB" ? "bg-blue-500 text-white border-blue-400"
+                : lang === "THUYET_MINH" ? "bg-green-500 text-white border-green-400"
+                : lang === "LONG_TIENG" ? "bg-purple-500 text-white border-purple-400"
+                : "bg-zinc-500 text-white border-zinc-400"
+              : "bg-white/[0.03] border-white/[0.06] text-zinc-400 hover:bg-white/[0.06]";
+
+          return (
+          <div className="mb-8">
+            <h2 className="text-lg font-semibold text-zinc-300 mb-3 flex items-center gap-2">
+              <svg className="w-5 h-5 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+              </svg>
+              Danh sách tập ({allEpisodes.length} tập)
+            </h2>
+
+            {/* Language Filter Tabs */}
+            {availableLanguages.length > 1 && (
+              <div className="flex flex-wrap gap-2 mb-4">
+                <button
+                  onClick={() => { setFilterLanguage(null); }}
+                  className={`px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${
+                    filterLanguage === null
+                      ? "bg-primary-500 text-white border-primary-400"
+                      : "bg-white/[0.03] border-white/[0.06] text-zinc-400 hover:bg-white/[0.06]"
+                  }`}
+                >
+                  Tất cả ({allEpisodes.length})
+                </button>
+                {availableLanguages.map((lang) => {
+                  const count = allEpisodes.filter(ep => ep.language === lang).length;
+                  return (
+                    <button
+                      key={lang}
+                      onClick={() => { setFilterLanguage(lang); }}
+                      className={`px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${langColor(lang, filterLanguage === lang)}`}
+                    >
+                      {langLabel(lang)} ({count})
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-2">
+              {filteredEpisodes.map((ep) => {
+                const originalIdx = allEpisodes.findIndex(e => e.id === ep.id);
+                return (
+                <button
+                  key={ep.id}
+                  onClick={() => {
+                    setActiveEpisode(originalIdx);
+                    setIsVideoPlaying(true);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  className={`flex flex-col items-center justify-center p-2 rounded-xl transition-all group ${
+                    originalIdx === activeEpisode
+                      ? "bg-primary-500 text-white border border-primary-400 shadow-lg shadow-primary-500/25"
+                      : "bg-white/[0.03] border border-white/[0.06] hover:bg-primary-500/10 hover:border-primary-500/30 text-white hover:text-primary-400"
+                  }`}
+                  title={ep.title || `Tập ${ep.episodeNum}`}
+                >
+                  <span className={`text-sm font-bold ${originalIdx === activeEpisode ? "text-white" : ""}`}>{ep.episodeNum}</span>
+                  {ep.language && (
+                    <span className="text-[9px] opacity-70 mt-0.5">
+                      {ep.language === "VIETSUB" ? "VS" : ep.language === "THUYET_MINH" ? "TM" : ep.language === "LONG_TIENG" ? "LT" : "Raw"}
+                    </span>
+                  )}
+                  {ep.duration && (
+                    <span className="text-[9px] opacity-60">{ep.duration}p</span>
+                  )}
+                </button>
+                );
+              })}
+            </div>
+            {/* Current episode info */}
+            {filmReview.episodes![activeEpisode] && (
+              <div className="mt-3 px-4 py-2 bg-white/[0.02] border border-white/[0.06] rounded-xl flex items-center justify-between text-sm">
+                <span className="text-zinc-400">
+                  <span className="text-primary-400 font-semibold">Tập {filmReview.episodes![activeEpisode].episodeNum}</span>
+                  {filmReview.episodes![activeEpisode].title && (
+                    <span className="ml-2 text-zinc-500">— {filmReview.episodes![activeEpisode].title}</span>
+                  )}
+                </span>
+                <div className="flex items-center gap-3 text-zinc-500">
+                  {filmReview.episodes![activeEpisode].duration && (
+                    <span className="text-xs">{filmReview.episodes![activeEpisode].duration} phút</span>
+                  )}
+                  {activeEpisode > 0 && (
+                    <button
+                      onClick={() => { setActiveEpisode(activeEpisode - 1); setIsVideoPlaying(true); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                      className="px-3 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-xs transition-colors"
+                    >
+                      ← Tập trước
+                    </button>
+                  )}
+                  {activeEpisode < filmReview.episodes!.length - 1 && (
+                    <button
+                      onClick={() => { setActiveEpisode(activeEpisode + 1); setIsVideoPlaying(true); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                      className="px-3 py-1 rounded-lg bg-primary-500/20 hover:bg-primary-500/30 text-primary-400 text-xs transition-colors"
+                    >
+                      Tập tiếp →
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+          );
+        })()}
 
         {/* 4. Actors */}
         {filmReview.actors && filmReview.actors.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
+            <h2 className="text-lg font-semibold text-zinc-300 mb-3">
               🎭 Diễn viên
             </h2>
             <div className="flex flex-wrap gap-3">
               {filmReview.actors.map((actor) => (
                 <div
                   key={actor.id}
-                  className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg"
+                  className="flex items-center gap-2 px-3 py-2 bg-white/[0.04] border border-white/[0.06] hover:border-white/[0.12] rounded-2xl transition-all"
                 >
                   {actor.avatar ? (
                     <Image
@@ -305,7 +465,7 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
                       {actor.name.charAt(0)}
                     </div>
                   )}
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <span className="text-sm font-medium text-zinc-400">
                     {actor.name}
                   </span>
                 </div>
@@ -317,10 +477,10 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
         {/* 5. Description */}
         {filmReview.description && (
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
+            <h2 className="text-lg font-semibold text-zinc-300 mb-3">
               📝 Mô tả
             </h2>
-            <div className="prose dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
+            <div className="prose dark:prose-invert max-w-none text-zinc-400 leading-relaxed whitespace-pre-wrap">
               {filmReview.description}
             </div>
           </div>
@@ -329,15 +489,15 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
         {/* 6. Tags */}
         {filmReview.tags && filmReview.tags.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
+            <h2 className="text-lg font-semibold text-zinc-300 mb-3">
               🏷️ Tags
             </h2>
             <div className="flex flex-wrap gap-2">
               {filmReview.tags.map((tag) => (
                 <Link
                   key={tag}
-                  href={`/film-reviews?tag=${tag}`}
-                  className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-full text-sm hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                  href={`/phim?tag=${tag}`}
+                  className="px-3 py-1 bg-white/[0.04] border border-white/[0.06] text-zinc-400 rounded-full text-sm hover:bg-primary-500/10 hover:text-primary-400 hover:border-primary-500/30 transition-colors"
                 >
                   #{tag}
                 </Link>
@@ -349,15 +509,15 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
         {/* 7. Categories */}
         {filmReview.categories && filmReview.categories.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
+            <h2 className="text-lg font-semibold text-zinc-300 mb-3">
               📂 Thể loại
             </h2>
             <div className="flex flex-wrap gap-2">
               {filmReview.categories.map((cat) => (
                 <Link
                   key={cat.id}
-                  href={`/film-reviews?category=${cat.slug}`}
-                  className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
+                  href={`/phim?category=${cat.slug}`}
+                  className="px-3 py-1 bg-primary-500/10 text-primary-400  rounded-full text-sm hover:bg-primary-500/20 transition-colors"
                 >
                   {cat.name}
                 </Link>
@@ -366,9 +526,12 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
           </div>
         )}
 
+        {/* Ad Banner */}
+        <AdInArticle />
+
         {/* 9. Comments Section */}
-        <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+        <div className="mt-8 pt-8 border-t border-white/[0.06]">
+          <h2 className="text-xl font-bold text-white mb-6">
             💬 Bình luận ({commentPagination.total})
           </h2>
 
@@ -380,26 +543,26 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
                 onChange={(e) => setCommentContent(e.target.value)}
                 placeholder="Viết bình luận của bạn..."
                 rows={3}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                className="w-full px-4 py-3 border border-white/[0.06] rounded-2xl bg-white/[0.02] text-white placeholder-zinc-600 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none"
               />
               <div className="flex justify-end mt-2">
                 <button
                   type="submit"
                   disabled={!commentContent.trim() || submitting}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-6 py-2 bg-primary-500 text-white rounded-2xl hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {submitting ? "Đang gửi..." : "Gửi bình luận"}
                 </button>
               </div>
             </form>
           ) : (
-            <div className="mb-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg text-center">
-              <p className="text-gray-600 dark:text-gray-400 mb-2">
+            <div className="mb-8 p-4 bg-white/[0.03] border border-white/[0.06] rounded-2xl text-center">
+              <p className="text-zinc-500 mb-2">
                 Bạn cần đăng nhập để bình luận
               </p>
               <Link
                 href="/auth/login"
-                className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                className="text-primary-400 hover:underline font-medium"
               >
                 Đăng nhập ngay
               </Link>
@@ -411,16 +574,16 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="animate-pulse flex gap-3">
-                  <div className="w-10 h-10 bg-gray-300 dark:bg-gray-700 rounded-full" />
+                  <div className="w-10 h-10 bg-gray-300 bg-white/[0.04] rounded-full" />
                   <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/4" />
-                    <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4" />
+                    <div className="h-4 bg-gray-300 bg-white/[0.04] rounded w-1/4" />
+                    <div className="h-4 bg-gray-300 bg-white/[0.04] rounded w-3/4" />
                   </div>
                 </div>
               ))}
             </div>
           ) : comments.length === 0 ? (
-            <p className="text-center text-gray-500 dark:text-gray-400 py-8">
+            <p className="text-center text-zinc-500 py-8">
               Chưa có bình luận nào. Hãy là người đầu tiên bình luận!
             </p>
           ) : (
@@ -445,12 +608,12 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
                   </div>
 
                   <div className="flex-1">
-                    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                    <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-4">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="font-semibold text-gray-900 dark:text-white text-sm">
+                        <span className="font-semibold text-white text-sm">
                           {comment.user?.name}
                         </span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                        <span className="text-xs text-zinc-500">
                           {new Date(comment.createdAt).toLocaleDateString(
                             "vi-VN",
                             {
@@ -463,7 +626,7 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
                           )}
                         </span>
                       </div>
-                      <p className="text-gray-700 dark:text-gray-300 text-sm">
+                      <p className="text-zinc-400 text-sm">
                         {comment.content}
                       </p>
                     </div>
@@ -476,7 +639,7 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
                             replyingTo === comment.id ? null : comment.id
                           )
                         }
-                        className="text-xs text-blue-600 dark:text-blue-400 hover:underline mt-1 ml-2"
+                        className="text-xs text-primary-400 hover:underline mt-1 ml-2"
                       >
                         Trả lời
                       </button>
@@ -490,13 +653,13 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
                           onChange={(e) => setReplyContent(e.target.value)}
                           placeholder="Viết trả lời..."
                           rows={2}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 resize-none"
+                          className="w-full px-3 py-2 border border-white/[0.06] rounded-2xl bg-white/[0.02] text-white text-sm focus:ring-2 focus:ring-primary-500 resize-none"
                         />
                         <div className="flex gap-2 mt-1">
                           <button
                             onClick={() => submitReply(comment.id)}
                             disabled={!replyContent.trim() || submitting}
-                            className="px-4 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                            className="px-4 py-1 bg-primary-500 text-white text-sm rounded-2xl hover:bg-primary-600 disabled:opacity-50 transition-colors"
                           >
                             Gửi
                           </button>
@@ -505,7 +668,7 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
                               setReplyingTo(null);
                               setReplyContent("");
                             }}
-                            className="px-4 py-1 text-gray-600 dark:text-gray-400 text-sm hover:text-gray-900 dark:hover:text-white transition-colors"
+                            className="px-4 py-1 text-zinc-500 text-sm hover:text-gray-900  transition-colors"
                           >
                             Hủy
                           </button>
@@ -535,18 +698,18 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
                                 </div>
                               )}
                             </div>
-                            <div className="flex-1 bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
+                            <div className="flex-1 bg-white/[0.03] border border-white/[0.04] rounded-2xl p-3">
                               <div className="flex items-center gap-2 mb-1">
-                                <span className="font-semibold text-gray-900 dark:text-white text-xs">
+                                <span className="font-semibold text-white text-xs">
                                   {reply.user?.name}
                                 </span>
-                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                <span className="text-xs text-zinc-500">
                                   {new Date(
                                     reply.createdAt
                                   ).toLocaleDateString("vi-VN")}
                                 </span>
                               </div>
-                              <p className="text-gray-700 dark:text-gray-300 text-sm">
+                              <p className="text-zinc-400 text-sm">
                                 {reply.content}
                               </p>
                             </div>
@@ -569,8 +732,8 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
                       key={page}
                       onClick={() => fetchComments(page)}
                       className={`w-8 h-8 rounded-full text-sm ${commentPage === page
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                          ? "bg-primary-500 text-white"
+                          : "bg-gray-200 bg-white/[0.04] text-zinc-400 hover:bg-gray-300 "
                         } transition-colors`}
                     >
                       {page}
@@ -583,15 +746,15 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
         </div>
 
         {/* 10. Review Link */}
-        <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+        <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-primary-500/20">
+          <h2 className="text-lg font-bold text-white mb-2">
             🔗 Link Review Phim
           </h2>
           <a
             href={filmReview.reviewLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-2xl hover:bg-primary-600 transition-colors font-medium"
           >
             Xem Review Đầy Đủ
             <svg
@@ -613,17 +776,17 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
         {/* 10. Related film reviews */}
         {filmReview.relatedReviews && filmReview.relatedReviews.length > 0 && (
           <div className="mt-10">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
-              🎬 Phim cùng thể loại
+          <h2 className="text-lg font-bold text-white mb-5">
+              🎬 Phìm cùng thể loại
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {filmReview.relatedReviews.map((related) => (
                 <Link
                   key={related.id}
-                  href={`/film-reviews/${related.slug}`}
-                  className="group bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden hover:shadow-lg transition-all duration-300"
+                  href={`/phim/${related.slug}`}
+                  className="group bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.12] rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
                 >
-                  <div className="relative h-40 bg-gray-200 dark:bg-gray-700">
+                  <div className="relative h-36 bg-white/[0.04]">
                     {related.thumbnailUrl ? (
                       <Image
                         src={getMediaUrl(related.thumbnailUrl)}
@@ -642,7 +805,7 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
                     </div>
                   </div>
                   <div className="p-2">
-                    <h3 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                    <h3 className="text-sm font-medium text-white line-clamp-2 group-hover:text-primary-400 ">
                       {related.title}
                     </h3>
                   </div>
@@ -653,7 +816,7 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
         )}
 
         {/* Meta info */}
-        <div className="mt-8 flex flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700 pt-4">
+        <div className="mt-8 flex flex-wrap gap-4 text-sm text-zinc-500 border-t border-white/[0.06] pt-4">
           <span>
             📅 Đăng ngày:{" "}
             {new Date(filmReview.createdAt).toLocaleDateString("vi-VN")}

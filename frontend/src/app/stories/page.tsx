@@ -20,7 +20,7 @@ export default async function StoriesPage({
     redirect(`/the-loai/${encodeURIComponent(genre)}${qs ? `?${qs}` : ""}`);
   }
   if (type === "AUDIO") {
-    redirect(`/truyen_audio${qs ? `?${qs}` : ""}`);
+    redirect(`/truyen-audio${qs ? `?${qs}` : ""}`);
   }
-  redirect(`/truyen_text${qs ? `?${qs}` : ""}`);
+  redirect(`/truyen-text${qs ? `?${qs}` : ""}`);
 }

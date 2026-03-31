@@ -52,6 +52,15 @@ const PERMISSIONS = [
   // Moderation
   { code: "comment.moderate", name: "Duyệt bình luận", group: "moderation", type: "action", description: "Duyệt và quản lý bình luận" },
   { code: "review.moderate", name: "Duyệt đánh giá", group: "moderation", type: "action", description: "Duyệt và quản lý đánh giá phim" },
+
+  // Blog
+  { code: "blog.view", name: "Xem blog", group: "blog", type: "view", description: "Xem tất cả bài blog (bao gồm nháp)" },
+  { code: "blog.create", name: "Viết blog", group: "blog", type: "action", description: "Tạo bài blog mới" },
+  { code: "blog.update", name: "Sửa blog", group: "blog", type: "action", description: "Chỉnh sửa bài blog" },
+  { code: "blog.delete", name: "Xóa blog", group: "blog", type: "action", description: "Xóa bài blog" },
+  { code: "blog.category.create", name: "Thêm danh mục blog", group: "blog", type: "action", description: "Thêm danh mục blog mới" },
+  { code: "blog.category.update", name: "Sửa danh mục blog", group: "blog", type: "action", description: "Sửa danh mục blog" },
+  { code: "blog.category.delete", name: "Xóa danh mục blog", group: "blog", type: "action", description: "Xóa danh mục blog" },
 ];
 
 /**
@@ -89,12 +98,23 @@ const ROLE_PERMISSIONS = {
     { code: "media.view", granted: true },
     { code: "media.upload", granted: true },
     { code: "media.delete", granted: true },
+    // Blog
+    { code: "blog.view", granted: true },
+    { code: "blog.create", granted: true },
+    { code: "blog.update", granted: true },
+    { code: "blog.delete", granted: true },
+    { code: "blog.category.create", granted: true },
+    { code: "blog.category.update", granted: true },
+    { code: "blog.category.delete", granted: true },
   ],
   USER: [
     // View only
     { code: "story_text.view", granted: true },
     { code: "story_audio.view", granted: true },
     { code: "film.view", granted: true },
+    // Blog — users can write
+    { code: "blog.create", granted: true },
+    { code: "blog.update", granted: true },
   ],
 };
 

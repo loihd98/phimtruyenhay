@@ -55,9 +55,9 @@ export async function generateMetadata({
 
   return {
     title: `Thể loại ${genreName} – Đọc truyện ${genreName} online miễn phí`,
-    description: `Khám phá kho truyện thể loại ${genreName} hay nhất. Đọc truyện chữ và nghe truyện audio ${genreName} miễn phí tại Kho Truyện Hay.`,
+    description: `Khám phá kho truyện thể loại ${genreName} hay nhất. Đọc truyện chữ và nghe truyện audio ${genreName} miễn phí tại The Midnight Movie Reel.`,
     openGraph: {
-      title: `Thể loại ${genreName} – Kho Truyện Hay`,
+      title: `Thể loại ${genreName} – The Midnight Movie Reel`,
       description: `Kho truyện ${genreName} hay nhất, cập nhật liên tục.`,
       type: "website",
       locale: "vi_VN",
@@ -84,21 +84,26 @@ export default async function GenrePage({
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-[1400px] mx-auto px-4 lg:px-8 py-8">
         {/* Breadcrumb */}
-        <nav className="text-sm text-gray-500 dark:text-gray-400 mb-6 flex items-center gap-2">
-          <Link href="/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Trang chủ</Link>
+        <nav className="text-sm text-zinc-500 mb-6 flex items-center gap-2">
+          <Link href="/" className="hover:text-primary-400 transition-colors">Trang chủ</Link>
           <span>/</span>
-          <Link href="/the-loai" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Thể loại</Link>
+          <Link href="/the-loai" className="hover:text-primary-400 transition-colors">Thể loại</Link>
           <span>/</span>
-          <span className="text-gray-900 dark:text-white font-medium">{genreName}</span>
+          <span className="text-white font-medium">{genreName}</span>
         </nav>
 
-        <div className="text-center mb-8 animate-fade-in hidden sm:block">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 animate-slide-up">
-            📚 {genreName}
+        <div className="mb-8 hidden sm:block">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="px-3 py-1 text-xs font-medium border rounded-full bg-cinema-purple/10 text-cinema-purple border-cinema-purple/20">
+              Thể loại
+            </span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+            {genreName}
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 animate-slide-up animation-delay-200">
+          <p className="text-zinc-500 text-sm">
             Khám phá truyện thể loại {genreName} hay nhất
           </p>
         </div>

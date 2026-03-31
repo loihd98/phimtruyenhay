@@ -7,7 +7,7 @@ Disallow: /profile/
 Disallow: /bookmarks/
 
 # Sitemaps
-Sitemap: https://vivutruyenhay.com/sitemap.xml
+Sitemap: https://themidnightmoviereel.io.vn/sitemap.xml
 
 # Crawl-delay
 Crawl-delay: 1

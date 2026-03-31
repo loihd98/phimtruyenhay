@@ -119,23 +119,23 @@ export default function DailyPopup({ storyId, affiliateLink }: DailyPopupProps) 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
             <div
-                className="relative bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8 transform transition-all"
+                className="relative bg-[#161625] border border-white/[0.08] rounded-2xl max-w-md w-full mx-4 p-8 transform transition-all"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Decorative elements */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl -z-10"></div>
-                <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-pink-400/20 to-orange-400/20 rounded-full blur-3xl -z-10"></div>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary-500/20 to-cinema-purple/20 rounded-full blur-3xl -z-10"></div>
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-accent/20 to-primary-500/20 rounded-full blur-3xl -z-10"></div>
 
                 {/* Content */}
                 <div className="relative z-10">
 
                     {/* Title */}
-                    <h2 className="text-xl md:text-2xl font-bold text-center mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                        Một Click Nhỏ – Tiếp Thêm Động Lực Lớn 💙
+                    <h2 className="text-xl md:text-2xl font-bold text-center mb-4 bg-gradient-to-r from-primary-500 to-cinema-purple bg-clip-text text-transparent">
+                        Một Click Nhỏ – Tiếp Thêm Động Lực Lớn
                     </h2>
 
                     {/* Description */}
-                    <p className="text-gray-700 text-center mb-8 leading-relaxed">
+                    <p className="text-zinc-400 text-center mb-8 leading-relaxed">
 
                         Sự ủng hộ của bạn giúp tụi mình có thêm động lực tìm và đăng những bộ truyện, bộ phim hay mỗi ngày.
                         <br />
@@ -146,7 +146,7 @@ export default function DailyPopup({ storyId, affiliateLink }: DailyPopupProps) 
                     {/* Button */}
                     <button
                         onClick={handleClose}
-                        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 active:scale-95"
+                        className="w-full bg-gradient-to-r from-primary-500 to-cinema-purple hover:from-primary-600 hover:to-cinema-purple/90 text-white font-semibold py-4 px-6 rounded-xl hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 active:scale-95"
                     >
                         Bấm để tắt
                     </button>
