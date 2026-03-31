@@ -4,6 +4,7 @@ import HomepageContent from "../components/home/HomepageContent";
 import JsonLd, {
   getOrganizationSchema,
   getWebsiteSchema,
+  getBreadcrumbSchema,
 } from "../components/seo/JsonLd";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://themidnightmoviereel.io.vn";
@@ -49,6 +50,17 @@ export default async function HomePage() {
     <>
       <JsonLd data={getOrganizationSchema(siteUrl)} />
       <JsonLd data={getWebsiteSchema(siteUrl)} />
+      <JsonLd data={getBreadcrumbSchema([{ name: "Trang chủ", url: "/" }], siteUrl)} />
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        name: "Nội dung nổi bật",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Review Phim", url: `${siteUrl}/phim` },
+          { "@type": "ListItem", position: 2, name: "Truyện Audio", url: `${siteUrl}/truyen-audio` },
+          { "@type": "ListItem", position: 3, name: "Truyện Chữ", url: `${siteUrl}/truyen-text` },
+        ],
+      }} />
       <Layout>
         <Hero />
         <HomepageContent

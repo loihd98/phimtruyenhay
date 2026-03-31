@@ -2,9 +2,11 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  compress: true,
   output: "standalone",
 
   experimental: {
+    optimizeCss: true,
     serverComponentsExternalPackages: ["sharp"],
   },
 
@@ -15,7 +17,7 @@ const nextConfig = {
     // volume-mounted files.
     loader: "custom",
     loaderFile: "./src/imageLoader.ts",
-    formats: ["image/webp", "image/avif"],
+    formats: ["image/avif", "image/webp"],
     // minimumCacheTTL not needed with custom loader
   },
   env: {

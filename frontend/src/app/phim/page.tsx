@@ -15,7 +15,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://themidnightmovieree
 async function getFilmCategories() {
   try {
     const res = await fetch(`${API_BASE_URL}/film-reviews/categories`, {
-      next: { revalidate: 60 },
+      next: { revalidate: 300 },
       signal: AbortSignal.timeout(5000),
     });
     if (!res.ok) return [];
@@ -30,7 +30,7 @@ async function getFilmCategories() {
 async function getFilmTags() {
   try {
     const res = await fetch(`${API_BASE_URL}/film-reviews/tags`, {
-      next: { revalidate: 60 },
+      next: { revalidate: 300 },
       signal: AbortSignal.timeout(5000),
     });
     if (!res.ok) return [];

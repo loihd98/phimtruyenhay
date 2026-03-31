@@ -57,7 +57,7 @@ async function fetchInitialData(searchParams: {
         if (searchParams.sort) params.set("sort", searchParams.sort as string);
 
         const [storiesRes, genresRes] = await Promise.all([
-            fetch(`${API_URL}/stories?${params}`, { next: { revalidate: 60 } }).catch(() => null),
+            fetch(`${API_URL}/stories?${params}`, { next: { revalidate: 300 } }).catch(() => null),
             fetch(`${API_URL}/stories/genres?type=AUDIO`, { next: { revalidate: 300 } }).catch(() => null),
         ]);
 

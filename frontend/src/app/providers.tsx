@@ -74,8 +74,9 @@ export default function ClientProvider({
     <Provider store={store}>
       <PersistGate
         loading={
-          <div className="flex items-center justify-center min-h-screen">
+          <div className="flex items-center justify-center min-h-screen" role="status" aria-label="Đang tải trang">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+            <span className="sr-only">Đang tải...</span>
           </div>
         }
         persistor={persistor}

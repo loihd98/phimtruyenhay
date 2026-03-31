@@ -54,6 +54,7 @@ export function getWebsiteSchema(siteUrl: string) {
     potentialAction: [
       {
         "@type": "SearchAction",
+        name: "Tìm phim",
         target: {
           "@type": "EntryPoint",
           urlTemplate: `${siteUrl}/phim?search={search_term_string}`,
@@ -62,6 +63,7 @@ export function getWebsiteSchema(siteUrl: string) {
       },
       {
         "@type": "SearchAction",
+        name: "Tìm truyện audio",
         target: {
           "@type": "EntryPoint",
           urlTemplate: `${siteUrl}/truyen-audio?search={search_term_string}`,
@@ -70,6 +72,7 @@ export function getWebsiteSchema(siteUrl: string) {
       },
       {
         "@type": "SearchAction",
+        name: "Tìm truyện chữ",
         target: {
           "@type": "EntryPoint",
           urlTemplate: `${siteUrl}/truyen-text?search={search_term_string}`,

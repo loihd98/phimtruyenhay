@@ -7,8 +7,8 @@ import ThemeProvider from "@/components/layout/ThemeProvider";
 import GoogleAnalytics from "@/components/seo/GoogleAnalytics";
 import GoogleAdSense from "@/components/seo/GoogleAdSense";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", display: "swap" });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://themidnightmoviereel.io.vn";
 const siteName = "The Midnight Movie Reel";
@@ -117,7 +117,8 @@ export default function RootLayout({
   return (
     <html lang="vi" suppressHydrationWarning>
       <head>
-        <meta name="theme-color" content="#e50914" />
+        <meta name="theme-color" content="#f8f9fa" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#0a0a0f" media="(prefers-color-scheme: dark)" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Midnight Movie Reel" />

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { getMediaUrl, formatViewCount } from "../../utils/media";
@@ -26,13 +26,29 @@ interface SidebarProps {
   flat?: boolean;
 }
 
+// Module-level cache so data persists across component mounts (SPA navigations)
+let _sidebarCache: { hot: Story[]; trending: Story[]; ts: number } | null = null;
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 export default function StorySidebar({ className = "", flat = false }: SidebarProps) {
   const router = useRouter();
-  const [hotStories, setHotStories] = useState<Story[]>([]);
-  const [trendingStories, setTrendingStories] = useState<Story[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [hotStories, setHotStories] = useState<Story[]>(_sidebarCache?.hot || []);
+  const [trendingStories, setTrendingStories] = useState<Story[]>(_sidebarCache?.trending || []);
+  const [loading, setLoading] = useState(!_sidebarCache);
+  const fetchedRef = useRef(false);
 
   useEffect(() => {
+    if (fetchedRef.current) return;
+    fetchedRef.current = true;
+
+    // Use cache if fresh
+    if (_sidebarCache && Date.now() - _sidebarCache.ts < CACHE_TTL) {
+      setHotStories(_sidebarCache.hot);
+      setTrendingStories(_sidebarCache.trending);
+      setLoading(false);
+      return;
+    }
+
     fetchSidebarData();
   }, []);
 
@@ -40,21 +56,19 @@ export default function StorySidebar({ className = "", flat = false }: SidebarPr
     try {
       setLoading(true);
 
-      // Fetch hot stories (most viewed)
-      const hotResponse = await apiClient.get(
-        "/stories?sort=viewCount&order=desc&limit=5"
-      );
-      if (hotResponse.data) {
-        setHotStories(hotResponse.data.stories || []);
-      }
+      const [hotResponse, trendingResponse] = await Promise.all([
+        apiClient.get("/stories?sort=viewCount&order=desc&limit=5"),
+        apiClient.get("/stories?sort=createdAt&order=desc&limit=5"),
+      ]);
 
-      // Fetch trending stories (recently popular)
-      const trendingResponse = await apiClient.get(
-        "/stories?sort=createdAt&order=desc&limit=5"
-      );
-      if (trendingResponse.data) {
-        setTrendingStories(trendingResponse.data.stories || []);
-      }
+      const hot = hotResponse.data?.stories || [];
+      const trending = trendingResponse.data?.stories || [];
+
+      setHotStories(hot);
+      setTrendingStories(trending);
+
+      // Update module-level cache
+      _sidebarCache = { hot, trending, ts: Date.now() };
     } catch (error) {
       console.error("Error fetching sidebar data:", error);
     } finally {

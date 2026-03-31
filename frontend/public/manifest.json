@@ -4,7 +4,7 @@
   "description": "Nghe truyện audio hay, đọc truyện chữ online miễn phí và review phim chuyên sâu tại The Midnight Movie Reel.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0a0f",
+  "background_color": "#f8f9fa",
   "theme_color": "#e50914",
   "orientation": "portrait-primary",
   "scope": "/",

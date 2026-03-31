@@ -34,6 +34,8 @@ export default function imageLoader({
     return src;
   }
 
-  // Everything else → return as-is (static assets, etc.)
-  return src;
+  // Static assets — use Next.js built-in image optimizer for resizing
+  // This handles the logo.png (1.7MB source) served at 34×34 etc.
+  const q = quality || 75;
+  return `/_next/image?url=${encodeURIComponent(src)}&w=${width}&q=${q}`;
 }

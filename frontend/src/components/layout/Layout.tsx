@@ -1,30 +1,31 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { memo } from "react";
+import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import AudioPlayer from "../audio/AudioPlayer";
+
+const MemoizedNavbar = memo(Navbar);
+const MemoizedFooter = memo(Footer);
 
 interface LayoutContentProps {
   children: React.ReactNode;
 }
 
 const LayoutContent: React.FC<LayoutContentProps> = ({ children }) => {
-  const dispatch = useDispatch();
-  const theme = useSelector((state: RootState) => state.ui.theme);
   const audioPlayerOpen = useSelector((state: RootState) => state.ui.audioPlayerOpen);
 
   return (
     <div
       className="min-h-screen transition-colors duration-200"
     >
-      <Navbar />
+      <MemoizedNavbar />
 
       <main className="flex-1">{children}</main>
 
-      <Footer />
+      <MemoizedFooter />
 
       {/* Audio Player */}
       {audioPlayerOpen && <AudioPlayer />}
