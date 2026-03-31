@@ -143,26 +143,60 @@ From now on, you can SSH as `deploy@103.199.17.168` (optional — using root is 
 
 > **Important:** On Ubuntu 20.04 (focal), do NOT use `curl -fsSL https://get.docker.com | sh` — it may fail due to missing packages on this release. Use the manual method below.
 
-### 4.1 Add Docker's GPG Key & Repository
+### 4.1 Clean Up Any Previous Failed Attempts
+
+If you ran any Docker install commands before and they failed, clean up first:
 
 ```bash
-install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-chmod a+r /etc/apt/keyrings/docker.gpg
+rm -f /etc/apt/keyrings/docker.gpg
+rm -f /etc/apt/sources.list.d/docker.list
+```
 
+### 4.2 Add Docker's GPG Key & Repository
+
+> **Why download to a temp file first?** Piping `curl | gpg --dearmor -o file` can fail silently on Ubuntu 20.04 — the GPG file is never written but no error is printed, causing the repo to be marked unsigned and all package installs to fail. Downloading to `/tmp` first makes the failure visible.
+
+```bash
+# Step 1 — Ensure keyrings directory exists
+install -m 0755 -d /etc/apt/keyrings
+
+# Step 2 — Download Docker's GPG key to a temp file
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /tmp/docker.asc
+
+# Step 3 — Convert to binary format and save to keyrings
+gpg --dearmor < /tmp/docker.asc > /etc/apt/keyrings/docker.gpg
+chmod a+r /etc/apt/keyrings/docker.gpg
+rm /tmp/docker.asc
+
+# Step 4 — Verify the key file was created (must NOT be empty)
+ls -lh /etc/apt/keyrings/docker.gpg
+```
+
+Expected output — file must be greater than 0 bytes:
+
+```
+-rw-r--r-- 1 root root 2.8K ... /etc/apt/keyrings/docker.gpg
+```
+
+If the file is 0 bytes or missing, **stop here** and see [Docker GPG Key Fails](#docker-gpg-key-fails) in Section 12.
+
+```bash
+# Step 5 — Add the Docker repository
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 ```
 
-### 4.2 Install Docker Engine
+### 4.3 Install Docker Engine
 
 ```bash
 apt-get update
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
 
-### 4.3 Verify Installation
+If `apt-get update` shows a signature error (`NO_PUBKEY`), see [Docker GPG Key Fails](#docker-gpg-key-fails) in Section 12.
+
+### 4.4 Verify Installation
 
 ```bash
 docker --version
@@ -176,7 +210,7 @@ Docker version 27.x.x
 Docker Compose version v2.x.x
 ```
 
-### 4.4 Enable Docker on Boot
+### 4.5 Enable Docker on Boot
 
 ```bash
 systemctl enable docker
@@ -515,8 +549,8 @@ curl -vI https://themidnightmoviereel.io.vn 2>&1 | grep -E "expire|subject|issue
 
 ### 8.2 Feature Checklist
 
-| Feature      | URL                                     | Expected                               |
-| ------------ | --------------------------------------- | -------------------------------------- |
+| Feature      | URL                                              | Expected                               |
+| ------------ | ------------------------------------------------ | -------------------------------------- |
 | Homepage     | https://themidnightmoviereel.io.vn               | Loads with stories                     |
 | API Health   | https://themidnightmoviereel.io.vn/api/health    | `{"status":"OK"}`                      |
 | Registration | https://themidnightmoviereel.io.vn/auth/register | Registration form                      |
@@ -759,6 +793,48 @@ docker compose -f docker-compose.prod.yml exec backend npx prisma migrate deploy
 ---
 
 ## 12. Troubleshooting
+
+### Docker GPG Key Fails
+
+Symptom: `chmod: cannot access '/etc/apt/keyrings/docker.gpg': No such file or directory` followed by `NO_PUBKEY 7EA0A9C3F273FCD8` or `Package 'docker-ce' has no installation candidate`.
+
+This means the GPG key was never written. Run the full recovery below:
+
+```bash
+# 1. Remove broken state
+rm -f /etc/apt/keyrings/docker.gpg
+rm -f /etc/apt/sources.list.d/docker.list
+
+# 2. Make sure required tools are installed
+apt-get install -y ca-certificates curl gnupg
+
+# 3. Re-create keyrings directory
+install -m 0755 -d /etc/apt/keyrings
+
+# 4. Download key to temp file, then convert it
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /tmp/docker.asc
+gpg --dearmor < /tmp/docker.asc > /etc/apt/keyrings/docker.gpg
+chmod a+r /etc/apt/keyrings/docker.gpg
+rm /tmp/docker.asc
+
+# 5. Confirm the file exists and is not empty
+ls -lh /etc/apt/keyrings/docker.gpg
+
+# 6. Re-add the repository
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# 7. Install Docker
+apt-get update
+apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# 8. Verify
+docker --version
+docker compose version
+```
+
+---
 
 ### Container Won't Start
 

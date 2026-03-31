@@ -466,20 +466,6 @@ const StoryDetailPage: React.FC = () => {
       </div>
     </div>
   );
-                >
-                  Chương tiếp →
-                  {story.chapters.find((c) => c.number === selectedChapter + 1)
-                    ?.affiliate?.isActive
-                    ? " 🔗"
-                    : ""}
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
 };
 
 export default StoryDetailPage;
