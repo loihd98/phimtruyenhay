@@ -89,7 +89,7 @@ export default function ContactForm() {
       setStatus({
         type: "error",
         message:
-          "Có lỗi xảy ra khi gửi tin nhắn. Vui lòng thử lại sau hoặc gửi email trực tiếp đến support@webtruyen.com",
+          "Có lỗi xảy ra khi gửi tin nhắn. Vui lòng thử lại sau hoặc gửi email trực tiếp đến hideonstorms@gmail.com",
       });
     }
   };
@@ -277,10 +277,10 @@ export default function ContactForm() {
         <p className="text-sm text-zinc-500">
           Hoặc gửi email trực tiếp đến:{" "}
           <a
-            href="mailto:support@webtruyen.com"
+            href="mailto:hideonstorms@gmail.com"
             className="text-primary-400  hover:underline font-medium"
           >
-            support@webtruyen.com
+            hideonstorms@gmail.com
           </a>
         </p>
       </div>

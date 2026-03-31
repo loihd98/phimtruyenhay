@@ -142,6 +142,56 @@ html:not(.dark) ::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.15) !
 html:not(.dark) ::-webkit-scrollbar-thumb:hover { background-color: rgba(0,0,0,0.25) !important; }
 html:not(.dark) ::-webkit-scrollbar-track { background-color: #f8f9fa; }
 
+/* --- Select / dropdown overrides (dark mode) --- */
+/* Browser <option> elements use OS default colors; force dark bg + light text */
+html.dark select {
+  background-color: #1a1a2e !important;
+  color: #f4f4f5 !important;
+}
+html.dark select option {
+  background-color: #1a1a2e !important;
+  color: #f4f4f5 !important;
+}
+html.dark select option:checked {
+  background-color: #e50914 !important;
+  color: #ffffff !important;
+}
+
+/* --- Select / dropdown overrides (light mode) --- */
+html:not(.dark) select {
+  background-color: #ffffff !important;
+  color: #1a1a2e !important;
+  border-color: #d1d5db !important;
+}
+html:not(.dark) select option {
+  background-color: #ffffff !important;
+  color: #1a1a2e !important;
+}
+html:not(.dark) select option:checked {
+  background-color: #e50914 !important;
+  color: #ffffff !important;
+}
+
+/* --- Light mode: section/content area separation --- */
+/* Main page wrapper gets subtle warm gray base */
+html:not(.dark) main {
+  background-color: #f1f2f6 !important;
+}
+/* Sections inside main get white card-like bg for contrast */
+html:not(.dark) main > section,
+html:not(.dark) main > div > section {
+  background-color: #ffffff !important;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+/* Container divs that wrap major content blocks */
+html:not(.dark) .bg-\[\#08080d\] > div,
+html:not(.dark) .bg-\[\#0a0a0f\] > div {
+  background-color: transparent !important;
+}
+
 /* --- Primary button stays vibrant in both modes (no override needed) --- */
 /* --- Accent, cinema-purple, cinema-neon colors stay as-is on light too --- */
 

@@ -20,7 +20,7 @@ export function getOrganizationSchema(siteUrl: string) {
     url: siteUrl,
     logo: `${siteUrl}/logo_phim.png`,
     description:
-      "Website review phim chuyên sâu, phân tích nội dung điện ảnh, giải thích ending và gợi ý phim hay.",
+      "Nghe truyện audio hay, đọc truyện chữ online miễn phí và review phim chuyên sâu tại The Midnight Movie Reel.",
     founder: {
       "@type": "Person",
       name: "The Midnight Movie Reel",
@@ -42,7 +42,7 @@ export function getWebsiteSchema(siteUrl: string) {
     name: "The Midnight Movie Reel",
     url: siteUrl,
     description:
-      "Review phim hay, phân tích điện ảnh chuyên sâu, giải thích ending và gợi ý phim đáng xem mỗi ngày",
+      "Nghe truyện audio, đọc truyện chữ online miễn phí và review phim hay mỗi ngày tại The Midnight Movie Reel",
     publisher: {
       "@type": "Organization",
       name: "The Midnight Movie Reel",
@@ -51,14 +51,32 @@ export function getWebsiteSchema(siteUrl: string) {
         url: `${siteUrl}/logo_phim.png`,
       },
     },
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${siteUrl}/phim?search={search_term_string}`,
+    potentialAction: [
+      {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${siteUrl}/phim?search={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
       },
-      "query-input": "required name=search_term_string",
-    },
+      {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${siteUrl}/truyen-audio?search={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
+      },
+      {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${siteUrl}/truyen-text?search={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
+      },
+    ],
     inLanguage: "vi-VN",
   };
 }

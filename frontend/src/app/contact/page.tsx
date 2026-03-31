@@ -43,7 +43,7 @@ export default function ContactPage() {
                 Email hỗ trợ
               </h3>
               <p className="text-primary-400 text-sm mb-2">
-                support@webtruyen.com
+                hideonstorms@gmail.com
               </p>
               <p className="text-primary-400  text-xs">
                 Phản hồi trong 24h
@@ -55,7 +55,7 @@ export default function ContactPage() {
                 Báo lỗi
               </h3>
               <p className="text-green-600 dark:text-green-400 text-sm mb-2">
-                bugs@webtruyen.com
+                hideonstorms@gmail.com
               </p>
               <p className="text-green-700 dark:text-green-300 text-xs">
                 Ưu tiên xử lý cao
@@ -67,7 +67,7 @@ export default function ContactPage() {
                 Góp ý tính năng
               </h3>
               <p className="text-purple-600 dark:text-purple-400 text-sm mb-2">
-                feedback@webtruyen.com
+                hideonstorms@gmail.com
               </p>
               <p className="text-purple-700 dark:text-purple-300 text-xs">
                 Ý kiến được đánh giá cao
@@ -101,7 +101,7 @@ export default function ContactPage() {
                         Website
                       </p>
                       <p className="text-zinc-500">
-                        www.webtruyen.com
+                        themidnightmoviereel.io.vn
                       </p>
                     </div>
                   </div>

@@ -6,26 +6,28 @@ const API_URL =
     process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost/api";
 
 export const metadata: Metadata = {
-    title: "Thể Loại Truyện & Phim – The Midnight Movie Reel",
+    title: "Thể Loại Truyện Audio, Truyện Chữ & Phim – The Midnight Movie Reel",
     description:
-        "Khám phá tất cả thể loại truyện audio, truyện đọc online và review phim tại The Midnight Movie Reel.",
+        "Khám phá tất cả thể loại truyện audio, truyện chữ online và review phim tại The Midnight Movie Reel. Tiên hiệp, đô thị, kiếm hiệp, ngôn tình, huyền huyễn và nhiều thể loại hấp dẫn khác.",
     keywords: [
-        "thể loại truyện",
+        "thể loại truyện audio",
+        "thể loại truyện chữ",
         "thể loại phim",
         "tiên hiệp",
         "kiếm hiệp",
         "đô thị",
         "ngôn tình",
         "huyền huyễn",
-        "truyện audio",
+        "truyện audio hay",
         "đọc truyện online",
-        "review phim",
+        "nghe truyện audio miễn phí",
+        "review phim hay",
         "The Midnight Movie Reel",
     ],
     openGraph: {
-        title: "Thể Loại Truyện & Phim – The Midnight Movie Reel",
+        title: "Thể Loại Truyện Audio, Truyện Chữ & Phim – The Midnight Movie Reel",
         description:
-            "Khám phá tất cả thể loại truyện và phim tại The Midnight Movie Reel.",
+            "Khám phá tất cả thể loại truyện audio, truyện chữ và phim tại The Midnight Movie Reel.",
         type: "website",
         locale: "vi_VN",
     },
@@ -37,6 +39,19 @@ export const metadata: Metadata = {
 async function fetchGenres() {
     try {
         const res = await fetch(`${API_URL}/stories/genres`, {
+            next: { revalidate: 300 },
+        });
+        if (!res.ok) return [];
+        const data = await res.json();
+        return data.genres || [];
+    } catch {
+        return [];
+    }
+}
+
+async function fetchAudioGenres() {
+    try {
+        const res = await fetch(`${API_URL}/stories/genres?type=AUDIO`, {
             next: { revalidate: 300 },
         });
         if (!res.ok) return [];
@@ -61,9 +76,10 @@ async function fetchFilmCategories() {
 }
 
 export default async function TheLoaiPage() {
-    const [genres, filmCategories] = await Promise.all([
+    const [genres, audioGenres, filmCategories] = await Promise.all([
         fetchGenres(),
+        fetchAudioGenres(),
         fetchFilmCategories(),
     ]);
-    return <GenresClient initialGenres={genres} initialFilmCategories={filmCategories} />;
+    return <GenresClient initialGenres={genres} initialAudioGenres={audioGenres} initialFilmCategories={filmCategories} />;
 }

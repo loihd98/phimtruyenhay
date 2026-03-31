@@ -54,7 +54,7 @@ router.post("/", contactLimiter, async (req, res) => {
     }
 
     // Create transporter for sending emails
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: process.env.SMTP_USER,

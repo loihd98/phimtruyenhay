@@ -25,16 +25,18 @@ interface FilmCategory {
 
 interface GenresClientProps {
   initialGenres: Genre[];
+  initialAudioGenres?: Genre[];
   initialFilmCategories?: FilmCategory[];
 }
 
-export default function GenresClient({ initialGenres, initialFilmCategories = [] }: GenresClientProps) {
+export default function GenresClient({ initialGenres, initialAudioGenres = [], initialFilmCategories = [] }: GenresClientProps) {
   const router = useRouter();
   const [genres] = useState<Genre[]>(initialGenres);
+  const [audioGenres] = useState<Genre[]>(initialAudioGenres);
   const [filmCategories] = useState<FilmCategory[]>(initialFilmCategories);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState<"name" | "count">("name");
-  const [activeTab, setActiveTab] = useState<"stories" | "films">("stories");
+  const [activeTab, setActiveTab] = useState<"text" | "audio" | "films">("text");
 
   const getGenreDescription = (genreName: string) => {
     const descriptions: { [key: string]: string } = {
@@ -64,6 +66,18 @@ export default function GenresClient({ initialGenres, initialFilmCategories = []
   };
 
   const filteredAndSortedGenres = genres
+    .filter((genre) =>
+      genre.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (sortBy === "name") {
+        return a.name.localeCompare(b.name, "vi");
+      } else {
+        return b._count.stories - a._count.stories;
+      }
+    });
+
+  const filteredAudioGenres = audioGenres
     .filter((genre) =>
       genre.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
@@ -105,20 +119,26 @@ export default function GenresClient({ initialGenres, initialFilmCategories = []
                     Thể Loại Truyện & Phim
                   </h1>
                   <p className="text-zinc-500 text-sm mb-5">
-                    Khám phá {genres.length} thể loại truyện {filmCategories.length > 0 ? `và ${filmCategories.length} thể loại phim` : ""}
+                    Khám phá {genres.length} thể loại truyện chữ, {audioGenres.length} thể loại truyện audio {filmCategories.length > 0 ? `và ${filmCategories.length} thể loại phim` : ""}
                   </p>
 
                   {/* Tab Switcher */}
                   <div className="flex gap-2 mb-4">
                     <button
-                      onClick={() => setActiveTab("stories")}
-                      className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${activeTab === "stories" ? "bg-primary-500 text-white" : "bg-white/[0.04] text-zinc-400 hover:bg-white/[0.08]"}`}
+                      onClick={() => setActiveTab("text")}
+                      className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${activeTab === "text" ? "bg-primary-500 text-white" : "bg-white/[0.04] text-zinc-400 hover:bg-white/[0.08]"}`}
                     >
-                      📖 Truyện ({genres.length})
+                      📖 Truyện Chữ ({genres.length})
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("audio")}
+                      className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${activeTab === "audio" ? "bg-green-500 text-white" : "bg-white/[0.04] text-zinc-400 hover:bg-white/[0.08]"}`}
+                    >
+                      🎧 Truyện Audio ({audioGenres.length})
                     </button>
                     <button
                       onClick={() => setActiveTab("films")}
-                      className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${activeTab === "films" ? "bg-primary-500 text-white" : "bg-white/[0.04] text-zinc-400 hover:bg-white/[0.08]"}`}
+                      className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${activeTab === "films" ? "bg-accent-500 text-white" : "bg-white/[0.04] text-zinc-400 hover:bg-white/[0.08]"}`}
                     >
                       🎬 Phim ({filmCategories.length})
                     </button>
@@ -148,8 +168,8 @@ export default function GenresClient({ initialGenres, initialFilmCategories = []
                   </div>
                 </div>
 
-                {/* Genres Grid */}
-                {activeTab === "stories" && (
+                {/* Text Stories Genres Grid */}
+                {activeTab === "text" && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
                   {filteredAndSortedGenres.map((genre, index) => (
                     <div
@@ -176,6 +196,41 @@ export default function GenresClient({ initialGenres, initialFilmCategories = []
                       </p>
                     </div>
                   ))}
+                </div>
+                )}
+
+                {/* Audio Stories Genres Grid */}
+                {activeTab === "audio" && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                  {filteredAudioGenres.length > 0 ? filteredAudioGenres.map((genre, index) => (
+                    <div
+                      key={genre.id}
+                      onClick={() =>
+                        router.push(`/truyen-audio?genre=${genre.slug}`)
+                      }
+                      className="bg-white/[0.02] border border-white/[0.06] rounded-2xl hover:border-green-500/30 transition-all duration-300 p-5 cursor-pointer group hover:-translate-y-1"
+                      style={{ animationDelay: `${index * 100}ms` }}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-3 group-hover:bg-green-400 transition-colors"></div>
+                          <h3 className="text-base font-semibold text-white group-hover:text-green-400 transition-colors">
+                            {genre.name}
+                          </h3>
+                        </div>
+                        <span className="bg-green-500/10 text-green-400 border border-green-500/20 text-xs px-2 py-0.5 rounded-full">
+                          {genre._count.stories}
+                        </span>
+                      </div>
+                      <p className="text-zinc-500 text-sm leading-relaxed">
+                        Nghe truyện audio thể loại {genre.name}
+                      </p>
+                    </div>
+                  )) : (
+                    <div className="col-span-full text-center py-12 text-zinc-500">
+                      <p>Chưa có thể loại truyện audio nào{searchTerm ? ` phù hợp với "${searchTerm}"` : ""}</p>
+                    </div>
+                  )}
                 </div>
                 )}
 
@@ -213,7 +268,7 @@ export default function GenresClient({ initialGenres, initialFilmCategories = []
                 )}
 
                 {/* No Results */}
-                {activeTab === "stories" && filteredAndSortedGenres.length === 0 && searchTerm && (
+                {activeTab === "text" && filteredAndSortedGenres.length === 0 && searchTerm && (
                   <div className="text-center py-12">
                     <div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mx-auto mb-4">
                       <svg className="w-7 h-7 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
