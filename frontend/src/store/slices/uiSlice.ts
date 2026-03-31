@@ -3,7 +3,7 @@ import { UIState } from "../../types";
 
 const initialState: UIState = {
   sidebarOpen: false,
-  theme: "dark",
+  theme: "light",
   audioPlayerOpen: false,
   currentAudio: undefined,
 };

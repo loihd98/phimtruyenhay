@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 export const runtime = "nodejs";
-export const alt = "The Midnight Movie Reel – Review Phim Hay, Phân Tích Điện Ảnh Chuyên Sâu";
+export const alt = "The Midnight Movie Reel – Truyện Audio, Truyện Chữ Online & Review Phim Hay";
 export const size = {
   width: 1200,
   height: 630,
@@ -47,7 +47,7 @@ export default async function Image() {
             marginBottom: 16,
           }}
         >
-          Review Phim • Phân Tích Điện Ảnh • Giải Thích Ending
+          Truyện Audio • Truyện Chữ Online • Review Phim
         </div>
         <div
           style={{
@@ -55,7 +55,7 @@ export default async function Image() {
             color: "#a1a1aa",
           }}
         >
-          Nơi Review & Phân Tích Phim Đỉnh Cao
+          Nghe truyện, đọc truyện & review phim mỗi ngày
         </div>
       </div>
     ),

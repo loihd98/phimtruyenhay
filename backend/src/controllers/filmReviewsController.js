@@ -493,7 +493,8 @@ class FilmReviewsController {
         });
       }
 
-      if (!reviewLink || !reviewLink.trim()) {
+      // reviewLink only required for single movies (phim lẻ), not series (phim bộ)
+      if (isMovie !== false && (!reviewLink || !reviewLink.trim())) {
         return res.status(400).json({
           error: "Validation Error",
           message: "Link review là bắt buộc",

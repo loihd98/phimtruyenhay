@@ -54,11 +54,11 @@ export async function generateMetadata({
   const genreName = genre?.name || params.slug;
 
   return {
-    title: `Thể loại ${genreName} – Đọc truyện ${genreName} online miễn phí`,
-    description: `Khám phá kho truyện thể loại ${genreName} hay nhất. Đọc truyện chữ và nghe truyện audio ${genreName} miễn phí tại The Midnight Movie Reel.`,
+    title: `Thể loại ${genreName} – Truyện Audio, Truyện Chữ & Phim ${genreName}`,
+    description: `Khám phá thể loại ${genreName} hay nhất. Nghe truyện audio, đọc truyện chữ và xem review phim ${genreName} miễn phí tại The Midnight Movie Reel.`,
     openGraph: {
       title: `Thể loại ${genreName} – The Midnight Movie Reel`,
-      description: `Kho truyện ${genreName} hay nhất, cập nhật liên tục.`,
+      description: `Kho truyện audio, truyện chữ và review phim ${genreName} hay nhất, cập nhật liên tục.`,
       type: "website",
       locale: "vi_VN",
     },

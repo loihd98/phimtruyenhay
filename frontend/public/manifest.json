@@ -1,14 +1,14 @@
 {
   "name": "The Midnight Movie Reel",
   "short_name": "MidnightReel",
-  "description": "Khám phá thế giới điện ảnh cùng The Midnight Movie Reel – website review phim, phân tích nội dung, giải thích ending và gợi ý phim hay mỗi ngày.",
+  "description": "Nghe truyện audio hay, đọc truyện chữ online miễn phí và review phim chuyên sâu tại The Midnight Movie Reel.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a0f",
   "theme_color": "#e50914",
   "orientation": "portrait-primary",
   "scope": "/",
-  "categories": ["entertainment", "movies", "reviews"],
+  "categories": ["entertainment", "movies", "reviews", "books", "audiobooks"],
   "lang": "vi",
   "dir": "ltr",
   "icons": [
@@ -74,9 +74,22 @@
       ]
     },
     {
-      "name": "Truyện",
+      "name": "Truyện Audio",
+      "short_name": "Audio",
+      "description": "Nghe truyện audio hay miễn phí",
+      "url": "/truyen-audio",
+      "icons": [
+        {
+          "src": "/logo_phim.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Truyện Chữ",
       "short_name": "Truyện",
-      "description": "Đọc và nghe truyện online",
+      "description": "Đọc truyện chữ online miễn phí",
       "url": "/truyen-text",
       "icons": [
         {

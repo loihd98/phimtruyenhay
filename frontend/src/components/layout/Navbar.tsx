@@ -105,7 +105,7 @@ const Navbar: React.FC = () => {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2.5 group shrink-0">
               <Image src="/logo_phim.png" alt="The Midnight Movie Reel" width={34} height={34} className="rounded-lg group-hover:rotate-[-4deg] transition-transform duration-300" priority />
-              <div className="hidden sm:block">
+              <div>
                 <span className="text-[15px] font-bold tracking-tight">
                   <span className="text-white/90">MIDNIGHT</span>
                   <span className="text-primary-500 ml-1">REEL</span>
@@ -204,6 +204,15 @@ const Navbar: React.FC = () => {
                   </>
                 )}
               </div>
+
+              {/* Mobile bookmark icon */}
+              {isReady && isAuthenticated && (
+                <Link href="/bookmarks" className="lg:hidden p-2 rounded-full text-zinc-400 hover:text-accent-400 hover:bg-accent-500/10 transition-all" title="Bookmarks">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                  </svg>
+                </Link>
+              )}
 
               {/* Hamburger */}
               <button onClick={() => { if (!isMobileMenuOpen) window.scrollTo({ top: 0, behavior: "instant" }); setIsMobileMenuOpen(!isMobileMenuOpen); }} className="lg:hidden p-2 rounded-full text-zinc-400 hover:text-white hover:bg-white/[0.06] transition-all" aria-label="Menu">

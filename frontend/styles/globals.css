@@ -7,7 +7,7 @@
   is applied. Midnight Movie Reel dark theme.
 */
 html {
-  color-scheme: dark;
+  color-scheme: light;
   font-family:
     var(--font-inter),
     "Inter",
@@ -185,6 +185,24 @@ html:not(.dark) main > div > section {
   padding: 1.25rem;
   margin-bottom: 1rem;
   box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+/* --- Dark mode: section/content area separation --- */
+html.dark main > section,
+html.dark main > div > section {
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding-bottom: 1.5rem;
+  margin-bottom: 1rem;
+}
+html.dark main > section:last-child,
+html.dark main > div > section:last-child {
+  border-bottom: none;
+}
+html.dark nav {
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+html.dark footer {
+  border-top: 1px solid rgba(255,255,255,0.06);
 }
 /* Container divs that wrap major content blocks */
 html:not(.dark) .bg-\[\#08080d\] > div,

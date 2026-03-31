@@ -115,7 +115,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" suppressHydrationWarning className="dark">
+    <html lang="vi" suppressHydrationWarning>
       <head>
         <meta name="theme-color" content="#e50914" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -127,7 +127,7 @@ export default function RootLayout({
         {/* Inline script to restore persisted theme before React hydration */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var p=JSON.parse(localStorage.getItem('persist:root')||'{}');var u=JSON.parse(p.ui||'{}');if(u.theme==='light'){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}catch(e){document.documentElement.classList.add('dark')}})();`,
+            __html: `(function(){try{var p=JSON.parse(localStorage.getItem('persist:root')||'{}');var u=JSON.parse(p.ui||'{}');if(u.theme==='dark'){document.documentElement.classList.add('dark')}else{document.documentElement.classList.remove('dark')}}catch(e){}})()`,
           }}
         />
       </head>

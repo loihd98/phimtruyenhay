@@ -6,11 +6,11 @@ import Layout from "../../components/layout/Layout";
 export const metadata: Metadata = {
   title: "Trợ Giúp - The Midnight Movie Reel",
   description:
-    "Hướng dẫn sử dụng The Midnight Movie Reel, câu hỏi thường gặp và cách thức hoạt động của trang web review phim và đọc truyện online.",
+    "Hướng dẫn sử dụng The Midnight Movie Reel, câu hỏi thường gặp về nghe truyện audio, đọc truyện chữ và review phim trên website.",
   openGraph: {
     title: "Trợ Giúp - The Midnight Movie Reel",
     description:
-      "Hướng dẫn sử dụng The Midnight Movie Reel, câu hỏi thường gặp và cách thức hoạt động của trang web review phim và đọc truyện online.",
+      "Hướng dẫn sử dụng The Midnight Movie Reel, câu hỏi thường gặp về nghe truyện audio, đọc truyện chữ và review phim trên website.",
     type: "website",
     locale: "vi_VN",
   },

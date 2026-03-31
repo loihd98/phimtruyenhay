@@ -20,7 +20,10 @@ export default function NotFound() {
                         Về trang chủ
                     </Link>
                     <Link href="/phim" className="inline-flex items-center justify-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] text-zinc-300 px-6 py-2.5 rounded-xl font-semibold text-sm transition-all">
-                        Xem Review Phim
+                        Review Phim
+                    </Link>
+                    <Link href="/truyen-audio" className="inline-flex items-center justify-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] text-zinc-300 px-6 py-2.5 rounded-xl font-semibold text-sm transition-all">
+                        Truyện Audio
                     </Link>
                 </div>
             </div>
