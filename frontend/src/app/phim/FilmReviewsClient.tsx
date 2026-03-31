@@ -309,7 +309,7 @@ const FilmReviewsClient: React.FC<FilmReviewsClientProps> = ({
                     <img
                       src={getMediaUrl(review.thumbnailUrl)}
                       alt={review.title}
-                      className="max-h-[200px] w-auto object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="max-h-[200px] w-full object-cover group-hover:scale-105 transition-transform duration-300"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = "none";
