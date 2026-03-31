@@ -75,7 +75,7 @@ export default function BlogPage() {
               <h1 className="text-3xl font-bold text-white font-playfair">Blog</h1>
               <p className="text-zinc-500 mt-1">Bài viết, chia sẻ và góc nhìn từ cộng đồng</p>
             </div>
-            {isAuthenticated && (
+            {/* {isAuthenticated && (
               <Link
                 href="/blog/write"
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium rounded-xl transition-all shadow-lg shadow-primary-500/20"
@@ -85,7 +85,7 @@ export default function BlogPage() {
                 </svg>
                 Viết bài
               </Link>
-            )}
+            )} */}
           </div>
 
           {/* Category filters */}
@@ -93,9 +93,8 @@ export default function BlogPage() {
             <div className="flex flex-wrap gap-2 mb-8">
               <Link
                 href="/blog"
-                className={`px-4 py-1.5 rounded-full text-[13px] font-medium transition-all ${
-                  !category ? "bg-primary-500 text-white" : "bg-white/[0.04] text-zinc-400 hover:text-white hover:bg-white/[0.08] border border-white/[0.06]"
-                }`}
+                className={`px-4 py-1.5 rounded-full text-[13px] font-medium transition-all ${!category ? "bg-primary-500 text-white" : "bg-white/[0.04] text-zinc-400 hover:text-white hover:bg-white/[0.08] border border-white/[0.06]"
+                  }`}
               >
                 Tất cả
               </Link>
@@ -103,9 +102,8 @@ export default function BlogPage() {
                 <Link
                   key={cat.id}
                   href={`/blog?category=${cat.slug}`}
-                  className={`px-4 py-1.5 rounded-full text-[13px] font-medium transition-all ${
-                    category === cat.slug ? "bg-primary-500 text-white" : "bg-white/[0.04] text-zinc-400 hover:text-white hover:bg-white/[0.08] border border-white/[0.06]"
-                  }`}
+                  className={`px-4 py-1.5 rounded-full text-[13px] font-medium transition-all ${category === cat.slug ? "bg-primary-500 text-white" : "bg-white/[0.04] text-zinc-400 hover:text-white hover:bg-white/[0.08] border border-white/[0.06]"
+                    }`}
                 >
                   {cat.name}
                   {cat._count?.posts > 0 && <span className="ml-1 text-zinc-600">({cat._count.posts})</span>}
@@ -208,11 +206,10 @@ export default function BlogPage() {
                 <Link
                   key={p}
                   href={`/blog?page=${p}${category ? `&category=${category}` : ""}${search ? `&search=${search}` : ""}`}
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-medium transition-all ${
-                    p === pagination.page
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-medium transition-all ${p === pagination.page
                       ? "bg-primary-500 text-white"
                       : "bg-white/[0.04] text-zinc-400 hover:bg-white/[0.08] border border-white/[0.06]"
-                  }`}
+                    }`}
                 >
                   {p}
                 </Link>

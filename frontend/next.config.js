@@ -14,7 +14,6 @@ const nextConfig = {
     // /uploads/ directly with aggressive caching.  This avoids the
     // 400 errors caused by standalone mode not being able to read
     // volume-mounted files.
-    loader: "custom",
     loaderFile: "./src/imageLoader.ts",
     formats: ["image/avif", "image/webp"],
     // minimumCacheTTL not needed with custom loader

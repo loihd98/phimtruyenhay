@@ -277,7 +277,7 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
       <Layout>
         <div className="min-h-screen">
           <div className="max-w-[1400px] mx-auto px-4 lg:px-8 py-8">
-            <div className="max-w-6xl mx-auto">
+            <div className="max-w-6xl mx-auto px-4 lg:px-8">
               {/* Loading skeleton */}
               <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 animate-pulse">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -334,7 +334,7 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
 
       <div className="min-h-screen">
         <div className={`max-w-[1400px] mx-auto ${!isAudioStory ? 'px-4 lg:px-8' : ''} py-8`}>
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-6xl mx-auto px-4 lg:px-8 py-8">
             {/* Chapter Content */}
             {isAudioStory && (
               <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 mb-5">

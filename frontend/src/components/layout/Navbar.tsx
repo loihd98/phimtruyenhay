@@ -89,7 +89,7 @@ const Navbar: React.FC = () => {
   const navLinks = [
     { href: "/", label: t("nav.home") },
     { href: "/phim", label: "Review Phim" },
-    { href: "/blog", label: "Blog" },
+    // { href: "/blog", label: "Blog" },
     { href: "/truyen-audio", label: t("nav.audio") },
     { href: "/truyen-text", label: t("nav.stories") },
     { href: "/the-loai", label: "Thể loại" },

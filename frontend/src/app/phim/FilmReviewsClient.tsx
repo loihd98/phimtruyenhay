@@ -305,12 +305,15 @@ const FilmReviewsClient: React.FC<FilmReviewsClientProps> = ({
                 {/* Thumbnail */}
                 <div className="relative aspect-square bg-white/[0.04] overflow-hidden">
                   {review.thumbnailUrl ? (
-                    <Image
+                    <img
                       src={getMediaUrl(review.thumbnailUrl)}
                       alt={review.title}
-                      fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = "none";
+                        target.nextElementSibling?.classList.remove("hidden");
+                      }}
                     />
                   ) : (
                     <div className="flex items-center justify-center h-full">
@@ -415,11 +418,10 @@ const FilmReviewsClient: React.FC<FilmReviewsClientProps> = ({
                       onClick={() =>
                         updateFilters("page", pageNum.toString())
                       }
-                      className={`w-10 h-10 rounded-xl text-sm font-medium transition-colors ${
-                        currentPage === pageNum
-                          ? "bg-primary-500 text-white"
-                          : "bg-white/[0.02] border border-white/[0.06] text-zinc-400 hover:bg-white/[0.06] hover:text-white"
-                      }`}
+                      className={`w-10 h-10 rounded-xl text-sm font-medium transition-colors ${currentPage === pageNum
+                        ? "bg-primary-500 text-white"
+                        : "bg-white/[0.02] border border-white/[0.06] text-zinc-400 hover:bg-white/[0.06] hover:text-white"
+                        }`}
                     >
                       {pageNum}
                     </button>
