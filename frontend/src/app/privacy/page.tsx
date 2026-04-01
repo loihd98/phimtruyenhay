@@ -4,13 +4,13 @@ import Layout from "../../components/layout/Layout";
 
 // Generate metadata for SEO
 export const metadata: Metadata = {
-  title: "Chính sách bảo mật - The Midnight Movie Reel",
+  title: "Chính sách bảo mật - Phim Truyện Hay",
   description:
-    "Chính sách bảo mật và xử lý dữ liệu cá nhân của The Midnight Movie Reel. Tìm hiểu cách chúng tôi thu thập, sử dụng và bảo vệ thông tin của bạn.",
+    "Chính sách bảo mật và xử lý dữ liệu cá nhân của Phim Truyện Hay. Tìm hiểu cách chúng tôi thu thập, sử dụng và bảo vệ thông tin của bạn.",
   openGraph: {
-    title: "Chính sách bảo mật - The Midnight Movie Reel",
+    title: "Chính sách bảo mật - Phim Truyện Hay",
     description:
-      "Chính sách bảo mật và xử lý dữ liệu cá nhân của The Midnight Movie Reel. Tìm hiểu cách chúng tôi thu thập, sử dụng và bảo vệ thông tin của bạn.",
+      "Chính sách bảo mật và xử lý dữ liệu cá nhân của Phim Truyện Hay. Tìm hiểu cách chúng tôi thu thập, sử dụng và bảo vệ thông tin của bạn.",
     type: "website",
     locale: "vi_VN",
   },
@@ -174,7 +174,7 @@ export default function PrivacyPage() {
               </p>
               <ul className="list-disc list-inside text-zinc-500 mb-6 space-y-1">
                 <li>Có lệnh của cơ quan pháp luật có thẩm quyền</li>
-                <li>Bảo vệ quyền lợi hợp pháp của The Midnight Movie Reel</li>
+                <li>Bảo vệ quyền lợi hợp pháp của Phim Truyện Hay</li>
                 <li>Ngăn chặn gian lận hoặc tội phạm mạng</li>
                 <li>Bảo vệ an toàn của người dùng khác</li>
               </ul>
@@ -325,7 +325,7 @@ export default function PrivacyPage() {
                 8. Dữ liệu trẻ em
               </h2>
               <p className="text-zinc-500 mb-6 leading-relaxed">
-                The Midnight Movie Reel không cố ý thu thập thông tin cá nhân từ trẻ em
+                Phim Truyện Hay không cố ý thu thập thông tin cá nhân từ trẻ em
                 dưới 13 tuổi. Nếu chúng tôi phát hiện đã thu thập thông tin như
                 vậy, chúng tôi sẽ xóa ngay lập tức. Phụ huynh có thể liên hệ với
                 chúng tôi nếu cho rằng con em mình đã cung cấp thông tin cá

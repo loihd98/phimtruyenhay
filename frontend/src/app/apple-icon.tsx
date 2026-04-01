@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 export const runtime = "nodejs";
-export const alt = "The Midnight Movie Reel";
+export const alt = "Phim Truyện Hay";
 export const size = {
   width: 180,
   height: 180,

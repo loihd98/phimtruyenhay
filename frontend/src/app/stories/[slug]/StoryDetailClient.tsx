@@ -367,7 +367,9 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                       className="block my-6 p-4 bg-primary-500/10 border border-primary-500/20 rounded-2xl"
                     >
                       <p className="font-bold items-center flex-wrap text-center">
-                        <span className="text-primary-400 text-sm">Cảm ơn bạn đã ghé thăm The Midnight Movie Reel! Nếu bạn thấy những câu chuyện ở đây thú vị, hãy bấm vào đây để ủng hộ tụi mình nhé. Mỗi lượt click của bạn là một nguồn động lực lớn!</span>
+                        <span className="text-primary-400 text-sm">Cảm ơn bạn đã ghé thăm Phim Truyện Hay ❤️<br />
+                          Nếu bạn thấy những câu chuyện ở đây thú vị, hãy bấm vào đây để ủng hộ tụi mình nhé.
+                          Mỗi lượt click của bạn là một nguồn động lực to lớn để tụi mình tiếp tục mang đến nhiều nội dung hay hơn!</span>
                         <a href={story.affiliate.targetUrl}
                           target="_blank"
                           rel="noopener noreferrer" className="underline text-primary-400 hover:text-primary-300 block mt-2 text-sm">Click ủng hộ tại đây</a>

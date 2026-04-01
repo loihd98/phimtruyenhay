@@ -31,6 +31,7 @@ const Footer: React.FC = () => {
             <div className="text-center md:text-left">
               <h3 className="text-xl font-bold text-white">Ủng hộ website duy trì & phát triển</h3>
               <p className="text-sm text-zinc-500 mt-1">Mọi đóng góp giúp chúng tôi cập nhật thêm review hay mỗi ngày</p>
+
             </div>
             <div className="flex items-center gap-4 bg-white/[0.02] border border-white/[0.06] rounded-2xl p-4">
               <Image src="/qr.jpg" alt="QR ủng hộ" width={72} height={72} className="rounded-xl" />
@@ -49,10 +50,11 @@ const Footer: React.FC = () => {
           <div className="col-span-2 md:col-span-4">
             <div className="flex items-center gap-2 mb-4">
               <span className="text-[15px] font-bold tracking-tight">
-                <span className="text-white/90">MIDNIGHT</span>
-                <span className="text-primary-500 ml-1">REEL</span>
+                <span className="text-white/90">Phim Truyện</span>
+                <span className="text-primary-500 ml-1">Hay</span>
               </span>
             </div>
+            <img src="logo_phim.png" alt="logo phim truyện hay" className="w-[200px] h-[200px] rounded-sm" />
             <p className="text-sm text-zinc-600 leading-relaxed max-w-xs">
               Review phim chuyên sâu, dễ hiểu. Phân tích nội dung, giải thích ending & gợi ý phim hay.
             </p>
@@ -130,7 +132,7 @@ const Footer: React.FC = () => {
 
         {/* Bottom bar */}
         <div className="py-5 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-[12px] text-zinc-600">&copy; {new Date().getFullYear()} The Midnight Movie Reel</p>
+          <p className="text-[12px] text-zinc-600">&copy; {new Date().getFullYear()} Phim Truyện Hay</p>
           <div className="flex items-center gap-4">
             <a href="/sitemap.xml" rel="sitemap" className="text-[12px] text-zinc-600 hover:text-zinc-400 transition-colors">Sitemap</a>
             <span className="text-zinc-800">|</span>

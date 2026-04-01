@@ -4,13 +4,13 @@ import Layout from "../../components/layout/Layout";
 
 // Generate metadata for SEO
 export const metadata: Metadata = {
-  title: "Trợ Giúp - The Midnight Movie Reel",
+  title: "Trợ Giúp - Phim Truyện Hay",
   description:
-    "Hướng dẫn sử dụng The Midnight Movie Reel, câu hỏi thường gặp về nghe truyện audio, đọc truyện chữ và review phim trên website.",
+    "Hướng dẫn sử dụng Phim Truyện Hay, câu hỏi thường gặp về nghe truyện audio, đọc truyện chữ và review phim trên website.",
   openGraph: {
-    title: "Trợ Giúp - The Midnight Movie Reel",
+    title: "Trợ Giúp - Phim Truyện Hay",
     description:
-      "Hướng dẫn sử dụng The Midnight Movie Reel, câu hỏi thường gặp về nghe truyện audio, đọc truyện chữ và review phim trên website.",
+      "Hướng dẫn sử dụng Phim Truyện Hay, câu hỏi thường gặp về nghe truyện audio, đọc truyện chữ và review phim trên website.",
     type: "website",
     locale: "vi_VN",
   },
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 const faqData = [
   {
     id: 1,
-    question: "Làm thế nào để đọc truyện trên The Midnight Movie Reel?",
+    question: "Làm thế nào để đọc truyện trên Phim Truyện Hay?",
     answer:
       "Bạn có thể duyệt qua kho truyện từ trang chủ, tìm kiếm theo tên truyện hoặc thể loại. Nhấp vào truyện muốn đọc và chọn chương để bắt đầu đọc.",
     category: "Cơ bản",
@@ -73,7 +73,7 @@ const faqData = [
     id: 8,
     question: "Trang web có thu phí không?",
     answer:
-      "The Midnight Movie Reel hoàn toàn miễn phí. Chúng tôi không thu phí đọc truyện hay nghe audio. Chi phí duy trì được trang trải từ quảng cáo và tài trợ.",
+      "Phim Truyện Hay hoàn toàn miễn phí. Chúng tôi không thu phí đọc truyện hay nghe audio. Chi phí duy trì được trang trải từ quảng cáo và tài trợ.",
     category: "Chi phí",
   },
 ];
@@ -88,7 +88,7 @@ export default function HelpPage() {
             Trợ Giúp
           </h1>
           <p className="text-lg text-zinc-500 max-w-2xl mx-auto animate-slide-up animation-delay-200">
-            Tìm hiểu cách sử dụng The Midnight Movie Reel một cách hiệu quả nhất
+            Tìm hiểu cách sử dụng Phim Truyện Hay một cách hiệu quả nhất
           </p>
         </div>
 

@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 export const runtime = "nodejs";
-export const alt = "The Midnight Movie Reel – Truyện Audio, Truyện Chữ Online & Review Phim Hay";
+export const alt = "Phim Truyện Hay – Truyện Audio, Truyện Chữ Online & Review Phim Hay";
 export const size = {
   width: 1200,
   height: 630,
@@ -38,7 +38,7 @@ export default async function Image() {
             letterSpacing: "-0.02em",
           }}
         >
-          The Midnight Movie Reel
+          Phim Truyện Hay
         </div>
         <div
           style={{

@@ -9,7 +9,7 @@ import JsonLd, {
 
 const API_BASE_URL =
   process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "/api";
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://themidnightmoviereel.io.vn";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://phimtruyenhay.com";
 
 // SSR: Fetch categories and tags on server
 async function getFilmCategories() {
@@ -51,22 +51,22 @@ export async function generateMetadata({
   const tag = searchParams.tag as string;
   const search = searchParams.search as string;
 
-  let title = "Review Phim Mới Nhất 2026 – Đánh Giá Chi Tiết & Không Spoiler | The Midnight Movie Reel";
+  let title = "Review Phim Mới Nhất 2026 – Đánh Giá Chi Tiết & Không Spoiler | Phim Truyện Hay";
   let description =
-    "Đọc review phim mới nhất, đánh giá chi tiết nội dung, diễn xuất, kịch bản và điểm số khách quan tại The Midnight Movie Reel.";
+    "Đọc review phim mới nhất, đánh giá chi tiết nội dung, diễn xuất, kịch bản và điểm số khách quan tại Phim Truyện Hay.";
 
   if (category) {
-    title = `Review Phim - ${category} | The Midnight Movie Reel`;
+    title = `Review Phim - ${category} | Phim Truyện Hay`;
     description = `Review phim thể loại ${category}. Xem đánh giá, xếp hạng phim mới nhất.`;
   }
 
   if (tag) {
-    title = `Review Phim - #${tag} | The Midnight Movie Reel`;
+    title = `Review Phim - #${tag} | Phim Truyện Hay`;
     description = `Review phim với tag #${tag}. Xem đánh giá, xếp hạng phim.`;
   }
 
   if (search) {
-    title = `Tìm kiếm: ${search} - Review Phim | The Midnight Movie Reel`;
+    title = `Tìm kiếm: ${search} - Review Phim | Phim Truyện Hay`;
     description = `Kết quả tìm kiếm review phim cho "${search}".`;
   }
 

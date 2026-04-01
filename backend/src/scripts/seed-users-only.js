@@ -10,10 +10,10 @@ async function main() {
     // Create admin user
     const adminPassword = await bcrypt.hash("Admin@Midnight2026!", 12);
     const admin = await prisma.user.upsert({
-      where: { email: "admin@themidnightmoviereel.io.vn" },
+      where: { email: "admin@phimtruyenhay.com" },
       update: {},
       create: {
-        email: "admin@themidnightmoviereel.io.vn",
+        email: "admin@phimtruyenhay.com",
         passwordHash: adminPassword,
         name: "Admin Midnight",
         role: "ADMIN",
@@ -23,10 +23,10 @@ async function main() {
     // Create editor user
     const editorPassword = await bcrypt.hash("Editor@Midnight2026!", 12);
     const editor = await prisma.user.upsert({
-      where: { email: "editor@themidnightmoviereel.io.vn" },
+      where: { email: "editor@phimtruyenhay.com" },
       update: {},
       create: {
-        email: "editor@themidnightmoviereel.io.vn",
+        email: "editor@phimtruyenhay.com",
         passwordHash: editorPassword,
         name: "Editor Midnight",
         role: "EDITOR",
@@ -36,10 +36,10 @@ async function main() {
     // Create demo user
     const userPassword = await bcrypt.hash("Demo@Midnight2026!", 12);
     const user = await prisma.user.upsert({
-      where: { email: "demo@themidnightmoviereel.io.vn" },
+      where: { email: "demo@phimtruyenhay.com" },
       update: {},
       create: {
-        email: "demo@themidnightmoviereel.io.vn",
+        email: "demo@phimtruyenhay.com",
         passwordHash: userPassword,
         name: "Demo User",
         role: "USER",

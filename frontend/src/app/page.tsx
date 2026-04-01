@@ -7,7 +7,7 @@ import JsonLd, {
   getBreadcrumbSchema,
 } from "../components/seo/JsonLd";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://themidnightmoviereel.io.vn";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://phimtruyenhay.com";
 
 function getApiUrl() {
   return process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";

@@ -55,9 +55,9 @@ export async function generateMetadata({
 
   return {
     title: `Thể loại ${genreName} – Truyện Audio, Truyện Chữ & Phim ${genreName}`,
-    description: `Khám phá thể loại ${genreName} hay nhất. Nghe truyện audio, đọc truyện chữ và xem review phim ${genreName} miễn phí tại The Midnight Movie Reel.`,
+    description: `Khám phá thể loại ${genreName} hay nhất. Nghe truyện audio, đọc truyện chữ và xem review phim ${genreName} miễn phí tại Phim Truyện Hay.`,
     openGraph: {
-      title: `Thể loại ${genreName} – The Midnight Movie Reel`,
+      title: `Thể loại ${genreName} – Phim Truyện Hay`,
       description: `Kho truyện audio, truyện chữ và review phim ${genreName} hay nhất, cập nhật liên tục.`,
       type: "website",
       locale: "vi_VN",

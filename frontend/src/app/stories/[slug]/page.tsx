@@ -25,17 +25,17 @@ export async function generateMetadata({
 
   if (!story) {
     return {
-      title: "Truyện không tồn tại - The Midnight Movie Reel",
+      title: "Truyện không tồn tại - Phim Truyện Hay",
       description: "Truyện bạn tìm kiếm không tồn tại hoặc đã bị xóa.",
     };
   }
 
   const isAudio = story.type === "AUDIO";
   const typeLabel = isAudio ? "Truyện Audio" : "Truyện Chữ";
-  const title = `${story.title} - ${typeLabel} | The Midnight Movie Reel`;
+  const title = `${story.title} - ${typeLabel} | Phim Truyện Hay`;
   const description =
     story.description?.substring(0, 160) ||
-    `Đọc ${story.title} - ${typeLabel} miễn phí tại The Midnight Movie Reel. ${story.chapters?.length || 0} chương.`;
+    `Đọc ${story.title} - ${typeLabel} miễn phí tại Phim Truyện Hay. ${story.chapters?.length || 0} chương.`;
 
   const genres = story.genres?.map((g: any) => g.name).join(", ") || "";
 
@@ -49,20 +49,20 @@ export async function generateMetadata({
       "đọc truyện online",
       "nghe truyện audio",
       "truyện hay",
-      "The Midnight Movie Reel",
+      "Phim Truyện Hay",
     ],
     openGraph: {
       title,
       description,
       type: "article",
       locale: "vi_VN",
-      siteName: "The Midnight Movie Reel",
+      siteName: "Phim Truyện Hay",
       ...(story.thumbnailUrl && {
         images: [
           {
             url: story.thumbnailUrl.startsWith("http")
               ? story.thumbnailUrl
-              : `${process.env.NEXT_PUBLIC_SITE_URL || "https://themidnightmoviereel.io.vn"}${story.thumbnailUrl}`,
+              : `${process.env.NEXT_PUBLIC_SITE_URL || "https://phimtruyenhay.com"}${story.thumbnailUrl}`,
             width: 1200,
             height: 630,
             alt: story.title,
@@ -74,7 +74,7 @@ export async function generateMetadata({
       canonical: `/stories/${params.slug}`,
     },
     other: {
-      "article:author": story.author?.name || "The Midnight Movie Reel",
+      "article:author": story.author?.name || "Phim Truyện Hay",
       ...(genres && { "article:tag": genres }),
     },
   };

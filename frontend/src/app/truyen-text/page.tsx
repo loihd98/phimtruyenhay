@@ -16,16 +16,16 @@ export async function generateMetadata({
     const genre = searchParams.genre as string;
     const search = searchParams.search as string;
 
-    let title = "Truyện Đọc Online – Kho Truyện Đọc Online Miễn Phí | The Midnight Movie Reel";
+    let title = "Truyện Đọc Online – Kho Truyện Đọc Online Miễn Phí | Phim Truyện Hay";
     let description =
-        "Kho truyện đọc online với nhiều thể loại hấp dẫn như ngôn tình, trinh thám, truyện ma. Đọc miễn phí tại The Midnight Movie Reel.";
+        "Kho truyện đọc online với nhiều thể loại hấp dẫn như ngôn tình, trinh thám, truyện ma. Đọc miễn phí tại Phim Truyện Hay.";
 
     if (genre) {
-        title = `Truyện Chữ thể loại ${genre} – The Midnight Movie Reel`;
-        description = `Đọc truyện chữ thể loại ${genre} miễn phí tại The Midnight Movie Reel.`;
+        title = `Truyện Chữ thể loại ${genre} – Phim Truyện Hay`;
+        description = `Đọc truyện chữ thể loại ${genre} miễn phí tại Phim Truyện Hay.`;
     }
     if (search) {
-        title = `Tìm kiếm truyện chữ: ${search} – The Midnight Movie Reel`;
+        title = `Tìm kiếm truyện chữ: ${search} – Phim Truyện Hay`;
         description = `Kết quả tìm kiếm truyện chữ cho "${search}".`;
     }
 

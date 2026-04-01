@@ -16,14 +16,14 @@ export function getOrganizationSchema(siteUrl: string) {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "The Midnight Movie Reel",
+    name: "Phim Truyện Hay",
     url: siteUrl,
     logo: `${siteUrl}/logo_phim.png`,
     description:
-      "Nghe truyện audio hay, đọc truyện chữ online miễn phí và review phim chuyên sâu tại The Midnight Movie Reel.",
+      "Nghe truyện audio hay, đọc truyện chữ online miễn phí và review phim chuyên sâu tại Phim Truyện Hay.",
     founder: {
       "@type": "Person",
-      name: "The Midnight Movie Reel",
+      name: "Phim Truyện Hay",
     },
     sameAs: [],
     contactPoint: {
@@ -39,13 +39,13 @@ export function getWebsiteSchema(siteUrl: string) {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "The Midnight Movie Reel",
+    name: "Phim Truyện Hay",
     url: siteUrl,
     description:
-      "Nghe truyện audio, đọc truyện chữ online miễn phí và review phim hay mỗi ngày tại The Midnight Movie Reel",
+      "Nghe truyện audio, đọc truyện chữ online miễn phí và review phim hay mỗi ngày tại Phim Truyện Hay",
     publisher: {
       "@type": "Organization",
-      name: "The Midnight Movie Reel",
+      name: "Phim Truyện Hay",
       logo: {
         "@type": "ImageObject",
         url: `${siteUrl}/logo_phim.png`,
@@ -99,7 +99,7 @@ export function getBookSchema(story: any, siteUrl: string) {
     },
     publisher: {
       "@type": "Organization",
-      name: "The Midnight Movie Reel",
+      name: "Phim Truyện Hay",
     },
     datePublished: story.createdAt,
     dateModified: story.updatedAt,
@@ -132,7 +132,7 @@ export function getArticleSchema(chapter: any, story: any, siteUrl: string) {
     },
     publisher: {
       "@type": "Organization",
-      name: "The Midnight Movie Reel",
+      name: "Phim Truyện Hay",
       logo: {
         "@type": "ImageObject",
         url: `${siteUrl}/logo_phim.png`,
@@ -170,7 +170,7 @@ export function getAudioBookSchema(story: any, siteUrl: string) {
     },
     publisher: {
       "@type": "Organization",
-      name: "The Midnight Movie Reel",
+      name: "Phim Truyện Hay",
     },
     datePublished: story.createdAt,
     inLanguage: "vi-VN",
@@ -210,11 +210,11 @@ export function getFilmReviewSchema(review: any, siteUrl: string) {
     dateModified: review.updatedAt,
     author: {
       "@type": "Person",
-      name: review.author?.name || "The Midnight Movie Reel",
+      name: review.author?.name || "Phim Truyện Hay",
     },
     publisher: {
       "@type": "Organization",
-      name: "The Midnight Movie Reel",
+      name: "Phim Truyện Hay",
       url: siteUrl,
     },
     reviewRating: review.rating
@@ -259,13 +259,13 @@ export function getFilmReviewsListSchema(siteUrl: string) {
   return {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Review Phim - The Midnight Movie Reel",
+    name: "Review Phim - Phim Truyện Hay",
     description:
       "Xem các bài review phim hay nhất. Đánh giá phim, xếp hạng và nhận xét từ cộng đồng.",
     url: `${siteUrl}/phim`,
     publisher: {
       "@type": "Organization",
-      name: "The Midnight Movie Reel",
+      name: "Phim Truyện Hay",
       url: siteUrl,
     },
     inLanguage: "vi-VN",

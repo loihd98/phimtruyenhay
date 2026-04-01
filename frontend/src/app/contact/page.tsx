@@ -5,13 +5,13 @@ import ContactForm from "../../components/contact/ContactForm";
 
 // Generate metadata for SEO
 export const metadata: Metadata = {
-  title: "Liên hệ - The Midnight Movie Reel",
+  title: "Liên hệ - Phim Truyện Hay",
   description:
-    "Liên hệ với đội ngũ The Midnight Movie Reel để được hỗ trợ, góp ý hoặc báo cáo vấn đề. Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn.",
+    "Liên hệ với đội ngũ Phim Truyện Hay để được hỗ trợ, góp ý hoặc báo cáo vấn đề. Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn.",
   openGraph: {
-    title: "Liên hệ - The Midnight Movie Reel",
+    title: "Liên hệ - Phim Truyện Hay",
     description:
-      "Liên hệ với đội ngũ The Midnight Movie Reel để được hỗ trợ, góp ý hoặc báo cáo vấn đề. Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn.",
+      "Liên hệ với đội ngũ Phim Truyện Hay để được hỗ trợ, góp ý hoặc báo cáo vấn đề. Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn.",
     type: "website",
     locale: "vi_VN",
   },
@@ -101,7 +101,7 @@ export default function ContactPage() {
                         Website
                       </p>
                       <p className="text-zinc-500">
-                        themidnightmoviereel.io.vn
+                        phimtruyenhay.com
                       </p>
                     </div>
                   </div>
@@ -161,7 +161,7 @@ export default function ContactPage() {
                       Có mất phí không?
                     </h4>
                     <p className="text-sm text-zinc-500">
-                      The Midnight Movie Reel hoàn toàn miễn phí cho tất cả người dùng.
+                      Phim Truyện Hay hoàn toàn miễn phí cho tất cả người dùng.
                     </p>
                   </div>
                   <div className="border-l-4 border-purple-500 pl-4">

@@ -1,6 +1,6 @@
-# Deployment Guide — themidnightmoviereel.io.vn
+# Deployment Guide — phimtruyenhay.com
 
-Complete A-to-Z guide for deploying the website to a fresh **Ubuntu 20.04 VPS** with IP `103.199.17.168` and domain `themidnightmoviereel.io.vn`.
+Complete A-to-Z guide for deploying the website to a fresh **Ubuntu 20.04 VPS** with IP `103.199.17.168` and domain `phimtruyenhay.com`.
 
 ---
 
@@ -30,7 +30,7 @@ Before starting, ensure you have:
 
 - A VPS with Ubuntu 20.04 LTS (IP: `103.199.17.168`)
 - Root SSH access to the VPS
-- Domain `themidnightmoviereel.io.vn` registered and ready to configure
+- Domain `phimtruyenhay.com` registered and ready to configure
 - Your project code pushed to GitHub at `https://github.com/loihd98/vivutruyenghay.git`
 
 ---
@@ -48,8 +48,8 @@ Wait 5-15 minutes for DNS propagation, then verify:
 
 ```bash
 # From your local machine
-nslookup themidnightmoviereel.io.vn
-ping themidnightmoviereel.io.vn
+nslookup phimtruyenhay.com
+ping phimtruyenhay.com
 ```
 
 Both should resolve to `103.199.17.168`.
@@ -226,7 +226,7 @@ systemctl start docker
 ```bash
 mkdir -p /opt
 cd /opt
-git clone https://github.com/loihd98/themidnightmoviereel.io.vn.git webtruyen
+git clone https://github.com/loihd98/phimtruyenhay.com.git webtruyen
 cd /opt/webtruyen
 ```
 
@@ -251,17 +251,17 @@ JWT_SECRET=PASTE_GENERATED_SECRET_HERE
 JWT_REFRESH_SECRET=PASTE_DIFFERENT_GENERATED_SECRET_HERE
 
 # URLs
-BASE_URL=https://themidnightmoviereel.io.vn
-CORS_ORIGIN=https://themidnightmoviereel.io.vn
-FRONTEND_URL=https://themidnightmoviereel.io.vn
-BACKEND_URL=https://themidnightmoviereel.io.vn
-DOMAIN=themidnightmoviereel.io.vn
+BASE_URL=https://phimtruyenhay.com
+CORS_ORIGIN=https://phimtruyenhay.com
+FRONTEND_URL=https://phimtruyenhay.com
+BACKEND_URL=https://phimtruyenhay.com
+DOMAIN=phimtruyenhay.com
 
 # Frontend
-NEXT_PUBLIC_API_URL=https://themidnightmoviereel.io.vn/api
-NEXT_PUBLIC_BASE_URL=https://themidnightmoviereel.io.vn
-NEXT_PUBLIC_MEDIA_URL=https://themidnightmoviereel.io.vn
-NEXT_PUBLIC_SITE_URL=https://themidnightmoviereel.io.vn
+NEXT_PUBLIC_API_URL=https://phimtruyenhay.com/api
+NEXT_PUBLIC_BASE_URL=https://phimtruyenhay.com
+NEXT_PUBLIC_MEDIA_URL=https://phimtruyenhay.com
+NEXT_PUBLIC_SITE_URL=https://phimtruyenhay.com
 API_URL=http://backend:5000/api
 
 # File upload
@@ -302,7 +302,7 @@ Create a temporary HTTP-only Nginx config:
 cat > /opt/webtruyen/nginx/prod.conf << 'EOF'
 server {
     listen 80;
-    server_name themidnightmoviereel.io.vn www.themidnightmoviereel.io.vn;
+    server_name phimtruyenhay.com www.phimtruyenhay.com;
 
     location /.well-known/acme-challenge/ {
         root /var/www/certbot;
@@ -369,8 +369,8 @@ nginx         Up
 ### 5.7 Verify HTTP Access
 
 ```bash
-curl -I http://themidnightmoviereel.io.vn
-curl http://themidnightmoviereel.io.vn/api/health
+curl -I http://phimtruyenhay.com
+curl http://phimtruyenhay.com/api/health
 ```
 
 If the site is accessible via HTTP, proceed to SSL setup.
@@ -386,7 +386,7 @@ cd /opt/webtruyen
 
 docker compose -f docker-compose.prod.yml run --rm certbot certonly \
   --webroot --webroot-path=/var/www/certbot \
-  -d themidnightmoviereel.io.vn -d www.themidnightmoviereel.io.vn \
+  -d phimtruyenhay.com -d www.phimtruyenhay.com \
   --email your-email@gmail.com \
   --agree-tos --no-eff-email
 ```
@@ -395,8 +395,8 @@ Expected output:
 
 ```
 Successfully received certificate.
-Certificate is saved at: /etc/letsencrypt/live/themidnightmoviereel.io.vn/fullchain.pem
-Key is saved at: /etc/letsencrypt/live/themidnightmoviereel.io.vn/privkey.pem
+Certificate is saved at: /etc/letsencrypt/live/phimtruyenhay.com/fullchain.pem
+Key is saved at: /etc/letsencrypt/live/phimtruyenhay.com/privkey.pem
 ```
 
 ### 6.2 Restore the Full HTTPS Nginx Config
@@ -425,12 +425,12 @@ docker compose -f docker-compose.prod.yml restart nginx
 ### 6.4 Verify HTTPS
 
 ```bash
-curl -I https://themidnightmoviereel.io.vn
+curl -I https://phimtruyenhay.com
 ```
 
 Expected: HTTP 200 with security headers (`Strict-Transport-Security`, `X-Frame-Options`, etc.).
 
-Open in a browser: **https://themidnightmoviereel.io.vn** — you should see a green padlock.
+Open in a browser: **https://phimtruyenhay.com** — you should see a green padlock.
 
 ---
 
@@ -479,14 +479,14 @@ SELECT id, email, name, role FROM users;
 
 ```bash
 # Register a user
-curl -X POST https://themidnightmoviereel.io.vn/api/auth/register \
+curl -X POST https://phimtruyenhay.com/api/auth/register \
   -H "Content-Type: application/json" \
-  -d '{"email": "admin@themidnightmoviereel.io.vn", "password": "YourStrongPassword123", "name": "Admin"}'
+  -d '{"email": "admin@phimtruyenhay.com", "password": "YourStrongPassword123", "name": "Admin"}'
 
 # Then promote to admin via database
 docker compose -f docker-compose.prod.yml exec postgres \
   psql -U webtruyen_user -d web_truyen -c \
-  "UPDATE users SET role = 'ADMIN' WHERE email = 'admin@themidnightmoviereel.io.vn';"
+  "UPDATE users SET role = 'ADMIN' WHERE email = 'admin@phimtruyenhay.com';"
 ```
 
 ### 7.5 Seed RBAC Permissions
@@ -538,26 +538,26 @@ docker compose -f docker-compose.prod.yml exec backend npx prisma db push
 docker compose -f docker-compose.prod.yml ps
 
 # Backend health
-curl https://themidnightmoviereel.io.vn/api/health
+curl https://phimtruyenhay.com/api/health
 
 # Frontend loads
-curl -s -o /dev/null -w "%{http_code}" https://themidnightmoviereel.io.vn
+curl -s -o /dev/null -w "%{http_code}" https://phimtruyenhay.com
 
 # SSL certificate info
-curl -vI https://themidnightmoviereel.io.vn 2>&1 | grep -E "expire|subject|issuer"
+curl -vI https://phimtruyenhay.com 2>&1 | grep -E "expire|subject|issuer"
 ```
 
 ### 8.2 Feature Checklist
 
-| Feature      | URL                                              | Expected                               |
-| ------------ | ------------------------------------------------ | -------------------------------------- |
-| Homepage     | https://themidnightmoviereel.io.vn               | Loads with stories                     |
-| API Health   | https://themidnightmoviereel.io.vn/api/health    | `{"status":"OK"}`                      |
-| Registration | https://themidnightmoviereel.io.vn/auth/register | Registration form                      |
-| Login        | https://themidnightmoviereel.io.vn/auth/login    | Login form                             |
-| Admin Panel  | https://themidnightmoviereel.io.vn/admin         | Admin dashboard (requires admin login) |
-| Sitemap      | https://themidnightmoviereel.io.vn/sitemap.xml   | XML sitemap                            |
-| SSL          | https://themidnightmoviereel.io.vn               | Green padlock                          |
+| Feature      | URL                                     | Expected                               |
+| ------------ | --------------------------------------- | -------------------------------------- |
+| Homepage     | https://phimtruyenhay.com               | Loads with stories                     |
+| API Health   | https://phimtruyenhay.com/api/health    | `{"status":"OK"}`                      |
+| Registration | https://phimtruyenhay.com/auth/register | Registration form                      |
+| Login        | https://phimtruyenhay.com/auth/login    | Login form                             |
+| Admin Panel  | https://phimtruyenhay.com/admin         | Admin dashboard (requires admin login) |
+| Sitemap      | https://phimtruyenhay.com/sitemap.xml   | XML sitemap                            |
+| SSL          | https://phimtruyenhay.com               | Green padlock                          |
 
 ### 8.3 Check Logs If Issues
 
@@ -616,7 +616,7 @@ docker compose -f docker-compose.prod.yml restart nginx
 
 ```bash
 docker run --rm -v webtruyen_certbot-certs:/certs alpine/openssl x509 \
-  -in /certs/live/themidnightmoviereel.io.vn/fullchain.pem -noout -dates
+  -in /certs/live/phimtruyenhay.com/fullchain.pem -noout -dates
 ```
 
 ---
@@ -734,7 +734,7 @@ docker compose -f docker-compose.prod.yml up -d --build --no-deps frontend
 docker compose -f docker-compose.prod.yml ps
 
 # Quick API test
-curl https://themidnightmoviereel.io.vn/api/health
+curl https://phimtruyenhay.com/api/health
 ```
 
 #### What each flag does
@@ -881,7 +881,7 @@ docker compose -f docker-compose.prod.yml up -d --build frontend
 ```bash
 # Check if certificates exist
 docker run --rm -v webtruyen_certbot-certs:/certs alpine \
-  ls -la /certs/live/themidnightmoviereel.io.vn/
+  ls -la /certs/live/phimtruyenhay.com/
 
 # If missing, re-run the SSL setup from Section 6
 ```
@@ -1079,7 +1079,7 @@ docker compose -f docker-compose.prod.yml exec postgres \
   psql -U webtruyen_user -d web_truyen -c "\d stories"
 
 # Test API
-curl https://themidnightmoviereel.io.vn/api/health
+curl https://phimtruyenhay.com/api/health
 ```
 
 ### 13.4 Rollback nếu migration lỗi

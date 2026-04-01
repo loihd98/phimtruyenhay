@@ -104,11 +104,11 @@ const Navbar: React.FC = () => {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-              <Image src="/logo_phim.png" alt="The Midnight Movie Reel" width={34} height={34} className="rounded-lg group-hover:rotate-[-4deg] transition-transform duration-300" priority />
+              <Image src="/logo_phim.png" alt="Phim Truyện Hay" width={34} height={34} className="rounded-lg group-hover:rotate-[-4deg] transition-transform duration-300" priority />
               <div>
                 <span className="text-[15px] font-bold tracking-tight">
-                  <span className="text-white/90">MIDNIGHT</span>
-                  <span className="text-primary-500 ml-1">REEL</span>
+                  <span className="text-white/90">Phim Truyện</span>
+                  <span className="text-primary-500 ml-1">Hay</span>
                 </span>
               </div>
             </Link>

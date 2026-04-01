@@ -78,7 +78,7 @@ services:
       - ./logs/nginx:/var/log/nginx
       - /etc/letsencrypt:/etc/letsencrypt:ro
     environment:
-      - DOMAIN=themidnightmoviereel.io.vn
+      - DOMAIN=phimtruyenhay.com
     depends_on:
       - frontend
       - backend

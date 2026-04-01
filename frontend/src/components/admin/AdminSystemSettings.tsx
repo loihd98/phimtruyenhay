@@ -30,7 +30,7 @@ interface SystemSettings {
 const AdminSystemSettings: React.FC = () => {
   const { t } = useLanguage();
   const [settings, setSettings] = useState<SystemSettings>({
-    siteName: "The Midnight Movie Reel",
+    siteName: "Phim Truyện Hay",
     siteDescription: "Nền tảng review phim và đọc truyện online hàng đầu",
     contactEmail: "admin@webtruyen.com",
     maxFileSize: 10,
@@ -47,7 +47,7 @@ const AdminSystemSettings: React.FC = () => {
       discord: "",
     },
     seoSettings: {
-      metaTitle: "The Midnight Movie Reel - Review phim và đọc truyện online miễn phí",
+      metaTitle: "Phim Truyện Hay - Review phim và đọc truyện online miễn phí",
       metaDescription:
         "Đọc truyện online miễn phí với hàng ngàn đầu truyện hay nhất",
       keywords: ["truyện", "đọc truyện", "truyện online", "light novel"],
@@ -201,8 +201,8 @@ const AdminSystemSettings: React.FC = () => {
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key as any)}
                 className={`px-4 py-2 font-medium text-sm rounded-t-lg transition-colors ${activeTab === tab.key
-                    ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:text-blue-400"
-                    : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                  ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:text-blue-400"
+                  : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                   }`}
               >
                 {tab.icon} {tab.label}

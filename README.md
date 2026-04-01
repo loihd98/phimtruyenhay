@@ -1,4 +1,4 @@
-# themidnightmoviereel.io.vn
+# phimtruyenhay.com
 
 A full-stack web application for reading stories, listening to audio stories, and reviewing films. Built with **Next.js 14**, **Node.js/Express**, **PostgreSQL**, and **Docker**.
 
@@ -235,7 +235,7 @@ The project includes built-in SEO optimization:
 ### SEO Checklist for Production
 
 - [ ] Register on [Google Search Console](https://search.google.com/search-console)
-- [ ] Submit sitemap URL: `https://themidnightmoviereel.io.vn/sitemap.xml`
+- [ ] Submit sitemap URL: `https://phimtruyenhay.com/sitemap.xml`
 - [ ] Add Google verification code to `layout.tsx`
 - [ ] (Optional) Set up Google Analytics
 - [ ] (Optional) Create Facebook App for social login & OG debugging
@@ -303,7 +303,7 @@ Managed via Let's Encrypt (Certbot) with automatic renewal.
 ```bash
 # Check certificate expiry
 docker run --rm -v webtruyen_certbot-certs:/certs alpine/openssl x509 \
-  -in /certs/live/themidnightmoviereel.io.vn/fullchain.pem -noout -dates
+  -in /certs/live/phimtruyenhay.com/fullchain.pem -noout -dates
 
 # Force renewal
 docker compose -f docker-compose.prod.yml run --rm certbot renew --force-renewal

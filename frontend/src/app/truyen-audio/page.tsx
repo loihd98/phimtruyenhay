@@ -16,16 +16,16 @@ export async function generateMetadata({
     const genre = searchParams.genre as string;
     const search = searchParams.search as string;
 
-    let title = "Truyện Audio Online – Nghe Truyện Audio Miễn Phí | The Midnight Movie Reel";
+    let title = "Truyện Audio Online – Nghe Truyện Audio Miễn Phí | Phim Truyện Hay";
     let description =
-        "Nghe truyện audio hay nhất gồm truyện ma, trinh thám, ngôn tình và nhiều thể loại hấp dẫn. Nghe miễn phí tại The Midnight Movie Reel.";
+        "Nghe truyện audio hay nhất gồm truyện ma, trinh thám, ngôn tình và nhiều thể loại hấp dẫn. Nghe miễn phí tại Phim Truyện Hay.";
 
     if (genre) {
-        title = `Truyện Audio thể loại ${genre} – The Midnight Movie Reel`;
-        description = `Nghe truyện audio thể loại ${genre} miễn phí tại The Midnight Movie Reel.`;
+        title = `Truyện Audio thể loại ${genre} – Phim Truyện Hay`;
+        description = `Nghe truyện audio thể loại ${genre} miễn phí tại Phim Truyện Hay.`;
     }
     if (search) {
-        title = `Tìm kiếm truyện audio: ${search} – The Midnight Movie Reel`;
+        title = `Tìm kiếm truyện audio: ${search} – Phim Truyện Hay`;
         description = `Kết quả tìm kiếm truyện audio cho "${search}".`;
     }
 

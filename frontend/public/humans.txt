@@ -1,7 +1,7 @@
 /* TEAM */
 Founder & Developer: Evanloi9x
-Site: https://themidnightmoviereel.io.vn
-Contact: admin@themidnightmoviereel.io.vn
+Site: https://phimtruyenhay.com
+Contact: admin@phimtruyenhay.com
 Location: Vietnam
 
 /* SITE */

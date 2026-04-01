@@ -1,7 +1,7 @@
 {
-  "name": "The Midnight Movie Reel",
-  "short_name": "MidnightReel",
-  "description": "Nghe truyện audio hay, đọc truyện chữ online miễn phí và review phim chuyên sâu tại The Midnight Movie Reel.",
+  "name": "Phim Truyện Hay",
+  "short_name": "PhimTruyenHay",
+  "description": "Nghe truyện audio hay, đọc truyện chữ online miễn phí và review phim chuyên sâu tại Phim Truyện Hay.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f8f9fa",

@@ -4,7 +4,7 @@
 
 /*
   Cinema-dark baseline — prevents white flash before JS / Tailwind dark class
-  is applied. Midnight Movie Reel dark theme.
+  is applied. phim truyện hay dark theme.
 */
 html {
   color-scheme: light;
@@ -48,99 +48,246 @@ html:not(.dark) body {
 /* IMPORTANT: Outside @layer so these beat Tailwind utility specificity */
 
 /* --- Background hex overrides --- */
-html:not(.dark) .bg-\[\#08080d\] { background-color: #f8f9fa !important; }
-html:not(.dark) .bg-\[\#0a0a0f\] { background-color: #f8f9fa !important; }
-html:not(.dark) .bg-\[\#0c0c14\] { background-color: #ffffff !important; }
-html:not(.dark) .bg-\[\#141420\] { background-color: #ffffff !important; }
-html:not(.dark) .bg-\[\#161625\] { background-color: #ffffff !important; }
-html:not(.dark) .bg-\[\#0c0c14\]\/98 { background-color: rgba(255,255,255,0.98) !important; }
-html:not(.dark) .bg-\[\#08080d\]\/95 { background-color: rgba(255,255,255,0.95) !important; }
-html:not(.dark) .bg-\[\#08080d\]\/90 { background-color: rgba(255,255,255,0.92) !important; }
+html:not(.dark) .bg-\[\#08080d\] {
+  background-color: #f8f9fa !important;
+}
+html:not(.dark) .bg-\[\#0a0a0f\] {
+  background-color: #f8f9fa !important;
+}
+html:not(.dark) .bg-\[\#0c0c14\] {
+  background-color: #ffffff !important;
+}
+html:not(.dark) .bg-\[\#141420\] {
+  background-color: #ffffff !important;
+}
+html:not(.dark) .bg-\[\#161625\] {
+  background-color: #ffffff !important;
+}
+html:not(.dark) .bg-\[\#0c0c14\]\/98 {
+  background-color: rgba(255, 255, 255, 0.98) !important;
+}
+html:not(.dark) .bg-\[\#08080d\]\/95 {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+html:not(.dark) .bg-\[\#08080d\]\/90 {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+}
 
 /* --- Tailwind cinema color overrides --- */
-html:not(.dark) .bg-cinema-dark { background-color: #f8f9fa !important; }
-html:not(.dark) .bg-cinema-deeper { background-color: #f0f0f4 !important; }
-html:not(.dark) .bg-cinema-card { background-color: #ffffff !important; }
-html:not(.dark) .border-cinema-border { border-color: #d1d5db !important; }
+html:not(.dark) .bg-cinema-dark {
+  background-color: #f8f9fa !important;
+}
+html:not(.dark) .bg-cinema-deeper {
+  background-color: #f0f0f4 !important;
+}
+html:not(.dark) .bg-cinema-card {
+  background-color: #ffffff !important;
+}
+html:not(.dark) .border-cinema-border {
+  border-color: #d1d5db !important;
+}
 
 /* --- Transparent dark cards → light cards --- */
-html:not(.dark) .bg-white\/\[0\.02\] { background-color: #ffffff !important; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-html:not(.dark) .bg-white\/\[0\.03\] { background-color: #ffffff !important; }
-html:not(.dark) .bg-white\/\[0\.04\] { background-color: #f3f4f6 !important; }
-html:not(.dark) .bg-white\/\[0\.06\] { background-color: #e5e7eb !important; }
-html:not(.dark) .bg-white\/\[0\.08\] { background-color: #e5e7eb !important; }
-html:not(.dark) .bg-white\/5 { background-color: #f3f4f6 !important; }
-html:not(.dark) .bg-white\/10 { background-color: #e5e7eb !important; }
-html:not(.dark) .bg-white\/20 { background-color: #d1d5db !important; }
+html:not(.dark) .bg-white\/\[0\.02\] {
+  background-color: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+html:not(.dark) .bg-white\/\[0\.03\] {
+  background-color: #ffffff !important;
+}
+html:not(.dark) .bg-white\/\[0\.04\] {
+  background-color: #f3f4f6 !important;
+}
+html:not(.dark) .bg-white\/\[0\.06\] {
+  background-color: #e5e7eb !important;
+}
+html:not(.dark) .bg-white\/\[0\.08\] {
+  background-color: #e5e7eb !important;
+}
+html:not(.dark) .bg-white\/5 {
+  background-color: #f3f4f6 !important;
+}
+html:not(.dark) .bg-white\/10 {
+  background-color: #e5e7eb !important;
+}
+html:not(.dark) .bg-white\/20 {
+  background-color: #d1d5db !important;
+}
 
 /* --- Gradient overrides --- */
-html:not(.dark) .from-\[\#0a0a0f\] { --tw-gradient-from: #f8f9fa !important; }
-html:not(.dark) .from-\[\#08080d\] { --tw-gradient-from: #f8f9fa !important; }
-html:not(.dark) .from-\[\#0c0c14\] { --tw-gradient-from: #ffffff !important; }
-html:not(.dark) .from-\[\#0e0e18\] { --tw-gradient-from: #f0f0f4 !important; }
-html:not(.dark) .from-\[\#141420\] { --tw-gradient-from: #ffffff !important; }
-html:not(.dark) .from-\[\#161625\] { --tw-gradient-from: #ffffff !important; }
-html:not(.dark) .to-\[\#0c0c14\] { --tw-gradient-to: #f8f9fa !important; }
-html:not(.dark) .to-\[\#12081e\] { --tw-gradient-to: #f0ecf6 !important; }
-html:not(.dark) .to-\[\#141420\] { --tw-gradient-to: #f8f9fa !important; }
-html:not(.dark) .from-black\/60 { --tw-gradient-from: rgba(0,0,0,0.35) !important; }
-html:not(.dark) .from-black\/80 { --tw-gradient-from: rgba(0,0,0,0.45) !important; }
-html:not(.dark) .via-transparent { --tw-gradient-via: transparent !important; }
+html:not(.dark) .from-\[\#0a0a0f\] {
+  --tw-gradient-from: #f8f9fa !important;
+}
+html:not(.dark) .from-\[\#08080d\] {
+  --tw-gradient-from: #f8f9fa !important;
+}
+html:not(.dark) .from-\[\#0c0c14\] {
+  --tw-gradient-from: #ffffff !important;
+}
+html:not(.dark) .from-\[\#0e0e18\] {
+  --tw-gradient-from: #f0f0f4 !important;
+}
+html:not(.dark) .from-\[\#141420\] {
+  --tw-gradient-from: #ffffff !important;
+}
+html:not(.dark) .from-\[\#161625\] {
+  --tw-gradient-from: #ffffff !important;
+}
+html:not(.dark) .to-\[\#0c0c14\] {
+  --tw-gradient-to: #f8f9fa !important;
+}
+html:not(.dark) .to-\[\#12081e\] {
+  --tw-gradient-to: #f0ecf6 !important;
+}
+html:not(.dark) .to-\[\#141420\] {
+  --tw-gradient-to: #f8f9fa !important;
+}
+html:not(.dark) .from-black\/60 {
+  --tw-gradient-from: rgba(0, 0, 0, 0.35) !important;
+}
+html:not(.dark) .from-black\/80 {
+  --tw-gradient-from: rgba(0, 0, 0, 0.45) !important;
+}
+html:not(.dark) .via-transparent {
+  --tw-gradient-via: transparent !important;
+}
 
 /* --- Border overrides --- */
-html:not(.dark) .border-white\/\[0\.04\] { border-color: #e5e7eb !important; }
-html:not(.dark) .border-white\/\[0\.06\] { border-color: #d1d5db !important; }
-html:not(.dark) .border-white\/\[0\.08\] { border-color: #d1d5db !important; }
-html:not(.dark) .border-white\/\[0\.12\] { border-color: #9ca3af !important; }
-html:not(.dark) .border-white\/10 { border-color: #d1d5db !important; }
-html:not(.dark) .border-white\/20 { border-color: #9ca3af !important; }
-html:not(.dark) .divide-white\/\[0\.04\] > :not([hidden]) ~ :not([hidden]) { border-color: #e5e7eb !important; }
+html:not(.dark) .border-white\/\[0\.04\] {
+  border-color: #e5e7eb !important;
+}
+html:not(.dark) .border-white\/\[0\.06\] {
+  border-color: #d1d5db !important;
+}
+html:not(.dark) .border-white\/\[0\.08\] {
+  border-color: #d1d5db !important;
+}
+html:not(.dark) .border-white\/\[0\.12\] {
+  border-color: #9ca3af !important;
+}
+html:not(.dark) .border-white\/10 {
+  border-color: #d1d5db !important;
+}
+html:not(.dark) .border-white\/20 {
+  border-color: #9ca3af !important;
+}
+html:not(.dark) .divide-white\/\[0\.04\] > :not([hidden]) ~ :not([hidden]) {
+  border-color: #e5e7eb !important;
+}
 
 /* --- Text overrides --- */
-html:not(.dark) .text-white { color: #111827 !important; }
-html:not(.dark) .text-white\/90 { color: rgba(17,24,39,0.9) !important; }
-html:not(.dark) .text-white\/80 { color: rgba(17,24,39,0.8) !important; }
-html:not(.dark) .text-white\/70 { color: rgba(17,24,39,0.7) !important; }
-html:not(.dark) .text-white\/60 { color: rgba(17,24,39,0.6) !important; }
-html:not(.dark) .text-zinc-300 { color: #374151 !important; }
-html:not(.dark) .text-zinc-400 { color: #4b5563 !important; }
-html:not(.dark) .text-zinc-500 { color: #6b7280 !important; }
-html:not(.dark) .text-zinc-600 { color: #9ca3af !important; }
-html:not(.dark) .text-zinc-800 { color: #d1d5db !important; }
-html:not(.dark) .text-gray-400 { color: #6b7280 !important; }
-html:not(.dark) .text-yellow-400 { color: #d97706 !important; }
+html:not(.dark) .text-white {
+  color: #111827 !important;
+}
+html:not(.dark) .text-white\/90 {
+  color: rgba(17, 24, 39, 0.9) !important;
+}
+html:not(.dark) .text-white\/80 {
+  color: rgba(17, 24, 39, 0.8) !important;
+}
+html:not(.dark) .text-white\/70 {
+  color: rgba(17, 24, 39, 0.7) !important;
+}
+html:not(.dark) .text-white\/60 {
+  color: rgba(17, 24, 39, 0.6) !important;
+}
+html:not(.dark) .text-zinc-300 {
+  color: #374151 !important;
+}
+html:not(.dark) .text-zinc-400 {
+  color: #4b5563 !important;
+}
+html:not(.dark) .text-zinc-500 {
+  color: #6b7280 !important;
+}
+html:not(.dark) .text-zinc-600 {
+  color: #9ca3af !important;
+}
+html:not(.dark) .text-zinc-800 {
+  color: #d1d5db !important;
+}
+html:not(.dark) .text-gray-400 {
+  color: #6b7280 !important;
+}
+html:not(.dark) .text-yellow-400 {
+  color: #d97706 !important;
+}
 
 /* --- Placeholder overrides --- */
-html:not(.dark) .placeholder-zinc-600::placeholder { color: #9ca3af !important; }
-html:not(.dark) .placeholder-zinc-500::placeholder { color: #6b7280 !important; }
+html:not(.dark) .placeholder-zinc-600::placeholder {
+  color: #9ca3af !important;
+}
+html:not(.dark) .placeholder-zinc-500::placeholder {
+  color: #6b7280 !important;
+}
 
 /* --- Ring / outline overrides --- */
-html:not(.dark) .ring-white\/10 { --tw-ring-color: rgba(0,0,0,0.08) !important; }
-html:not(.dark) .ring-white\/20 { --tw-ring-color: rgba(0,0,0,0.12) !important; }
+html:not(.dark) .ring-white\/10 {
+  --tw-ring-color: rgba(0, 0, 0, 0.08) !important;
+}
+html:not(.dark) .ring-white\/20 {
+  --tw-ring-color: rgba(0, 0, 0, 0.12) !important;
+}
 
 /* --- Shadow overrides --- */
-html:not(.dark) .shadow-black\/20 { --tw-shadow-color: rgba(0,0,0,0.05) !important; }
-html:not(.dark) .shadow-black\/40 { --tw-shadow-color: rgba(0,0,0,0.08) !important; }
-html:not(.dark) .shadow-lg { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.05) !important; }
-html:not(.dark) .shadow-2xl { box-shadow: 0 8px 25px -5px rgba(0,0,0,0.1), 0 4px 10px -6px rgba(0,0,0,0.06) !important; }
+html:not(.dark) .shadow-black\/20 {
+  --tw-shadow-color: rgba(0, 0, 0, 0.05) !important;
+}
+html:not(.dark) .shadow-black\/40 {
+  --tw-shadow-color: rgba(0, 0, 0, 0.08) !important;
+}
+html:not(.dark) .shadow-lg {
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.08),
+    0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
+}
+html:not(.dark) .shadow-2xl {
+  box-shadow:
+    0 8px 25px -5px rgba(0, 0, 0, 0.1),
+    0 4px 10px -6px rgba(0, 0, 0, 0.06) !important;
+}
 
 /* --- Hover state overrides --- */
-html:not(.dark) .hover\:bg-white\/\[0\.04\]:hover { background-color: #f3f4f6 !important; }
-html:not(.dark) .hover\:bg-white\/\[0\.06\]:hover { background-color: #e5e7eb !important; }
-html:not(.dark) .hover\:bg-white\/\[0\.08\]:hover { background-color: #d1d5db !important; }
-html:not(.dark) .hover\:bg-white\/\[0\.1\]:hover { background-color: #d1d5db !important; }
-html:not(.dark) .hover\:text-white:hover { color: #111827 !important; }
-html:not(.dark) .hover\:bg-white\/10:hover { background-color: #e5e7eb !important; }
-html:not(.dark) .hover\:border-white\/\[0\.12\]:hover { border-color: rgba(0,0,0,0.12) !important; }
-html:not(.dark) .group:hover .group-hover\:text-white { color: #111827 !important; }
+html:not(.dark) .hover\:bg-white\/\[0\.04\]:hover {
+  background-color: #f3f4f6 !important;
+}
+html:not(.dark) .hover\:bg-white\/\[0\.06\]:hover {
+  background-color: #e5e7eb !important;
+}
+html:not(.dark) .hover\:bg-white\/\[0\.08\]:hover {
+  background-color: #d1d5db !important;
+}
+html:not(.dark) .hover\:bg-white\/\[0\.1\]:hover {
+  background-color: #d1d5db !important;
+}
+html:not(.dark) .hover\:text-white:hover {
+  color: #111827 !important;
+}
+html:not(.dark) .hover\:bg-white\/10:hover {
+  background-color: #e5e7eb !important;
+}
+html:not(.dark) .hover\:border-white\/\[0\.12\]:hover {
+  border-color: rgba(0, 0, 0, 0.12) !important;
+}
+html:not(.dark) .group:hover .group-hover\:text-white {
+  color: #111827 !important;
+}
 
 /* --- Backdrop blur stays the same but bg needs override --- */
-html:not(.dark) .backdrop-blur-xl { backdrop-filter: blur(24px); }
+html:not(.dark) .backdrop-blur-xl {
+  backdrop-filter: blur(24px);
+}
 
 /* --- Scrollbar light mode --- */
-html:not(.dark) ::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.15) !important; }
-html:not(.dark) ::-webkit-scrollbar-thumb:hover { background-color: rgba(0,0,0,0.25) !important; }
-html:not(.dark) ::-webkit-scrollbar-track { background-color: #f8f9fa; }
+html:not(.dark) ::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.15) !important;
+}
+html:not(.dark) ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.25) !important;
+}
+html:not(.dark) ::-webkit-scrollbar-track {
+  background-color: #f8f9fa;
+}
 
 /* --- Select / dropdown overrides (dark mode) --- */
 /* Browser <option> elements use OS default colors; force dark bg + light text */
@@ -184,13 +331,13 @@ html:not(.dark) main > div > section {
   border-radius: 12px;
   padding: 1.25rem;
   margin-bottom: 1rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 /* --- Dark mode: section/content area separation --- */
 html.dark main > section,
 html.dark main > div > section {
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   padding-bottom: 1.5rem;
   margin-bottom: 1rem;
 }
@@ -199,10 +346,10 @@ html.dark main > div > section:last-child {
   border-bottom: none;
 }
 html.dark nav {
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 html.dark footer {
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 /* Container divs that wrap major content blocks */
 html:not(.dark) .bg-\[\#08080d\] > div,
@@ -219,39 +366,92 @@ html:not(.dark) .bg-\[\#0a0a0f\] > div {
 }
 .hero-gradient {
   background:
-    radial-gradient(ellipse at 20% 50%, rgba(229,9,20,0.15), transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(124,58,237,0.12), transparent 50%),
-    radial-gradient(ellipse at 60% 80%, rgba(245,158,11,0.08), transparent 50%),
+    radial-gradient(
+      ellipse at 20% 50%,
+      rgba(229, 9, 20, 0.15),
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse at 80% 20%,
+      rgba(124, 58, 237, 0.12),
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse at 60% 80%,
+      rgba(245, 158, 11, 0.08),
+      transparent 50%
+    ),
     linear-gradient(to bottom right, #1a0a2e, #0f0a1e, #0a0a0f);
 }
 .hero-grid {
   background-image:
-    linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
   background-size: 50px 50px;
 }
-html:not(.dark) .hero-banner { background-color: #0f0a1e !important; }
-html:not(.dark) .hero-banner .text-white { color: #ffffff !important; }
-html:not(.dark) .hero-banner .text-white\/90 { color: rgba(255,255,255,0.9) !important; }
-html:not(.dark) .hero-banner .text-white\/80 { color: rgba(255,255,255,0.8) !important; }
-html:not(.dark) .hero-banner .text-white\/70 { color: rgba(255,255,255,0.7) !important; }
-html:not(.dark) .hero-banner .text-white\/60 { color: rgba(255,255,255,0.6) !important; }
-html:not(.dark) .hero-banner .text-white\/50 { color: rgba(255,255,255,0.5) !important; }
-html:not(.dark) .hero-text { color: rgba(255,255,255,0.75) !important; }
-html:not(.dark) .hero-text-strong { color: #ffffff !important; }
-html:not(.dark) .hero-text-sub { color: rgba(255,255,255,0.5) !important; }
-html:not(.dark) .hero-btn { color: #ffffff !important; border-color: rgba(255,255,255,0.2) !important; background-color: rgba(255,255,255,0.1) !important; }
-html:not(.dark) .hero-btn:hover { background-color: rgba(255,255,255,0.2) !important; }
-html:not(.dark) .hero-banner .bg-white\/\[0\.06\] { background-color: rgba(255,255,255,0.06) !important; box-shadow: none !important; }
-html:not(.dark) .hero-banner .bg-white\/10 { background-color: rgba(255,255,255,0.1) !important; }
-html:not(.dark) .hero-banner .bg-white\/20 { background-color: rgba(255,255,255,0.2) !important; }
-html:not(.dark) .hero-banner .border-white\/\[0\.12\] { border-color: rgba(255,255,255,0.12) !important; }
-html:not(.dark) .hero-banner .border-white\/20 { border-color: rgba(255,255,255,0.2) !important; }
-html:not(.dark) .hero-banner .hover\:bg-white\/20:hover { background-color: rgba(255,255,255,0.2) !important; }
+html:not(.dark) .hero-banner {
+  background-color: #0f0a1e !important;
+}
+html:not(.dark) .hero-banner .text-white {
+  color: #ffffff !important;
+}
+html:not(.dark) .hero-banner .text-white\/90 {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+html:not(.dark) .hero-banner .text-white\/80 {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+html:not(.dark) .hero-banner .text-white\/70 {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+html:not(.dark) .hero-banner .text-white\/60 {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+html:not(.dark) .hero-banner .text-white\/50 {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+html:not(.dark) .hero-text {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+html:not(.dark) .hero-text-strong {
+  color: #ffffff !important;
+}
+html:not(.dark) .hero-text-sub {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+html:not(.dark) .hero-btn {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+html:not(.dark) .hero-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+html:not(.dark) .hero-banner .bg-white\/\[0\.06\] {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  box-shadow: none !important;
+}
+html:not(.dark) .hero-banner .bg-white\/10 {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+html:not(.dark) .hero-banner .bg-white\/20 {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+html:not(.dark) .hero-banner .border-white\/\[0\.12\] {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+html:not(.dark) .hero-banner .border-white\/20 {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+html:not(.dark) .hero-banner .hover\:bg-white\/20:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
 html:not(.dark) .hero-banner .text-zinc-300,
 html:not(.dark) .hero-banner .text-zinc-400,
 html:not(.dark) .hero-banner .text-zinc-500,
-html:not(.dark) .hero-banner .text-zinc-600 { color: rgba(255,255,255,0.5) !important; }
+html:not(.dark) .hero-banner .text-zinc-600 {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
 /* --- EXCEPTIONS: text-white must stay white inside colored / overlay backgrounds --- */
 /* Descendant selectors (text-white is CHILD of colored bg) */
 html:not(.dark) .bg-primary-500 .text-white,
@@ -270,7 +470,9 @@ html:not(.dark) .bg-cinema-neon .text-white,
 html:not(.dark) [class*="bg-primary-"] > .text-white,
 html:not(.dark) [class*="bg-black/"] .text-white,
 html:not(.dark) [class*="bg-black/"] .text-white\/90,
-html:not(.dark) [class*="bg-black/"] .text-white\/80 { color: #ffffff !important; }
+html:not(.dark) [class*="bg-black/"] .text-white\/80 {
+  color: #ffffff !important;
+}
 
 /* Same-element selectors (text-white + colored bg on SAME element) */
 html:not(.dark) .bg-primary-500.text-white,
@@ -286,7 +488,9 @@ html:not(.dark) [class*="bg-gradient-to-"][class*="text-white"],
 html:not(.dark) [class*="from-primary-"][class*="text-white"],
 html:not(.dark) [class*="from-cinema-"][class*="text-white"],
 html:not(.dark) [class*="from-accent-"][class*="text-white"],
-html:not(.dark) [class*="bg-black/"][class*="text-white"] { color: #ffffff !important; }
+html:not(.dark) [class*="bg-black/"][class*="text-white"] {
+  color: #ffffff !important;
+}
 
 /* Buttons with colored bg that use hover to keep text-white */
 html:not(.dark) .bg-primary-500[class*="text-white"],
@@ -296,11 +500,15 @@ html:not(.dark) .bg-accent-500[class*="text-white"],
 html:not(.dark) .bg-red-500[class*="text-white"],
 html:not(.dark) .bg-red-600[class*="text-white"],
 html:not(.dark) .bg-green-500[class*="text-white"],
-html:not(.dark) .bg-green-600[class*="text-white"] { color: #ffffff !important; }
+html:not(.dark) .bg-green-600[class*="text-white"] {
+  color: #ffffff !important;
+}
 
 /* hover:text-white must stay white when hovering inside/on colored overlays */
 html:not(.dark) [class*="bg-black/"] .hover\:text-white:hover,
-html:not(.dark) [class*="bg-black/"].hover\:text-white:hover { color: #ffffff !important; }
+html:not(.dark) [class*="bg-black/"].hover\:text-white:hover {
+  color: #ffffff !important;
+}
 
 /* Line clamp utilities */
 @layer utilities {
@@ -656,7 +864,9 @@ input[type="range"]::-moz-range-thumb {
 
 /* ===== Hover lift effect for cards ===== */
 .hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 .hover-lift:hover {
   transform: translateY(-4px);
@@ -668,18 +878,44 @@ input[type="range"]::-moz-range-thumb {
   opacity: 0;
   animation: fadeUp 0.5s ease-out forwards;
 }
-.stagger-children > *:nth-child(1) { animation-delay: 0s; }
-.stagger-children > *:nth-child(2) { animation-delay: 0.05s; }
-.stagger-children > *:nth-child(3) { animation-delay: 0.1s; }
-.stagger-children > *:nth-child(4) { animation-delay: 0.15s; }
-.stagger-children > *:nth-child(5) { animation-delay: 0.2s; }
-.stagger-children > *:nth-child(6) { animation-delay: 0.25s; }
-.stagger-children > *:nth-child(7) { animation-delay: 0.3s; }
-.stagger-children > *:nth-child(8) { animation-delay: 0.35s; }
-.stagger-children > *:nth-child(9) { animation-delay: 0.4s; }
-.stagger-children > *:nth-child(10) { animation-delay: 0.45s; }
+.stagger-children > *:nth-child(1) {
+  animation-delay: 0s;
+}
+.stagger-children > *:nth-child(2) {
+  animation-delay: 0.05s;
+}
+.stagger-children > *:nth-child(3) {
+  animation-delay: 0.1s;
+}
+.stagger-children > *:nth-child(4) {
+  animation-delay: 0.15s;
+}
+.stagger-children > *:nth-child(5) {
+  animation-delay: 0.2s;
+}
+.stagger-children > *:nth-child(6) {
+  animation-delay: 0.25s;
+}
+.stagger-children > *:nth-child(7) {
+  animation-delay: 0.3s;
+}
+.stagger-children > *:nth-child(8) {
+  animation-delay: 0.35s;
+}
+.stagger-children > *:nth-child(9) {
+  animation-delay: 0.4s;
+}
+.stagger-children > *:nth-child(10) {
+  animation-delay: 0.45s;
+}
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

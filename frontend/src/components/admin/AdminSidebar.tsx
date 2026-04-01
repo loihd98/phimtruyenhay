@@ -271,16 +271,16 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {/* Dashboard standalone item */}
           {canSeeTab("dashboard") && (
-          <button
-            onClick={() => handleMenuClick("dashboard")}
-            className={`group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg w-full text-left transition-all duration-200 ${activeTab === "dashboard"
-              ? "bg-red-600 text-white shadow-md"
-              : "text-gray-300 hover:bg-gray-800 hover:text-white"
-              }`}
-          >
-            <span className="mr-3">{standaloneItems[0].icon}</span>
-            <span>{standaloneItems[0].label}</span>
-          </button>
+            <button
+              onClick={() => handleMenuClick("dashboard")}
+              className={`group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg w-full text-left transition-all duration-200 ${activeTab === "dashboard"
+                ? "bg-red-600 text-white shadow-md"
+                : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                }`}
+            >
+              <span className="mr-3">{standaloneItems[0].icon}</span>
+              <span>{standaloneItems[0].label}</span>
+            </button>
           )}
 
           {/* Collapsible Menu Groups */}
@@ -290,52 +290,52 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
             if (visibleItems.length === 0) return null;
 
             return (
-            <div key={group.id} className="mt-1">
-              <button
-                onClick={() => toggleGroup(group.id)}
-                className={`flex items-center justify-between w-full px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${isTabInGroup(group.id)
-                  ? "bg-gray-800 text-red-400"
-                  : "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
-                  }`}
-              >
-                <div className="flex items-center">
-                  <span className="mr-3">{group.icon}</span>
-                  <span>{group.label}</span>
-                </div>
-                <svg
-                  className={`w-4 h-4 transition-transform duration-200 ${expandedGroups.includes(group.id) ? "rotate-180" : ""
+              <div key={group.id} className="mt-1">
+                <button
+                  onClick={() => toggleGroup(group.id)}
+                  className={`flex items-center justify-between w-full px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${isTabInGroup(group.id)
+                    ? "bg-gray-800 text-red-400"
+                    : "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
                     }`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
+                  <div className="flex items-center">
+                    <span className="mr-3">{group.icon}</span>
+                    <span>{group.label}</span>
+                  </div>
+                  <svg
+                    className={`w-4 h-4 transition-transform duration-200 ${expandedGroups.includes(group.id) ? "rotate-180" : ""
+                      }`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
 
-              {/* Submenu items */}
-              <div
-                className={`overflow-hidden transition-all duration-200 ${expandedGroups.includes(group.id) ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                  }`}
-              >
-                <div className="ml-4 mt-1 space-y-0.5 border-l-2 border-gray-700 pl-3">
-                  {visibleItems.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => handleMenuClick(item.id)}
-                      className={`flex items-center w-full px-3 py-2 text-sm rounded-lg transition-all duration-200 ${activeTab === item.id
-                        ? "bg-red-600/20 text-red-400 font-medium"
-                        : "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
-                        }`}
-                    >
-                      <span className={`w-1.5 h-1.5 rounded-full mr-3 ${activeTab === item.id ? "bg-red-400" : "bg-gray-600"
-                        }`}></span>
-                      {item.label}
-                    </button>
-                  ))}
+                {/* Submenu items */}
+                <div
+                  className={`overflow-hidden transition-all duration-200 ${expandedGroups.includes(group.id) ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                    }`}
+                >
+                  <div className="ml-4 mt-1 space-y-0.5 border-l-2 border-gray-700 pl-3">
+                    {visibleItems.map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={() => handleMenuClick(item.id)}
+                        className={`flex items-center w-full px-3 py-2 text-sm rounded-lg transition-all duration-200 ${activeTab === item.id
+                          ? "bg-red-600/20 text-red-400 font-medium"
+                          : "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
+                          }`}
+                      >
+                        <span className={`w-1.5 h-1.5 rounded-full mr-3 ${activeTab === item.id ? "bg-red-400" : "bg-gray-600"
+                          }`}></span>
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
             );
           })}
 
@@ -361,7 +361,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
         {/* Footer */}
         <div className="p-4 border-t border-gray-700 bg-gray-800">
           <div className="text-xs text-gray-500 text-center">
-            <div className="font-medium text-gray-400">The Midnight Movie Reel Admin</div>
+            <div className="font-medium text-gray-400">Phim Truyện Hay Admin</div>
             <div className="mt-1">Version 1.0.0</div>
           </div>
         </div>

@@ -43,7 +43,8 @@ async function fetchAllFilmReviewSlugs(): Promise<
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://themidnightmoviereel.io.vn";
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "https://phimtruyenhay.com";
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [

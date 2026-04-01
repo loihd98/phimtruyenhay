@@ -6,9 +6,9 @@ const API_URL =
     process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost/api";
 
 export const metadata: Metadata = {
-    title: "Thể Loại Truyện Audio, Truyện Chữ & Phim – The Midnight Movie Reel",
+    title: "Thể Loại Truyện Audio, Truyện Chữ & Phim – Phim Truyện Hay",
     description:
-        "Khám phá tất cả thể loại truyện audio, truyện chữ online và review phim tại The Midnight Movie Reel. Tiên hiệp, đô thị, kiếm hiệp, ngôn tình, huyền huyễn và nhiều thể loại hấp dẫn khác.",
+        "Khám phá tất cả thể loại truyện audio, truyện chữ online và review phim tại Phim Truyện Hay. Tiên hiệp, đô thị, kiếm hiệp, ngôn tình, huyền huyễn và nhiều thể loại hấp dẫn khác.",
     keywords: [
         "thể loại truyện audio",
         "thể loại truyện chữ",
@@ -22,12 +22,12 @@ export const metadata: Metadata = {
         "đọc truyện online",
         "nghe truyện audio miễn phí",
         "review phim hay",
-        "The Midnight Movie Reel",
+        "Phim Truyện Hay",
     ],
     openGraph: {
-        title: "Thể Loại Truyện Audio, Truyện Chữ & Phim – The Midnight Movie Reel",
+        title: "Thể Loại Truyện Audio, Truyện Chữ & Phim – Phim Truyện Hay",
         description:
-            "Khám phá tất cả thể loại truyện audio, truyện chữ và phim tại The Midnight Movie Reel.",
+            "Khám phá tất cả thể loại truyện audio, truyện chữ và phim tại Phim Truyện Hay.",
         type: "website",
         locale: "vi_VN",
     },

@@ -7,12 +7,13 @@ Hướng dẫn deploy **nhiều website** trên **cùng 1 VPS** sử dụng Dock
 ```
 Internet → VPS (103.199.17.168)
     ├─ Port 80/443 → Gateway Nginx (shared reverse proxy)
-    │       ├─ themidnightmoviereel.io.vn → Site 1 (docker-compose stack)
+    │       ├─ phimtruyenhay.com → Site 1 (docker-compose stack)
     │       └─ site2.com → Site 2 (docker-compose stack)
     └─ Certbot (SSL cho tất cả domains)
 ```
 
 **Nguyên tắc:**
+
 - 1 Gateway Nginx duy nhất giữ port 80/443
 - Mỗi site là 1 docker-compose stack riêng, KHÔNG expose port ra host
 - Tất cả dùng chung 1 Docker network (`gateway-network`)
@@ -30,7 +31,7 @@ ssh root@103.199.17.168
 mkdir -p /opt/gateway/nginx/conf.d
 mkdir -p /opt/gateway/certbot/www
 mkdir -p /opt/gateway/certbot/certs
-mkdir -p /opt/sites/vivutruyenhay     # Site 1
+mkdir -p /opt/sites/phimtruyenhay     # Site 1
 mkdir -p /opt/sites/site2             # Site 2
 ```
 
@@ -58,7 +59,7 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - ./certbot/www:/var/www/certbot:ro
       - ./certbot/certs:/etc/letsencrypt:ro
-      - /opt/sites/vivutruyenhay/uploads:/uploads/vivutruyenhay:ro
+      - /opt/sites/phimtruyenhay/uploads:/uploads/phimtruyenhay:ro
       # Thêm uploads cho site 2 nếu cần
       # - /opt/sites/site2/uploads:/uploads/site2:ro
     networks:
@@ -138,17 +139,17 @@ http {
 }
 ```
 
-### File: `/opt/gateway/nginx/conf.d/vivutruyenhay.conf`
+### File: `/opt/gateway/nginx/conf.d/phimtruyenhay.conf`
 
 ```nginx
 ########################################################
-# Site 1: themidnightmoviereel.io.vn
+# Site 1: phimtruyenhay.com
 ########################################################
 
 # HTTP → HTTPS + Let's Encrypt
 server {
     listen 80;
-    server_name themidnightmoviereel.io.vn www.themidnightmoviereel.io.vn;
+    server_name phimtruyenhay.com www.phimtruyenhay.com;
 
     location /.well-known/acme-challenge/ {
         root /var/www/certbot;
@@ -163,22 +164,22 @@ server {
 server {
     listen 443 ssl;
     http2 on;
-    server_name www.themidnightmoviereel.io.vn;
+    server_name www.phimtruyenhay.com;
 
-    ssl_certificate /etc/letsencrypt/live/themidnightmoviereel.io.vn/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/themidnightmoviereel.io.vn/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/phimtruyenhay.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/phimtruyenhay.com/privkey.pem;
 
-    return 301 https://themidnightmoviereel.io.vn$request_uri;
+    return 301 https://phimtruyenhay.com$request_uri;
 }
 
 # HTTPS main
 server {
     listen 443 ssl;
     http2 on;
-    server_name themidnightmoviereel.io.vn;
+    server_name phimtruyenhay.com;
 
-    ssl_certificate /etc/letsencrypt/live/themidnightmoviereel.io.vn/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/themidnightmoviereel.io.vn/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/phimtruyenhay.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/phimtruyenhay.com/privkey.pem;
 
     client_max_body_size 2g;
 
@@ -192,7 +193,7 @@ server {
     # API → backend container (tên container trong docker-compose của site 1)
     location /api/ {
         limit_req zone=api burst=300 nodelay;
-        proxy_pass http://vivutruyenhay-backend:5000/api/;
+        proxy_pass http://phimtruyenhay-backend:5000/api/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -205,7 +206,7 @@ server {
 
     # Frontend → Next.js container
     location / {
-        proxy_pass http://vivutruyenhay-frontend:3000;
+        proxy_pass http://phimtruyenhay-frontend:3000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -217,7 +218,7 @@ server {
 
     # Next.js static assets
     location /_next/static/ {
-        proxy_pass http://vivutruyenhay-frontend:3000;
+        proxy_pass http://phimtruyenhay-frontend:3000;
         expires 1y;
         add_header Cache-Control "public, immutable";
         access_log off;
@@ -225,7 +226,7 @@ server {
 
     # Static uploads
     location ^~ /uploads/ {
-        alias /uploads/vivutruyenhay/;
+        alias /uploads/phimtruyenhay/;
         autoindex off;
         expires 1y;
         add_header Cache-Control "public, immutable";
@@ -237,7 +238,7 @@ server {
     }
 
     location ~* \.(ico|svg|png|webp)$ {
-        proxy_pass http://vivutruyenhay-frontend:3000;
+        proxy_pass http://phimtruyenhay-frontend:3000;
         expires 30d;
         add_header Cache-Control "public";
         access_log off;
@@ -306,6 +307,7 @@ server {
 ## Bước 4: Sửa docker-compose.prod.yml của Site 1
 
 **Thay đổi chính:**
+
 - Xóa service `nginx` và `certbot` (Gateway xử lý)
 - Xóa port expose
 - Thêm `container_name` cố định
@@ -317,7 +319,7 @@ Sử dụng file `docker-compose.multisite.yml`:
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: vivutruyenhay-postgres
+    container_name: phimtruyenhay-postgres
     restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -342,7 +344,7 @@ services:
       dockerfile: Dockerfile
       args:
         - NODE_ENV=production
-    container_name: vivutruyenhay-backend
+    container_name: phimtruyenhay-backend
     restart: unless-stopped
     volumes:
       - ./uploads:/uploads
@@ -373,10 +375,10 @@ services:
       args:
         - NODE_OPTIONS=--max-old-space-size=2048
         - NODE_ENV=production
-        - NEXT_PUBLIC_API_URL=https://themidnightmoviereel.io.vn/api
-        - NEXT_PUBLIC_BASE_URL=https://themidnightmoviereel.io.vn
-        - NEXT_PUBLIC_MEDIA_URL=https://themidnightmoviereel.io.vn
-    container_name: vivutruyenhay-frontend
+        - NEXT_PUBLIC_API_URL=https://phimtruyenhay.com/api
+        - NEXT_PUBLIC_BASE_URL=https://phimtruyenhay.com
+        - NEXT_PUBLIC_MEDIA_URL=https://phimtruyenhay.com
+    container_name: phimtruyenhay-frontend
     restart: unless-stopped
     volumes:
       - ./uploads:/app/public/uploads:ro
@@ -385,7 +387,7 @@ services:
     environment:
       - NODE_OPTIONS=--max-old-space-size=1024
       - PORT=3000
-      - API_URL=http://vivutruyenhay-backend:5000/api
+      - API_URL=http://phimtruyenhay-backend:5000/api
       - MEDIA_URL_INTERNAL=http://nginx-gateway
     depends_on:
       backend:
@@ -417,7 +419,7 @@ networks:
 ```bash
 # Từ máy local, rsync code lên VPS
 rsync -avz --exclude node_modules --exclude .next --exclude postgres_data \
-  ./vivutruyenhay/ root@103.199.17.168:/opt/sites/vivutruyenhay/
+  ./phimtruyenhay/ root@103.199.17.168:/opt/sites/phimtruyenhay/
 ```
 
 ### 5.2. Tạo shared network
@@ -437,7 +439,7 @@ cd /opt/gateway
 cat > nginx/conf.d/temp.conf << 'EOF'
 server {
     listen 80;
-    server_name themidnightmoviereel.io.vn www.themidnightmoviereel.io.vn;
+    server_name phimtruyenhay.com www.phimtruyenhay.com;
 
     location /.well-known/acme-challenge/ {
         root /var/www/certbot;
@@ -458,8 +460,8 @@ docker run --rm \
   -v /opt/gateway/certbot/certs:/etc/letsencrypt \
   certbot/certbot certonly \
   --webroot -w /var/www/certbot \
-  -d themidnightmoviereel.io.vn \
-  -d www.themidnightmoviereel.io.vn \
+  -d phimtruyenhay.com \
+  -d www.phimtruyenhay.com \
   --email your-email@gmail.com \
   --agree-tos --no-eff-email
 
@@ -476,7 +478,7 @@ docker run --rm \
 
 # Xóa config tạm, thay bằng config thật
 rm nginx/conf.d/temp.conf
-# Copy vivutruyenhay.conf và site2.conf vào nginx/conf.d/
+# Copy phimtruyenhay.conf và site2.conf vào nginx/conf.d/
 
 docker compose down
 ```
@@ -484,7 +486,7 @@ docker compose down
 ### 5.4. Start Site 1
 
 ```bash
-cd /opt/sites/vivutruyenhay
+cd /opt/sites/phimtruyenhay
 docker compose -f docker-compose.multisite.yml up -d --build
 ```
 
@@ -576,22 +578,24 @@ docker compose restart nginx-gateway
 ## Quản lý hàng ngày
 
 ### Xem logs
+
 ```bash
 # Gateway
 docker logs nginx-gateway -f
 
 # Site 1
-docker logs vivutruyenhay-frontend -f
-docker logs vivutruyenhay-backend -f
+docker logs phimtruyenhay-frontend -f
+docker logs phimtruyenhay-backend -f
 
 # Site 2
 docker logs site2-frontend -f
 ```
 
 ### Restart services
+
 ```bash
 # Restart 1 site (không ảnh hưởng site khác)
-cd /opt/sites/vivutruyenhay
+cd /opt/sites/phimtruyenhay
 docker compose -f docker-compose.multisite.yml restart
 
 # Restart gateway (ảnh hưởng tất cả sites)
@@ -600,17 +604,19 @@ docker compose restart nginx-gateway
 ```
 
 ### Update code
+
 ```bash
 # Từ local
 rsync -avz --exclude node_modules --exclude .next --exclude postgres_data \
-  ./vivutruyenhay/ root@103.199.17.168:/opt/sites/vivutruyenhay/
+  ./phimtruyenhay/ root@103.199.17.168:/opt/sites/phimtruyenhay/
 
 # Trên VPS
-cd /opt/sites/vivutruyenhay
+cd /opt/sites/phimtruyenhay
 docker compose -f docker-compose.multisite.yml up -d --build
 ```
 
 ### Renew SSL (tự động, nhưng manual nếu cần)
+
 ```bash
 docker exec certbot certbot renew --quiet
 cd /opt/gateway && docker compose restart nginx-gateway
@@ -620,13 +626,14 @@ cd /opt/gateway && docker compose restart nginx-gateway
 
 ## Tài nguyên VPS (khuyến nghị)
 
-| Sites | RAM tối thiểu | RAM khuyến nghị | CPU |
-|-------|---------------|-----------------|-----|
-| 1 site | 2 GB | 4 GB | 2 cores |
-| 2 sites | 4 GB | 6 GB | 2-4 cores |
-| 3+ sites | 6 GB | 8 GB | 4 cores |
+| Sites    | RAM tối thiểu | RAM khuyến nghị | CPU       |
+| -------- | ------------- | --------------- | --------- |
+| 1 site   | 2 GB          | 4 GB            | 2 cores   |
+| 2 sites  | 4 GB          | 6 GB            | 2-4 cores |
+| 3+ sites | 6 GB          | 8 GB            | 4 cores   |
 
 ### Kiểm tra tài nguyên
+
 ```bash
 # RAM usage
 docker stats --no-stream
@@ -641,16 +648,18 @@ df -h
 ## Troubleshooting
 
 ### Container không thấy nhau
+
 ```bash
 # Kiểm tra network
 docker network inspect gateway-network
 
 # Đảm bảo tất cả containers cần giao tiếp đều trong gateway-network
-docker network connect gateway-network vivutruyenhay-backend
-docker network connect gateway-network vivutruyenhay-frontend
+docker network connect gateway-network phimtruyenhay-backend
+docker network connect gateway-network phimtruyenhay-frontend
 ```
 
 ### SSL certificate lỗi
+
 ```bash
 # Kiểm tra cert exists
 ls -la /opt/gateway/certbot/certs/live/
@@ -664,6 +673,7 @@ docker run --rm \
 ```
 
 ### Port 80/443 bị chiếm
+
 ```bash
 # Tìm process dùng port
 ss -tlnp | grep -E ':80|:443'

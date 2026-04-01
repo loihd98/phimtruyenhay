@@ -6,7 +6,7 @@ Disallow: /auth/
 Disallow: /profile/
 
 # Sitemaps
-Sitemap: https://themidnightmoviereel.io.vn/sitemap.xml
+Sitemap: https://phimtruyenhay.com/sitemap.xml
 
 # Specific bots
 User-agent: Googlebot

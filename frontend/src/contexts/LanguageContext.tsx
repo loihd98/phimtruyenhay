@@ -72,7 +72,7 @@ const translations: Record<Language, TranslationKeys> = {
     "home.ongoing_stories": "Đang cập nhật",
 
     // Stories page
-    "stories.title": "The Midnight Movie Reel",
+    "stories.title": "Phim Truyện Hay",
     "stories.filter.all": "Tất cả",
     "stories.filter.text": "Văn bản",
     "stories.filter.audio": "Audio",

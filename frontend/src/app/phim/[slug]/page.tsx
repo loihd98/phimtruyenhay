@@ -9,7 +9,7 @@ import JsonLd, {
 
 const API_BASE_URL =
   process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "/api";
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://themidnightmoviereel.io.vn";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://phimtruyenhay.com";
 
 // SSR: Fetch film review on server for SEO
 async function getFilmReview(slug: string) {
@@ -34,7 +34,7 @@ export async function generateMetadata({
 
   if (!filmReview) {
     return {
-      title: "Không tìm thấy review phim | The Midnight Movie Reel",
+      title: "Không tìm thấy review phim | Phim Truyện Hay",
       description: "Bài review phim không tồn tại hoặc đã bị xóa.",
     };
   }
@@ -43,14 +43,14 @@ export async function generateMetadata({
   const isMultiEpisode = episodeCount > 1;
   const langLabel =
     filmReview.language === "VIETSUB" ? "Vietsub" :
-    filmReview.language === "THUYET_MINH" ? "Thuyết Minh" :
-    filmReview.language === "LONG_TIENG" ? "Lồng Tiếng" :
-    filmReview.language === "RAW" ? "Raw" : "";
+      filmReview.language === "THUYET_MINH" ? "Thuyết Minh" :
+        filmReview.language === "LONG_TIENG" ? "Lồng Tiếng" :
+          filmReview.language === "RAW" ? "Raw" : "";
 
   const titleParts = [filmReview.title];
   if (langLabel) titleParts.push(langLabel);
   if (isMultiEpisode) titleParts.push(`${episodeCount} Tập`);
-  const title = `${titleParts.join(" - ")} | The Midnight Movie Reel`;
+  const title = `${titleParts.join(" - ")} | Phim Truyện Hay`;
 
   const descParts: string[] = [];
   if (filmReview.description) {

@@ -28,15 +28,15 @@ export async function generateMetadata({
 
   if (!story) {
     return {
-      title: "Truyện không tồn tại – The Midnight Movie Reel",
+      title: "Truyện không tồn tại – Phim Truyện Hay",
       description: "Truyện bạn tìm kiếm không tồn tại hoặc đã bị xóa.",
     };
   }
 
-  const title = `${story.title} – Nghe Truyện Audio Online | The Midnight Movie Reel`;
+  const title = `${story.title} – Nghe Truyện Audio Online | Phim Truyện Hay`;
   const description =
     story.description?.substring(0, 160) ||
-    `Nghe ${story.title} – Truyện Audio miễn phí tại The Midnight Movie Reel. ${story.chapters?.length || 0} chương.`;
+    `Nghe ${story.title} – Truyện Audio miễn phí tại Phim Truyện Hay. ${story.chapters?.length || 0} chương.`;
 
   return {
     title,
@@ -53,13 +53,13 @@ export async function generateMetadata({
       description,
       type: "article",
       locale: "vi_VN",
-      siteName: "The Midnight Movie Reel",
+      siteName: "Phim Truyện Hay",
       ...(story.thumbnailUrl && {
         images: [
           {
             url: story.thumbnailUrl.startsWith("http")
               ? story.thumbnailUrl
-              : `${process.env.NEXT_PUBLIC_SITE_URL || "https://themidnightmoviereel.io.vn"}${story.thumbnailUrl}`,
+              : `${process.env.NEXT_PUBLIC_SITE_URL || "https://phimtruyenhay.com"}${story.thumbnailUrl}`,
             width: 1200,
             height: 630,
             alt: story.title,
