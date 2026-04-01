@@ -538,7 +538,7 @@ class FilmReviewsController {
           description: description?.trim() || null,
           thumbnailUrl: thumbnailUrl || null,
           rating: parseFloat(rating) || 0,
-          reviewLink: reviewLink.trim(),
+          reviewLink: reviewLink ? reviewLink.trim() : null,
           tags: tags || [],
           status: status || "DRAFT",
           authorId: req.user.id,
