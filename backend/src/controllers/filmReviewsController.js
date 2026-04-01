@@ -542,7 +542,7 @@ class FilmReviewsController {
           tags: tags || [],
           status: status || "DRAFT",
           author: { connect: { id: req.user.id } },
-          affiliateId: affiliateId || null,
+          affiliate: affiliateId ? { connect: { id: affiliateId } } : undefined,
           language: language || "VIETSUB",
           totalEpisodes: totalEpisodes ? parseInt(totalEpisodes) : 1,
           isMovie: isMovie !== false,
@@ -664,10 +664,9 @@ class FilmReviewsController {
         reviewLink: reviewLink?.trim() || existing.reviewLink,
         tags: tags !== undefined ? tags : existing.tags,
         status: status || existing.status,
-        affiliateId:
-          affiliateId !== undefined
-            ? affiliateId || null
-            : existing.affiliateId,
+        ...(affiliateId !== undefined && {
+          affiliate: affiliateId ? { connect: { id: affiliateId } } : { disconnect: true },
+        }),
         ...(viewCount !== undefined && {
           viewCount: Math.max(0, parseInt(viewCount) || 0),
         }),
@@ -777,7 +776,7 @@ class FilmReviewsController {
         const affiliateId = affiliateLinks[index % affiliateLinks.length].id;
         return prisma.filmReview.update({
           where: { id: reviewId },
-          data: { affiliateId },
+          data: { affiliate: { connect: { id: affiliateId } } },
         });
       });
 
