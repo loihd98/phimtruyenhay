@@ -747,5 +747,6 @@ module.exports = {
   MediaController: new MediaController(),
   uploadAudio: audioUpload.single("audio"),
   uploadImage: imageUpload.single("image"),
-  uploadUniversal: universalUpload.single("image"), // Accept "image" field name for both types
+  // Accept `file` field name for universal uploads (frontend uses `file` in many places)
+  uploadUniversal: universalUpload.single("file"),
 };
