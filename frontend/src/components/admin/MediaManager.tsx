@@ -5,7 +5,6 @@ import { useLanguage } from "../../contexts/LanguageContext";
 import apiClient from "@/utils/api";
 import Modal from "./Modal";
 import Pagination from "./Pagination";
-import { get } from "http";
 import { getMediaUrl } from "@/utils/media";
 
 interface MediaFile {
@@ -36,6 +35,8 @@ const MediaManager: React.FC = () => {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [uploadFiles, setUploadFiles] = useState<FileList | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [uploadingFileName, setUploadingFileName] = useState<string>("");
   const itemsPerPage = 20;
 
   useEffect(() => {
@@ -91,7 +92,6 @@ const MediaManager: React.FC = () => {
       setIsLoading(false);
     }
   };
-
   const handleDelete = async (file: any) => {
     if (window.confirm(t("admin.media.confirm_delete"))) {
       try {
@@ -110,13 +110,28 @@ const MediaManager: React.FC = () => {
     if (!uploadFiles || uploadFiles.length === 0) return;
 
     setIsUploading(true);
+    setUploadProgress(0);
     try {
-      for (const file of Array.from(uploadFiles)) {
+      const fileArray = Array.from(uploadFiles);
+      for (let i = 0; i < fileArray.length; i++) {
+        const file = fileArray[i] as File;
+        setUploadingFileName(file.name);
+        setUploadProgress(0);
         const formData = new FormData();
         formData.append("image", file);
         await apiClient.post("/admin/media/upload", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
+          },
+          // No timeout for large audio files — nginx upload location has 1h timeout
+          timeout: 0,
+          onUploadProgress: (progressEvent: { loaded: number; total?: number }) => {
+            if (progressEvent.total) {
+              const pct = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total
+              );
+              setUploadProgress(pct);
+            }
           },
         });
       }
@@ -129,6 +144,8 @@ const MediaManager: React.FC = () => {
       alert(t("admin.media.upload_error1"));
     } finally {
       setIsUploading(false);
+      setUploadProgress(0);
+      setUploadingFileName("");
     }
   };
 
@@ -395,6 +412,24 @@ const MediaManager: React.FC = () => {
                   </li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {/* Upload progress bar */}
+          {isUploading && (
+            <div className="space-y-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                Đang tải: {uploadingFileName}
+              </p>
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                <div
+                  className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 text-right">
+                {uploadProgress}%
+              </p>
             </div>
           )}
 
