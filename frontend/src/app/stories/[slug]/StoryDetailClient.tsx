@@ -311,10 +311,10 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
               {error || "Truyện không tồn tại"}
             </h1>
             <button
-              onClick={() => router.push("/stories")}
+              onClick={() => router.push("/")}
               className="bg-primary-500 text-white px-6 py-2.5 rounded-xl hover:bg-primary-600 transition-colors text-sm"
             >
-              Về trang danh sách truyện
+              Về trang chủ
             </button>
           </div>
         </div>
@@ -334,7 +334,7 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
 
       <div className="min-h-screen">
         <div className={`max-w-[1400px] mx-auto ${!isAudioStory ? 'px-4 lg:px-8' : ''} py-8`}>
-          <div className="max-w-6xl mx-auto px-4 lg:px-8 py-8">
+          <div className="max-w-6xl mx-auto px-3 lg:px-8 py-8">
             {/* Chapter Content */}
             {isAudioStory && (
               <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 mb-5">
@@ -468,12 +468,12 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
 
                   {/* Description */}
                   <div className="text-zinc-400">
-                    <h3 className="text-base font-semibold text-zinc-300 mb-2">M\u00f4 t\u1ea3</h3>
+                    <h3 className="text-base font-semibold text-zinc-300 mb-2">Mô tả</h3>
                     <div
                       className={`text-sm ${!showFullDescription ? "line-clamp-4" : ""
                         }`}
                     >
-                      {story.description || "Ch\u01b0a c\u00f3 m\u00f4 t\u1ea3"}
+                      {story.description || "Chưa có mô tả"}
                     </div>
                     {story.description && story.description.length > 200 && (
                       <button

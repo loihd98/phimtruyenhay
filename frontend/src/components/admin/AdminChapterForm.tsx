@@ -75,6 +75,32 @@ const AdminChapterForm: React.FC<AdminChapterFormProps> = ({
     }
   }, [storyId]);
 
+  // Reload form data when chapter changes (for editing)
+  useEffect(() => {
+    if (chapter) {
+      setFormData({
+        id: chapter.id,
+        number: chapter.number || 1,
+        title: chapter.title || "",
+        content: chapter.content || "",
+        audioUrl: chapter.audioUrl || "",
+        isLocked: chapter.isLocked || false,
+        thumbnailUrl: chapter.thumbnailUrl || "",
+        duration: chapter.duration,
+        affiliateId: chapter.affiliateId || "",
+        storyId: chapter.storyId || storyId || "",
+      });
+
+      // Set audio and thumbnail previews
+      if (chapter.audioUrl) {
+        setAudioPreview(getMediaUrl(chapter.audioUrl));
+      }
+      if (chapter.thumbnailUrl) {
+        setThumbnailPreview(getMediaUrl(chapter.thumbnailUrl));
+      }
+    }
+  }, [chapter, storyId]);
+
   const fetchStories = async () => {
     try {
       const response = await apiClient.get("/admin/stories?limit=1000");
