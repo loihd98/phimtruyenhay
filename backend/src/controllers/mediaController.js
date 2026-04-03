@@ -249,6 +249,7 @@ class MediaController {
 
       // Check if file exists
       if (!fs.existsSync(filePath)) {
+        console.warn(`[Media Delete] File not found at path: ${filePath}`);
         return res.status(404).json({
           error: "Not Found",
           message: "File không tồn tại",
@@ -256,16 +257,28 @@ class MediaController {
       }
 
       // Delete file
-      fs.unlinkSync(filePath);
+      try {
+        fs.unlinkSync(filePath);
+        console.log(`[Media Delete] Successfully deleted file: ${filePath}`);
+      } catch (fsError) {
+        console.error(`[Media Delete] Failed to delete file at ${filePath}:`, fsError.message);
+        return res.status(403).json({
+          error: "Permission Denied",
+          message: `Lỗi xóa file: ${fsError.message}`,
+        });
+      }
 
       res.json({
+        success: true,
         message: "File đã được xóa",
       });
     } catch (error) {
-      console.error("Delete file error:", error);
+      console.error("[Media Delete] Unexpected error:", error.message, error.stack);
       res.status(500).json({
+        success: false,
         error: "Internal Server Error",
         message: "Có lỗi xảy ra khi xóa file",
+        details: process.env.NODE_ENV === "development" ? error.message : undefined,
       });
     }
   }

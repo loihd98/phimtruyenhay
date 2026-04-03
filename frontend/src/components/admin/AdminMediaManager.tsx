@@ -143,6 +143,9 @@ const AdminMediaManager: React.FC = () => {
   const [filterType, setFilterType] = useState<string>("ALL");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
 
   useEffect(() => {
     fetchMediaFiles();
@@ -204,11 +207,31 @@ const AdminMediaManager: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa file này?")) {
+      setIsDeletingId(id);
+      setErrorMessage("");
+      
       try {
-        await apiClient.delete(`/media/${id}`);
-        fetchMediaFiles();
-      } catch (error) {
+        const response = await apiClient.delete(`/media/${id}`);
+        
+        if (response.data.success) {
+          setSuccessMessage("✓ File đã xóa thành công");
+          setTimeout(() => setSuccessMessage(""), 3000);
+          fetchMediaFiles();
+        } else {
+          throw new Error(response.data.message || "Lỗi khi xóa file");
+        }
+      } catch (error: any) {
+        const errorMsg = error?.response?.data?.message 
+          || error?.message 
+          || "Không thể xóa file. Vui lòng thử lại.";
+        
+        setErrorMessage(errorMsg);
         console.error("Error deleting media file:", error);
+        
+        // Clear error after 5 seconds
+        setTimeout(() => setErrorMessage(""), 5000);
+      } finally {
+        setIsDeletingId(null);
       }
     }
   };
@@ -243,6 +266,19 @@ const AdminMediaManager: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Error/Success Messages */}
+      {errorMessage && (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded-lg p-4 mb-6">
+          <p className="text-red-700 dark:text-red-300">❌ {errorMessage}</p>
+        </div>
+      )}
+      
+      {successMessage && (
+        <div className="bg-green-50 dark:bg-green-900/20 border border-green-300 dark:border-green-700 rounded-lg p-4 mb-6">
+          <p className="text-green-700 dark:text-green-300">{successMessage}</p>
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
@@ -337,10 +373,11 @@ const AdminMediaManager: React.FC = () => {
                   </button>
                   <button
                     onClick={() => handleDelete(media.id)}
-                    className="bg-red-600 text-white p-2 rounded-full hover:bg-red-700 transition-colors"
-                    title="Xóa"
+                    disabled={isDeletingId === media.id}
+                    className="bg-red-600 text-white p-2 rounded-full hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    title={isDeletingId === media.id ? "Đang xóa..." : "Xóa"}
                   >
-                    🗑️
+                    {isDeletingId === media.id ? "⏳" : "🗑️"}
                   </button>
                 </div>
               </div>
