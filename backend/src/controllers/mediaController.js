@@ -245,14 +245,38 @@ class MediaController {
         });
       }
 
-      const filePath = path.join(config.uploadPath, type, safeFilename);
+      // Resolve upload path - ensure it's absolute
+      let uploadBasePath = config.uploadPath || "./uploads";
+      if (!path.isAbsolute(uploadBasePath)) {
+        // If relative, resolve from project root
+        uploadBasePath = path.join(process.cwd(), uploadBasePath);
+      }
+
+      const filePath = path.join(uploadBasePath, type, safeFilename);
+
+      console.log(`[Media Delete] Attempting to delete file at: ${filePath}`);
 
       // Check if file exists
       if (!fs.existsSync(filePath)) {
         console.warn(`[Media Delete] File not found at path: ${filePath}`);
         return res.status(404).json({
+          success: false,
           error: "Not Found",
           message: "File không tồn tại",
+        });
+      }
+
+      // Verify it's actually in the upload directory (prevent escape attempts)
+      const realPath = fs.realpathSync(filePath);
+      const realUploadPath = fs.realpathSync(uploadBasePath);
+      if (!realPath.startsWith(realUploadPath)) {
+        console.error(
+          `[Media Delete] Security check failed - path outside upload directory: ${realPath}`
+        );
+        return res.status(403).json({
+          success: false,
+          error: "Forbidden",
+          message: "Đường dẫn file không hợp lệ",
         });
       }
 
@@ -264,8 +288,10 @@ class MediaController {
         console.error(
           `[Media Delete] Failed to delete file at ${filePath}:`,
           fsError.message,
+          fsError.code
         );
         return res.status(403).json({
+          success: false,
           error: "Permission Denied",
           message: `Lỗi xóa file: ${fsError.message}`,
         });
@@ -279,7 +305,7 @@ class MediaController {
       console.error(
         "[Media Delete] Unexpected error:",
         error.message,
-        error.stack,
+        error.stack
       );
       res.status(500).json({
         success: false,
@@ -313,7 +339,13 @@ class MediaController {
         });
       }
 
-      const filePath = path.join(config.uploadPath, type, safeFilename);
+      // Resolve upload path - ensure it's absolute
+      let uploadBasePath = config.uploadPath || "./uploads";
+      if (!path.isAbsolute(uploadBasePath)) {
+        uploadBasePath = path.join(process.cwd(), uploadBasePath);
+      }
+
+      const filePath = path.join(uploadBasePath, type, safeFilename);
 
       // Check if file exists
       if (!fs.existsSync(filePath)) {
@@ -356,7 +388,13 @@ class MediaController {
         });
       }
 
-      const dirPath = path.join(config.uploadPath, type);
+      // Resolve upload path - ensure it's absolute
+      let uploadBasePath = config.uploadPath || "./uploads";
+      if (!path.isAbsolute(uploadBasePath)) {
+        uploadBasePath = path.join(process.cwd(), uploadBasePath);
+      }
+
+      const dirPath = path.join(uploadBasePath, type);
 
       // Create directory if it doesn't exist
       if (!fs.existsSync(dirPath)) {
@@ -670,8 +708,14 @@ class MediaController {
       }
 
       // Scan filesystem to build usageMap keyed by filename
-      const audioDir = path.join(config.uploadPath || "./uploads", "audio");
-      const imageDir = path.join(config.uploadPath || "./uploads", "image");
+      // Resolve upload path - ensure it's absolute
+      let uploadBasePath = config.uploadPath || "./uploads";
+      if (!path.isAbsolute(uploadBasePath)) {
+        uploadBasePath = path.join(process.cwd(), uploadBasePath);
+      }
+
+      const audioDir = path.join(uploadBasePath, "audio");
+      const imageDir = path.join(uploadBasePath, "image");
 
       const audioFiles = fs.existsSync(audioDir)
         ? fs.readdirSync(audioDir)
