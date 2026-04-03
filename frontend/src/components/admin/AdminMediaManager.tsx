@@ -209,10 +209,10 @@ const AdminMediaManager: React.FC = () => {
     if (window.confirm("Bạn có chắc chắn muốn xóa file này?")) {
       setIsDeletingId(id);
       setErrorMessage("");
-      
+
       try {
         const response = await apiClient.delete(`/media/${id}`);
-        
+
         if (response.data.success) {
           setSuccessMessage("✓ File đã xóa thành công");
           setTimeout(() => setSuccessMessage(""), 3000);
@@ -221,13 +221,13 @@ const AdminMediaManager: React.FC = () => {
           throw new Error(response.data.message || "Lỗi khi xóa file");
         }
       } catch (error: any) {
-        const errorMsg = error?.response?.data?.message 
-          || error?.message 
+        const errorMsg = error?.response?.data?.message
+          || error?.message
           || "Không thể xóa file. Vui lòng thử lại.";
-        
+
         setErrorMessage(errorMsg);
         console.error("Error deleting media file:", error);
-        
+
         // Clear error after 5 seconds
         setTimeout(() => setErrorMessage(""), 5000);
       } finally {
@@ -272,7 +272,7 @@ const AdminMediaManager: React.FC = () => {
           <p className="text-red-700 dark:text-red-300">❌ {errorMessage}</p>
         </div>
       )}
-      
+
       {successMessage && (
         <div className="bg-green-50 dark:bg-green-900/20 border border-green-300 dark:border-green-700 rounded-lg p-4 mb-6">
           <p className="text-green-700 dark:text-green-300">{successMessage}</p>

@@ -90,7 +90,7 @@ const AdminChapterForm: React.FC<AdminChapterFormProps> = ({
         affiliateId: chapter.affiliateId || "",
         storyId: chapter.storyId || storyId || "",
       });
-      
+
       // Set audio and thumbnail previews
       if (chapter.audioUrl) {
         setAudioPreview(getMediaUrl(chapter.audioUrl));

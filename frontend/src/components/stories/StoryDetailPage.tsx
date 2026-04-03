@@ -197,8 +197,8 @@ const StoryDetailPage: React.FC = () => {
         <div className="text-center">
           <div className="text-6xl mb-4">📚</div>
           <h1 className="text-2xl font-bold text-white mb-3">{error || "Truyện không tồn tại"}</h1>
-          <button onClick={() => router.push("/truyen-text")} className="bg-primary-500 text-white px-6 py-2.5 rounded-2xl hover:bg-primary-600 transition-colors">
-            Về trang danh sách truyện
+          <button onClick={() => router.push("/")} className="bg-primary-500 text-white px-6 py-2.5 rounded-2xl hover:bg-primary-600 transition-colors">
+            Về trang chủ
           </button>
         </div>
       </div>
@@ -273,11 +273,10 @@ const StoryDetailPage: React.FC = () => {
                 <div className="mt-3 space-y-2">
                   <button
                     onClick={toggleBookmark}
-                    className={`w-full py-2 px-3 rounded-xl font-medium text-sm transition-all ${
-                      isBookmarked
-                        ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
-                        : "bg-white/[0.04] text-zinc-400 hover:bg-white/[0.08] hover:text-white border border-white/[0.06]"
-                    }`}
+                    className={`w-full py-2 px-3 rounded-xl font-medium text-sm transition-all ${isBookmarked
+                      ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
+                      : "bg-white/[0.04] text-zinc-400 hover:bg-white/[0.08] hover:text-white border border-white/[0.06]"
+                      }`}
                   >
                     {isBookmarked ? "❤️ Đã yêu thích" : "🤍 Yêu thích"}
                   </button>
@@ -294,9 +293,8 @@ const StoryDetailPage: React.FC = () => {
               {/* Info */}
               <div className="flex-1 min-w-0">
                 {/* Type badge */}
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium mb-3 ${
-                  story.type === "AUDIO" ? "bg-cinema-purple/20 text-cinema-purple border border-cinema-purple/30" : "bg-primary-500/20 text-primary-400 border border-primary-500/30"
-                }`}>
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium mb-3 ${story.type === "AUDIO" ? "bg-cinema-purple/20 text-cinema-purple border border-cinema-purple/30" : "bg-primary-500/20 text-primary-400 border border-primary-500/30"
+                  }`}>
                   {story.type === "AUDIO" ? "🎧 Truyện Audio" : "📖 Truyện Chữ"}
                 </span>
 

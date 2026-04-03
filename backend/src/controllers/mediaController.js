@@ -261,7 +261,10 @@ class MediaController {
         fs.unlinkSync(filePath);
         console.log(`[Media Delete] Successfully deleted file: ${filePath}`);
       } catch (fsError) {
-        console.error(`[Media Delete] Failed to delete file at ${filePath}:`, fsError.message);
+        console.error(
+          `[Media Delete] Failed to delete file at ${filePath}:`,
+          fsError.message,
+        );
         return res.status(403).json({
           error: "Permission Denied",
           message: `Lỗi xóa file: ${fsError.message}`,
@@ -273,12 +276,17 @@ class MediaController {
         message: "File đã được xóa",
       });
     } catch (error) {
-      console.error("[Media Delete] Unexpected error:", error.message, error.stack);
+      console.error(
+        "[Media Delete] Unexpected error:",
+        error.message,
+        error.stack,
+      );
       res.status(500).json({
         success: false,
         error: "Internal Server Error",
         message: "Có lỗi xảy ra khi xóa file",
-        details: process.env.NODE_ENV === "development" ? error.message : undefined,
+        details:
+          process.env.NODE_ENV === "development" ? error.message : undefined,
       });
     }
   }

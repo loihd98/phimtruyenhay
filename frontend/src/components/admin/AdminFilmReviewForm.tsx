@@ -650,12 +650,12 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
               />
               <span
                 className={`text-lg font-bold min-w-[3rem] text-center ${formData.rating >= 8
-                    ? "text-green-500"
-                    : formData.rating >= 5
-                      ? "text-yellow-500"
-                      : formData.rating > 0
-                        ? "text-red-500"
-                        : "text-gray-400"
+                  ? "text-green-500"
+                  : formData.rating >= 5
+                    ? "text-yellow-500"
+                    : formData.rating > 0
+                      ? "text-red-500"
+                      : "text-gray-400"
                   }`}
               >
                 {formData.rating}
@@ -948,8 +948,8 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
                   type="button"
                   onClick={() => handleCategoryToggle(cat.id)}
                   className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${selectedCategoryIds.includes(cat.id)
-                      ? "bg-blue-100 border-blue-300 text-blue-800 dark:bg-blue-900/40 dark:border-blue-600 dark:text-blue-300"
-                      : "bg-gray-50 border-gray-200 text-gray-600 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600"
+                    ? "bg-blue-100 border-blue-300 text-blue-800 dark:bg-blue-900/40 dark:border-blue-600 dark:text-blue-300"
+                    : "bg-gray-50 border-gray-200 text-gray-600 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600"
                     }`}
                 >
                   {selectedCategoryIds.includes(cat.id) && (
