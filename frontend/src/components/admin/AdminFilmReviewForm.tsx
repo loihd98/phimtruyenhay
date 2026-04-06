@@ -293,6 +293,7 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
 
       const response = await apiClient.post("/admin/media/upload/image", formDataUpload, {
         headers: { "Content-Type": "multipart/form-data" },
+        timeout: 0,
       });
 
       const imageUrl = response.data.file?.url || response.data.url;

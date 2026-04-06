@@ -183,6 +183,7 @@ const AdminMediaUpload: React.FC = () => {
               headers: {
                 "Content-Type": "multipart/form-data",
               },
+              timeout: 0,
             });
 
             if (response.data?.success) {

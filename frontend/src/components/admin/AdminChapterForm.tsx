@@ -132,6 +132,7 @@ const AdminChapterForm: React.FC<AdminChapterFormProps> = ({
     form.append(fileKey, file);
     const response = await apiClient.post(`media/upload/${type}`, form, {
       headers: { "Content-Type": "multipart/form-data" },
+      timeout: 0,
     });
     return response.data.file.url;
   };

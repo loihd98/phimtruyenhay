@@ -30,6 +30,7 @@ const requireMediaPermission = (code) => async (req, res, next) => {
     }
     next();
   } catch (error) {
+    console.error("Permission check error:", error);
     return res
       .status(500)
       .json({ error: "Internal Server Error", message: "Lỗi kiểm tra quyền" });

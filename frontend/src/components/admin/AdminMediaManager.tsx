@@ -193,6 +193,7 @@ const AdminMediaManager: React.FC = () => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        timeout: 0,
       });
 
       setShowUploadModal(false);

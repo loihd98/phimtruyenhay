@@ -164,6 +164,12 @@ class MediaController {
   // Upload audio file
   async uploadAudio(req, res) {
     try {
+      // Ensure upload directories exist
+      const audioDir = path.join(config.uploadPath || "uploads", "audio");
+      if (!fs.existsSync(audioDir)) {
+        fs.mkdirSync(audioDir, { recursive: true });
+      }
+
       if (!req.file) {
         return res.status(400).json({
           error: "Bad Request",
@@ -195,6 +201,12 @@ class MediaController {
   // Upload image file
   async uploadImage(req, res) {
     try {
+      // Ensure upload directories exist
+      const imageDir = path.join(config.uploadPath || "uploads", "image");
+      if (!fs.existsSync(imageDir)) {
+        fs.mkdirSync(imageDir, { recursive: true });
+      }
+
       if (!req.file) {
         return res.status(400).json({
           error: "Bad Request",
@@ -512,14 +524,21 @@ class MediaController {
   // POST /api/media/upload - Upload and save media file to database
   async uploadMediaToDatabase(req, res) {
     try {
-      if (!req.file) {
+      // Multer may populate `req.file` (single) or `req.files` (fields).
+      // Support both: prefer `req.file`, then check common field names in `req.files`.
+      let file = req.file;
+      if (!file && req.files) {
+        if (req.files.file && req.files.file[0]) file = req.files.file[0];
+        else if (req.files.image && req.files.image[0]) file = req.files.image[0];
+        else if (req.files.audio && req.files.audio[0]) file = req.files.audio[0];
+      }
+
+      if (!file) {
         return res.status(400).json({
           success: false,
           message: "No file uploaded",
         });
       }
-
-      const { file } = req;
       const type = file.mimetype.startsWith("image/") ? "image" : "audio";
       const url = `/uploads/${type}/${file.filename}`;
 
@@ -747,6 +766,10 @@ module.exports = {
   MediaController: new MediaController(),
   uploadAudio: audioUpload.single("audio"),
   uploadImage: imageUpload.single("image"),
-  // Accept `file` field name for universal uploads (frontend uses `file` in many places)
-  uploadUniversal: universalUpload.single("file"),
+  // Accept multiple field names for universal uploads: `file`, `image`, `audio`
+  uploadUniversal: universalUpload.fields([
+    { name: "file", maxCount: 1 },
+    { name: "image", maxCount: 1 },
+    { name: "audio", maxCount: 1 },
+  ]),
 };
