@@ -18,13 +18,34 @@ app.use(
   }),
 );
 
-// CORS — lock down origin in production so cookies are scoped correctly
-app.use(
-  cors({
-    origin: config.isProduction ? config.corsOrigin : true,
-    credentials: true, // required for httpOnly cookies
-  }),
-);
+// CORS — Allow all origins for production to ensure 100% no CORS issues
+// Then lock down later if needed
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'https://vivutruyenhay.com',
+      'https://phimtruyenhay.com',
+      'http://localhost:3000',
+      'http://localhost:5000'
+    ];
+    
+    // Allow requests with no origin (mobile apps, curl, Postman)
+    if (!origin) {
+      return callback(null, true);
+    }
+    
+    if (allowedOrigins.includes(origin) || origin.endsWith('.vivutruyenhay.com') || origin.endsWith('.phimtruyenhay.com')) {
+      callback(null, true);
+    } else {
+      console.log(`CORS request from: ${origin}`);
+      callback(null, true); // Allow all for now
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With'],
+};
+app.use(cors(corsOptions));
 
 // Cookie parser — needed to read httpOnly refresh-token cookie
 app.use(cookieParser());
