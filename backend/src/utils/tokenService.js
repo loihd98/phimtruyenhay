@@ -39,7 +39,7 @@ class TokenService {
     const rawToken = crypto.randomBytes(64).toString("hex");
     const tokenHash = this.hashToken(rawToken);
     const expiresAt = new Date(
-      Date.now() + config.refreshTokenMaxAgeDays * 24 * 60 * 60 * 1000
+      Date.now() + config.refreshTokenMaxAgeDays * 24 * 60 * 60 * 1000,
     );
 
     const familyId = family || crypto.randomUUID();
@@ -122,7 +122,7 @@ class TokenService {
         user,
         meta,
         tokenRecord.family,
-        tokenRecord.id
+        tokenRecord.id,
       );
 
     const accessToken = this.generateAccessToken(user);
@@ -153,10 +153,7 @@ class TokenService {
     const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     await prisma.refreshToken.deleteMany({
       where: {
-        OR: [
-          { expiresAt: { lt: cutoff } },
-          { revokedAt: { lt: cutoff } },
-        ],
+        OR: [{ expiresAt: { lt: cutoff } }, { revokedAt: { lt: cutoff } }],
       },
     });
   }
@@ -164,10 +161,10 @@ class TokenService {
   // ─── Cookie helpers ────────────────────────────────────────────
   getRefreshCookieOptions() {
     return {
-      httpOnly: true,                       // not accessible via JS
-      secure: config.isProduction,          // HTTPS-only in prod
+      httpOnly: true, // not accessible via JS
+      secure: config.isProduction, // HTTPS-only in prod
       sameSite: config.isProduction ? "strict" : "lax",
-      path: "/api/auth",                    // only sent to auth endpoints
+      path: "/api/auth", // only sent to auth endpoints
       maxAge: config.refreshTokenMaxAgeDays * 24 * 60 * 60 * 1000,
       ...(config.cookieDomain ? { domain: config.cookieDomain } : {}),
     };

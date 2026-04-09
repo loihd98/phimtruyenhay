@@ -26,7 +26,7 @@ Hệ thống RBAC (Role-Based Access Control) với:
 docker exec -t <postgres_container> pg_dump -U <user> -d <dbname> > backup_$(date +%Y%m%d_%H%M%S).sql
 
 # Or if using docker-compose
-docker-compose exec db pg_dump -U postgres -d vivutruyenghay > backup_pre_rbac.sql
+docker-compose exec db pg_dump -U postgres -d phimtruyenhay.com > backup_pre_rbac.sql
 
 # Backup toàn bộ volumes
 docker run --rm -v themidnightmoviereel_pgdata:/data -v $(pwd):/backup alpine tar czf /backup/pgdata_backup.tar.gz /data

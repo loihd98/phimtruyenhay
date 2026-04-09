@@ -46,7 +46,7 @@ export async function generateMetadata({
       "truyện chữ",
       "đọc truyện",
       ...(story.genres?.map((g: any) => g.name) || []),
-      "vivutruyenghay",
+      "phimtruyenhay.com",
     ],
     openGraph: {
       title,

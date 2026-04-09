@@ -23,7 +23,6 @@ app.use(
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
-      'https://vivutruyenhay.com',
       'https://phimtruyenhay.com',
       'http://localhost:3000',
       'http://localhost:5000'
@@ -34,7 +33,7 @@ const corsOptions = {
       return callback(null, true);
     }
     
-    if (allowedOrigins.includes(origin) || origin.endsWith('.vivutruyenhay.com') || origin.endsWith('.phimtruyenhay.com')) {
+    if (allowedOrigins.includes(origin) || origin.endsWith('.phimtruyenhay.com')) {
       callback(null, true);
     } else {
       console.log(`CORS request from: ${origin}`);

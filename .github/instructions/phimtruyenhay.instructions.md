@@ -7,23 +7,24 @@ applyTo: "**"
 ## Tổng quan dự án
 
 **phimtruyenhay.com** là web app full-stack phục vụ 3 nhóm nội dung chính:
+
 1. **Truyện Audio** — Nghe truyện MP3 trực tuyến (tiên hiệp, đô thị, kiếm hiệp, ngôn tình...)
 2. **Truyện Chữ** — Đọc truyện online
 3. **Review Phim** — Đánh giá phim kèm link xem, episodes, actors, categories
 
-Domain chính: `phimtruyenhay.com` | Domain phụ: `vivutruyenhay.com`
+Domain chính: `phimtruyenhay.com`
 
 ---
 
 ## Tech Stack
 
-| Layer | Công nghệ |
-|-------|-----------|
-| Frontend | Next.js 14 (App Router), TypeScript, Tailwind CSS, Redux Toolkit |
-| Backend | Node.js 20, Express, Prisma ORM |
-| Database | PostgreSQL 15 |
-| Infra (Prod) | Docker Compose, Nginx (reverse proxy), Let's Encrypt SSL |
-| Auth | JWT (access token) + Refresh Token rotation (httpOnly cookie) + Google/Facebook OAuth |
+| Layer        | Công nghệ                                                                             |
+| ------------ | ------------------------------------------------------------------------------------- |
+| Frontend     | Next.js 14 (App Router), TypeScript, Tailwind CSS, Redux Toolkit                      |
+| Backend      | Node.js 20, Express, Prisma ORM                                                       |
+| Database     | PostgreSQL 15                                                                         |
+| Infra (Prod) | Docker Compose, Nginx (reverse proxy), Let's Encrypt SSL                              |
+| Auth         | JWT (access token) + Refresh Token rotation (httpOnly cookie) + Google/Facebook OAuth |
 
 ---
 
@@ -173,7 +174,7 @@ Nginx (port 80/443)
 
 ### SSL / Domains
 
-- `phimtruyenhay.com` và `vivutruyenhay.com` đều có cert riêng
+- `phimtruyenhay.com`
 - `www.*` redirect → non-www
 - HSTS: max-age=31536000, includeSubDomains, preload
 - Security headers: X-Frame-Options, X-Content-Type-Options, X-XSS-Protection, Referrer-Policy, Permissions-Policy
@@ -190,16 +191,16 @@ docker compose up
 
 ### Environment Variables quan trọng
 
-| Biến | Mô tả |
-|------|-------|
-| `DATABASE_URL` | PostgreSQL connection string |
-| `JWT_SECRET` | Access token signing key |
-| `JWT_REFRESH_SECRET` | Refresh token signing key |
-| `NEXT_PUBLIC_API_URL` | Frontend gọi API từ browser (https://domain/api) |
-| `API_URL` | Frontend SSR gọi API nội bộ (http://backend:5000/api) |
-| `NEXT_PUBLIC_BASE_URL` | Base URL để build absolute URLs cho SEO |
-| `GOOGLE_CLIENT_ID/SECRET` | Google OAuth |
-| `FACEBOOK_APP_ID/SECRET` | Facebook OAuth |
+| Biến                      | Mô tả                                                 |
+| ------------------------- | ----------------------------------------------------- |
+| `DATABASE_URL`            | PostgreSQL connection string                          |
+| `JWT_SECRET`              | Access token signing key                              |
+| `JWT_REFRESH_SECRET`      | Refresh token signing key                             |
+| `NEXT_PUBLIC_API_URL`     | Frontend gọi API từ browser (https://domain/api)      |
+| `API_URL`                 | Frontend SSR gọi API nội bộ (http://backend:5000/api) |
+| `NEXT_PUBLIC_BASE_URL`    | Base URL để build absolute URLs cho SEO               |
+| `GOOGLE_CLIENT_ID/SECRET` | Google OAuth                                          |
+| `FACEBOOK_APP_ID/SECRET`  | Facebook OAuth                                        |
 
 ---
 
@@ -207,25 +208,25 @@ docker compose up
 
 ### Models chính
 
-| Model | Mô tả |
-|-------|-------|
-| `User` | Người dùng, roles: USER/ADMIN/EDITOR/REVIEWER, OAuth support |
-| `RefreshToken` | Refresh token rotation, token family tracking, revocation |
-| `Story` | Truyện (TEXT hoặc AUDIO), slug, viewCount, status: DRAFT/PUBLISHED/HIDDEN |
-| `Chapter` | Chapter của story: content (text) hoặc audioUrl (audio), có thể lock |
-| `TextGenre` | Thể loại truyện chữ (many-to-many với Story) |
-| `AudioGenre` | Thể loại truyện audio (many-to-many với Story) |
-| `Comment` | Comment threaded trên chapters |
-| `Bookmark` | User bookmark story hoặc film review |
-| `FilmReview` | Review phim: rating, reviewLink, tags, isMovie, totalEpisodes, language |
-| `FilmEpisode` | Các tập phim: episodeNum, videoUrl, duration, language |
-| `FilmComment` | Comment threaded trên film reviews |
-| `FilmCategory` | Thể loại phim (many-to-many) |
-| `FilmActor` | Diễn viên (many-to-many) |
+| Model           | Mô tả                                                                         |
+| --------------- | ----------------------------------------------------------------------------- |
+| `User`          | Người dùng, roles: USER/ADMIN/EDITOR/REVIEWER, OAuth support                  |
+| `RefreshToken`  | Refresh token rotation, token family tracking, revocation                     |
+| `Story`         | Truyện (TEXT hoặc AUDIO), slug, viewCount, status: DRAFT/PUBLISHED/HIDDEN     |
+| `Chapter`       | Chapter của story: content (text) hoặc audioUrl (audio), có thể lock          |
+| `TextGenre`     | Thể loại truyện chữ (many-to-many với Story)                                  |
+| `AudioGenre`    | Thể loại truyện audio (many-to-many với Story)                                |
+| `Comment`       | Comment threaded trên chapters                                                |
+| `Bookmark`      | User bookmark story hoặc film review                                          |
+| `FilmReview`    | Review phim: rating, reviewLink, tags, isMovie, totalEpisodes, language       |
+| `FilmEpisode`   | Các tập phim: episodeNum, videoUrl, duration, language                        |
+| `FilmComment`   | Comment threaded trên film reviews                                            |
+| `FilmCategory`  | Thể loại phim (many-to-many)                                                  |
+| `FilmActor`     | Diễn viên (many-to-many)                                                      |
 | `AffiliateLink` | Link affiliate (Google Drive, Fshare, Mega...) gắn vào stories/chapters/films |
-| `Media` | File upload (image/audio), track usage |
-| `BlogPost` | Blog posts |
-| `BlogComment` | Comment trên blog |
+| `Media`         | File upload (image/audio), track usage                                        |
+| `BlogPost`      | Blog posts                                                                    |
+| `BlogComment`   | Comment trên blog                                                             |
 
 ### Enums
 
