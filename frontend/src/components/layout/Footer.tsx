@@ -34,10 +34,10 @@ const Footer: React.FC = () => {
 
             </div>
             <div className="flex items-center gap-4 bg-white/[0.02] border border-white/[0.06] rounded-2xl p-4">
-              <Image src="/qr.jpg" alt="QR ủng hộ" width={72} height={72} className="rounded-xl" />
+              <Image src="/qr_bidv.jpg" alt="QR ủng hộ" width={72} height={72} className="rounded-xl" />
               <div className="text-sm">
-                <p className="text-zinc-400">Ngân hàng <span className="text-white font-semibold">TCB</span></p>
-                <p className="text-lg font-mono font-bold text-accent-400 mt-0.5">19036367410014</p>
+                <p className="text-zinc-400">Ngân hàng <span className="text-white font-semibold">BIDV</span></p>
+                <p className="text-lg font-mono font-bold text-accent-400 mt-0.5">2206502400</p>
                 <p className="text-[11px] text-zinc-600 mt-0.5">Quét QR hoặc chuyển khoản</p>
               </div>
             </div>

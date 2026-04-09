@@ -107,6 +107,7 @@ app.use("/api/contact", require("./routes/contact"));
 app.use("/api/affiliate", require("./routes/affiliate"));
 app.use("/api/film-reviews", require("./routes/filmReviews"));
 app.use("/api/blog", require("./routes/blog"));
+app.use("/api/vip", require("./routes/vip"));
 
 // Affiliate redirect (short URL)
 app.use("/r", require("./routes/affiliate"));

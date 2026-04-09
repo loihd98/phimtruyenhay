@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   usePathname,
   useRouter,
@@ -16,10 +16,18 @@ import apiClient, { storiesAPI } from "@/utils/api";
 import CommentSection from "@/components/comments/CommentSection";
 import { useLanguage } from "@/contexts/LanguageContext";
 import DailyPopup from "@/components/DailyPopup";
+import SharePopup from "@/components/ui/SharePopup";
 import {
   isAffiliateCooldown,
   markAffiliateShown,
+  openAffiliateLink,
 } from "@/utils/affiliateCooldown";
+import {
+  saveChapterProgress,
+  getChapterProgress,
+  saveLastPlayed,
+  getLastPlayed,
+} from "@/utils/audioProgress";
 
 interface Story {
   id: string;
@@ -90,8 +98,12 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [trendingStories, setTrendingStories] = useState<Story[]>([]);
   const [isLoadingTrending, setIsLoadingTrending] = useState(true);
+  const [showAudioChapterList, setShowAudioChapterList] = useState(false);
+  const [audioInitialTime, setAudioInitialTime] = useState(0);
+  const [showSharePopup, setShowSharePopup] = useState(false);
   // Capture initial 'from' value so affiliate check works even after URL cleanup
   const initialFrom = useRef(searchParams.get("from"));
+  const audioSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { slug } = params;
 
@@ -118,7 +130,7 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
   useEffect(() => {
     if (!initialFrom.current && story?.affiliate?.targetUrl && !isAffiliateCooldown(story.affiliate.targetUrl)) {
       markAffiliateShown(story.affiliate.targetUrl);
-      window.open(story.affiliate.targetUrl, "_blank", "noopener");
+      openAffiliateLink(story.affiliate.targetUrl);
     }
   }, [story?.affiliate?.targetUrl]);
 
@@ -245,7 +257,7 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
 
     // If next chapter has an active affiliate link, open it in new tab
     if (nextChapter?.affiliate?.isActive && nextChapter.affiliate.targetUrl) {
-      window.open(nextChapter.affiliate.targetUrl, "_blank");
+      openAffiliateLink(nextChapter.affiliate.targetUrl);
     }
     handleChapterChange(chapterNumber);
   }
@@ -259,7 +271,7 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
 
       // If next chapter has an active affiliate link, open it in new tab
       if (nextChapter?.affiliate?.isActive && nextChapter.affiliate.targetUrl) {
-        window.open(nextChapter.affiliate.targetUrl, "_blank");
+        openAffiliateLink(nextChapter.affiliate.targetUrl);
       }
 
       handleChapterChange(nextChapterNumber);
@@ -271,6 +283,57 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
       handleChapterChange(selectedChapter - 1);
     }
   };
+
+  // Restore audio progress when chapter changes
+  useEffect(() => {
+    if (story?.type === "AUDIO" && story.id) {
+      const saved = getChapterProgress(story.id, selectedChapter);
+      setAudioInitialTime(saved);
+    }
+  }, [story?.id, story?.type, selectedChapter]);
+
+  // Restore last played chapter on first load for audio stories
+  useEffect(() => {
+    if (story?.type === "AUDIO" && story.id) {
+      const lastPlayed = getLastPlayed();
+      if (lastPlayed && lastPlayed.storyId === story.id) {
+        const chapterExists = story.chapters.some(
+          (c) => c.number === lastPlayed.chapterNumber
+        );
+        if (chapterExists && !searchParams.get("chapter")) {
+          setSelectedChapter(lastPlayed.chapterNumber);
+          setAudioInitialTime(lastPlayed.timestamp);
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [story?.id]);
+
+  const handleAudioTimeUpdate = useCallback(
+    (time: number) => {
+      if (!story || story.type !== "AUDIO") return;
+      // Throttle saves to every 5 seconds
+      if (audioSaveTimer.current) return;
+      audioSaveTimer.current = setTimeout(() => {
+        audioSaveTimer.current = null;
+      }, 5000);
+      saveChapterProgress(story.id, selectedChapter, time);
+      saveLastPlayed(story.id, story.slug, selectedChapter, time);
+    },
+    [story, selectedChapter]
+  );
+
+  const handleAudioEnded = useCallback(() => {
+    if (!story || story.type !== "AUDIO") return;
+    // Clear progress for finished chapter
+    saveChapterProgress(story.id, selectedChapter, 0);
+    // Auto-play next chapter
+    if (selectedChapter < story.chapters.length) {
+      const nextNum = selectedChapter + 1;
+      handleChapterChange(nextNum);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [story, selectedChapter]);
 
   if (loading) {
     return (
@@ -342,6 +405,11 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                   <h2 className="text-2xl font-bold text-white">
                     {story.title}
                   </h2>
+                  {story.chapters.length > 1 && (
+                    <p className="text-sm text-zinc-500 mt-1">
+                      {story.chapters.length} chương • Đang nghe chương {selectedChapter}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -357,9 +425,81 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                       <SimpleAudioPlayer
                         src={getMediaUrl(currentChapter.audioUrl)}
                         title={`${story.title} - Chương ${currentChapter.number}`}
+                        initialTime={audioInitialTime}
+                        onTimeUpdate={handleAudioTimeUpdate}
+                        onEnded={handleAudioEnded}
                       />
                     </div>
                   ) : null}
+
+                  {/* Audio Chapter Navigation */}
+                  {story.chapters.length > 1 && (
+                    <div className="mt-4">
+                      {/* Prev/Next buttons */}
+                      <div className="flex gap-2 mb-3">
+                        <button
+                          onClick={handlePrevChapter}
+                          disabled={selectedChapter <= 1}
+                          className="text-sm flex-1 py-2.5 px-4 bg-white/[0.04] border border-white/[0.06] text-zinc-400 rounded-xl hover:bg-white/[0.08] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        >
+                          ← Chương trước
+                        </button>
+                        <button
+                          onClick={handleNextChapter}
+                          disabled={selectedChapter >= story.chapters.length}
+                          className="text-sm flex-1 py-2.5 px-4 bg-primary-500 text-white rounded-xl hover:bg-primary-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        >
+                          Chương tiếp →
+                        </button>
+                      </div>
+
+                      {/* Expandable chapter list */}
+                      <button
+                        onClick={() => setShowAudioChapterList(!showAudioChapterList)}
+                        className="w-full flex items-center justify-between py-2.5 px-4 bg-white/[0.04] border border-white/[0.06] rounded-xl text-sm text-zinc-400 hover:bg-white/[0.08] hover:text-white transition-colors"
+                      >
+                        <span>📋 Danh sách chương ({story.chapters.length})</span>
+                        <svg
+                          className={`w-4 h-4 transition-transform ${showAudioChapterList ? "rotate-180" : ""}`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+
+                      {showAudioChapterList && (
+                        <div className="mt-2 max-h-64 overflow-y-auto border border-white/[0.06] rounded-xl divide-y divide-white/[0.04]">
+                          {story.chapters.map((chapter) => (
+                            <button
+                              key={chapter.id}
+                              onClick={() => onSelectChapter(chapter.number)}
+                              className={`w-full text-left py-3 px-4 text-sm transition-colors ${
+                                chapter.number === selectedChapter
+                                  ? "bg-primary-500/10 text-primary-400"
+                                  : "text-zinc-400 hover:bg-white/[0.04] hover:text-white"
+                              }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="flex items-center gap-2">
+                                  {chapter.number === selectedChapter && (
+                                    <span className="flex space-x-0.5">
+                                      <span className="w-1 h-3 bg-primary-500 rounded-full animate-pulse" />
+                                      <span className="w-1 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }} />
+                                      <span className="w-1 h-3 bg-primary-500 rounded-full animate-pulse" style={{ animationDelay: "0.2s" }} />
+                                    </span>
+                                  )}
+                                  Chương {chapter.number}: {chapter.title}
+                                </span>
+                                {chapter.isLocked && !user && <span>🔒</span>}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {/* Deal Hot Section */}
                   {story.affiliate?.targetUrl && (
@@ -376,6 +516,26 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                       </p>
                     </div>
                   )}
+
+                  {/* Action buttons */}
+                  <div className="flex gap-2 mt-4">
+                    <button
+                      onClick={toggleBookmark}
+                      className={`flex-1 py-2.5 px-4 rounded-xl font-medium transition-colors text-sm ${
+                        isBookmarked
+                          ? "bg-primary-500/10 text-primary-400 border border-primary-500/20"
+                          : "bg-white/[0.04] text-zinc-400 border border-white/[0.06] hover:text-white hover:bg-white/[0.08]"
+                      }`}
+                    >
+                      {isBookmarked ? "❤ Đã yêu thích" : "Yêu thích"}
+                    </button>
+                    <button
+                      onClick={() => setShowSharePopup(true)}
+                      className="py-2.5 px-4 bg-white/[0.04] border border-white/[0.06] text-zinc-400 rounded-xl hover:text-white hover:bg-white/[0.08] transition-colors text-sm"
+                    >
+                      🔗 Chia sẻ
+                    </button>
+                  </div>
 
                 </div>
               </div>
@@ -423,6 +583,12 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                           `T\u1ea3i t\u1eeb ${story.affiliate.provider}`}
                       </a>
                     )}
+                    <button
+                      onClick={() => setShowSharePopup(true)}
+                      className="w-full py-2.5 px-4 bg-white/[0.04] text-zinc-400 border border-white/[0.06] hover:text-white hover:bg-white/[0.08] rounded-xl font-medium transition-colors text-sm"
+                    >
+                      🔗 Chia sẻ
+                    </button>
                   </div>
                 </div>
 
@@ -755,6 +921,13 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
           </div>
         </div>
       </div>
+
+      <SharePopup
+        isOpen={showSharePopup}
+        onClose={() => setShowSharePopup(false)}
+        url={typeof window !== "undefined" ? window.location.href : ""}
+        title={story.title}
+      />
     </Layout >
   );
 }

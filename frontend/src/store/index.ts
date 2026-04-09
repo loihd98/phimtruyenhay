@@ -8,6 +8,7 @@ import authSlice from "./slices/authSlice";
 import uiSlice from "./slices/uiSlice";
 import bookmarkSlice from "./slices/bookmarkSlice";
 import unlockSlice from "./slices/unlockSlice";
+import vipSlice from "./slices/vipSlice";
 
 // Combine all reducers first
 const rootReducer = combineReducers({
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   ui: uiSlice,
   bookmarks: bookmarkSlice,
   unlock: unlockSlice,
+  vip: vipSlice,
 });
 
 /**

@@ -483,3 +483,54 @@ export interface MediaUsage {
   field: string;
   createdAt: string;
 }
+
+// ===== VIP Membership Types =====
+
+export type VipPlanType = "MONTH_1" | "MONTH_3" | "MONTH_6" | "MONTH_12";
+export type PaymentStatus = "PENDING" | "DETECTED" | "VERIFYING" | "COMPLETED" | "EXPIRED" | "FAILED";
+
+export interface VipPlan {
+  id: VipPlanType;
+  label: string;
+  months: number;
+  price: number;
+}
+
+export interface VipSubscription {
+  id: string;
+  userId: string;
+  plan: VipPlanType;
+  amount: number;
+  startDate: string;
+  endDate: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface PaymentTransaction {
+  id: string;
+  userId: string;
+  plan: VipPlanType;
+  amount: number;
+  transferContent: string;
+  status: PaymentStatus;
+  bankName?: string;
+  accountNumber?: string;
+  accountHolder?: string;
+  expiresAt: string;
+  createdAt: string;
+}
+
+export interface PaymentCreateResponse {
+  paymentId: string;
+  plan: { label: string; months: number; price: number };
+  amount: number;
+  transferContent: string;
+  bankInfo: {
+    bankName: string;
+    accountNumber: string;
+    accountHolder: string;
+  };
+  qrUrl: string;
+  expiresAt: string;
+}

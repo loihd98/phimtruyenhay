@@ -50,3 +50,9 @@ export function markShownForItem(itemId: string): void {
   try { localStorage.setItem(safeKey(ITEM_PREFIX, itemId), Date.now().toString()); }
   catch { }
 }
+
+/** Open an affiliate link in a new background tab with consistent security options. */
+export function openAffiliateLink(url: string): void {
+  if (typeof window === "undefined" || !url) return;
+  window.open(url, "_blank", "noopener,noreferrer");
+}

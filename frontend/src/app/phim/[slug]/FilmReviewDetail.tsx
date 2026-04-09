@@ -10,6 +10,7 @@ import { getMediaUrl, formatViewCount } from "../../../utils/media";
 import apiClient from "../../../utils/api";
 import { FilmReview, FilmComment } from "../../../types";
 import { AdInArticle } from "../../../components/seo/AdBanner";
+import SharePopup from "../../../components/ui/SharePopup";
 
 interface FilmReviewDetailProps {
   initialData: FilmReview | null;
@@ -40,6 +41,7 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
   const [replyContent, setReplyContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [commentPage, setCommentPage] = useState(1);
+  const [showSharePopup, setShowSharePopup] = useState(false);
   const [commentPagination, setCommentPagination] = useState({
     page: 1,
     limit: 10,
@@ -210,7 +212,7 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
 
       {/* 1. Video embed / Thumbnail */}
       {(() => {
-        const hasEpisodes = filmReview.episodes && filmReview.episodes.length > 1;
+        const hasEpisodes = filmReview.episodes && filmReview.episodes.length > 0;
         const currentVideoUrl = hasEpisodes
           ? filmReview.episodes![activeEpisode]?.videoUrl || filmReview.reviewLink
           : filmReview.reviewLink;
@@ -315,10 +317,16 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
               {filmReview.totalEpisodes} tập
             </span>
           )}
+          <button
+            onClick={() => setShowSharePopup(true)}
+            className="ml-auto px-3 py-1.5 bg-white/[0.04] border border-white/[0.06] text-zinc-400 rounded-xl hover:text-white hover:bg-white/[0.08] transition-colors text-sm"
+          >
+            🔗 Chia sẻ
+          </button>
         </div>
 
         {/* 3b. Episode List - Switchable with Language Filter */}
-        {filmReview.episodes && filmReview.episodes.length > 1 && (() => {
+        {filmReview.episodes && filmReview.episodes.length > 0 && (() => {
           const allEpisodes = filmReview.episodes!;
           const availableLanguages = Array.from(new Set(allEpisodes.map(ep => ep.language))).filter(Boolean);
           const filteredEpisodes = filterLanguage
@@ -825,6 +833,13 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
           {filmReview.author && <span>✍️ Bởi: {filmReview.author.name}</span>}
         </div>
       </div>
+
+      <SharePopup
+        isOpen={showSharePopup}
+        onClose={() => setShowSharePopup(false)}
+        url={typeof window !== "undefined" ? window.location.href : ""}
+        title={filmReview.title}
+      />
     </div>
   );
 };

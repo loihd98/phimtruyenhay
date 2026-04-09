@@ -62,6 +62,8 @@ model User {
   refreshTokens RefreshToken[]
   blogPosts    BlogPost[]
   blogComments BlogComment[]
+  vipSubscriptions VipSubscription[]
+  paymentTransactions PaymentTransaction[]
   
   @@map("users")
 }
@@ -511,4 +513,81 @@ model MediaUsage {
   @@index([mediaId])
   @@index([entityType, entityId])
   @@map("media_usages")
+}
+
+// ===== VIP Membership System =====
+
+enum VipPlanType {
+  MONTH_1
+  MONTH_3
+  MONTH_6
+  MONTH_12
+}
+
+enum PaymentStatus {
+  PENDING
+  DETECTED
+  VERIFYING
+  COMPLETED
+  EXPIRED
+  FAILED
+}
+
+model VipSubscription {
+  id          String      @id @default(cuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan        VipPlanType
+  amount      Int         // Amount in VND
+  startDate   DateTime
+  endDate     DateTime
+  isActive    Boolean     @default(true)
+
+  // Payment reference
+  paymentId   String?     @unique
+  payment     PaymentTransaction? @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([endDate])
+  @@index([isActive])
+  @@map("vip_subscriptions")
+}
+
+model PaymentTransaction {
+  id              String        @id @default(cuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan            VipPlanType
+  amount          Int           // Amount in VND
+  transferContent String        @unique // Unique transfer content for matching
+  status          PaymentStatus @default(PENDING)
+  
+  // Bank info snapshot
+  bankName        String?
+  accountNumber   String?
+  accountHolder   String?
+  
+  // Verification
+  detectedAt      DateTime?     // When payment was detected
+  verifiedAt      DateTime?     // When payment was verified
+  expiresAt       DateTime      // When pending payment expires (15 min)
+  
+  // Metadata
+  ipAddress       String?
+  userAgent       String?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  subscription    VipSubscription?
+
+  @@index([userId])
+  @@index([status])
+  @@index([transferContent])
+  @@index([expiresAt])
+  @@map("payment_transactions")
 }

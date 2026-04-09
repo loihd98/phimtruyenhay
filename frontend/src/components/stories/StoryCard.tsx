@@ -12,7 +12,7 @@ import { AppDispatch } from "../../store";
 import { getMediaUrl, formatViewCount } from "../../utils/media";
 import Image from "next/image";
 import apiClient from "@/utils/api";
-import { isShownForItem, markShownForItem } from "@/utils/affiliateCooldown";
+import { isShownForItem, markShownForItem, openAffiliateLink } from "@/utils/affiliateCooldown";
 interface StoryCardProps {
   story: Story;
   variant?: "default" | "compact" | "featured" | "card";
@@ -30,6 +30,7 @@ const StoryCard: React.FC<StoryCardProps> = ({
   const dispatch = useDispatch<AppDispatch>();
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const { bookmarks } = useSelector((state: RootState) => state.bookmarks);
+  const isVip = useSelector((state: RootState) => state.vip?.isVip ?? false);
   const [affiliatePopupLink, setAffiliatePopupLink] = useState<string | null>(null);
   const [pendingNavUrl, setPendingNavUrl] = useState<string>("");
 
@@ -90,8 +91,8 @@ const StoryCard: React.FC<StoryCardProps> = ({
       const basePath = story.type === "AUDIO" ? "/truyen-audio" : "/truyen-text";
       const navUrl = `${basePath}/${story.slug}?from=story-card`;
 
-      // Show popup once per story per day
-      if (!isShownForItem(story.id)) {
+      // VIP users skip affiliate popup
+      if (!isVip && !isShownForItem(story.id)) {
         try {
           const response = await apiClient.get('/affiliate/public/active?limit=10');
           if (response.data?.success && response.data?.data?.length > 0) {
@@ -113,13 +114,20 @@ const StoryCard: React.FC<StoryCardProps> = ({
 
   const handleAffiliateConfirm = () => {
     markShownForItem(story.id);
-    if (affiliatePopupLink) window.open(affiliatePopupLink, '_blank', 'noopener,noreferrer');
-    setAffiliatePopupLink(null);
+    // Navigate to content page first, then open affiliate in background
+    // This preserves browser back button and avoids blank bridge tab
     if (pendingNavUrl) router.push(pendingNavUrl);
+    setAffiliatePopupLink(null);
+    // Delay affiliate open slightly so the navigation takes priority
+    if (affiliatePopupLink) {
+      setTimeout(() => {
+        openAffiliateLink(affiliatePopupLink);
+      }, 300);
+    }
   };
 
   const handleAffiliateSkip = () => {
-    // Don't mark as shown — allow popup to appear again next time
+    markShownForItem(story.id); // Mark as shown so it doesn't repeat
     setAffiliatePopupLink(null);
     if (pendingNavUrl) router.push(pendingNavUrl);
   };

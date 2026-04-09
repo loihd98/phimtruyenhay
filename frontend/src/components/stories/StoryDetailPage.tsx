@@ -9,7 +9,7 @@ import { RootState } from "@/store";
 import { getMediaUrl, formatViewCount } from "@/utils/media";
 import SimpleAudioPlayer from "../audio/SimpleAudioPlayer";
 import apiClient from "@/utils/api";
-import { isShownForItem, markShownForItem } from "@/utils/affiliateCooldown";
+import { isShownForItem, markShownForItem, openAffiliateLink } from "@/utils/affiliateCooldown";
 
 interface Story {
   id: string;
@@ -62,6 +62,7 @@ const StoryDetailPage: React.FC = () => {
   const params = useParams();
   const router = useRouter();
   const { user } = useSelector((state: RootState) => state.auth);
+  const isVip = useSelector((state: RootState) => state.vip?.isVip ?? false);
 
   const [story, setStory] = useState<Story | null>(null);
   const [loading, setLoading] = useState(true);
@@ -163,7 +164,7 @@ const StoryDetailPage: React.FC = () => {
 
       if (nextChapter?.affiliate?.isActive && nextChapter.affiliate.targetUrl) {
         const itemKey = `${story.id}-ch-${nextChapterNumber}`;
-        if (!isShownForItem(itemKey)) {
+        if (!isVip && !isShownForItem(itemKey)) {
           // Show popup first, then navigate
           setChapterAffiliate({ url: nextChapter.affiliate.targetUrl, nextChapterNum: nextChapterNumber });
           return;
@@ -226,7 +227,7 @@ const StoryDetailPage: React.FC = () => {
               <button
                 onClick={() => {
                   markShownForItem(`${story.id}-ch-${chapterAffiliate.nextChapterNum}`);
-                  window.open(chapterAffiliate.url, "_blank", "noopener,noreferrer");
+                  openAffiliateLink(chapterAffiliate.url);
                   setSelectedChapter(chapterAffiliate.nextChapterNum);
                   setChapterAffiliate(null);
                 }}

@@ -44,6 +44,7 @@ const TAB_PERMISSION_MAP: Partial<Record<AdminTab, string | "ADMIN_ONLY">> = {
   roles: "ADMIN_ONLY",
   settings: "ADMIN_ONLY",
   "affiliate-links": "ADMIN_ONLY",
+  vip: "ADMIN_ONLY",
 };
 
 const AdminSidebar: React.FC<AdminSidebarProps> = ({
@@ -202,6 +203,15 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
       icon: (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+      ),
+    },
+    {
+      id: "vip" as AdminTab,
+      label: "Quản lý VIP",
+      icon: (
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3l3.057 7.29L3 13l7 1 2 7 2-7 7-1-5.057-2.71L19 3l-7 4-7-4z" />
         </svg>
       ),
     },

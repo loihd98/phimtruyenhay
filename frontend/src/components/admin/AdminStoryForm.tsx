@@ -49,6 +49,17 @@ interface TextChapterDraft {
   uploadingAudio: boolean;
 }
 
+interface AudioChapterDraft {
+  id?: string;
+  number: number;
+  title: string;
+  audioUrl: string;
+  audioPreview: string;
+  isLocked: boolean;
+  expanded: boolean;
+  uploadingAudio: boolean;
+}
+
 interface AdminStoryFormProps {
   storyId?: string;
   defaultType?: "TEXT" | "AUDIO";
@@ -141,6 +152,55 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
     }
   };
 
+  // AUDIO chapters accordion
+  const emptyAudioChapter = (num: number): AudioChapterDraft => ({
+    number: num,
+    title: `Chương ${num}`,
+    audioUrl: "",
+    audioPreview: "",
+    isLocked: false,
+    expanded: num === 1,
+    uploadingAudio: false,
+  });
+  const [audioChapters, setAudioChapters] = useState<AudioChapterDraft[]>([emptyAudioChapter(1)]);
+  const [audioChapterModalIdx, setAudioChapterModalIdx] = useState<number>(-1);
+
+  const addAudioChapter = () =>
+    setAudioChapters((prev) => [...prev, emptyAudioChapter(prev.length + 1)]);
+
+  const removeAudioChapter = (idx: number) =>
+    setAudioChapters((prev) => {
+      const next = prev.filter((_, i) => i !== idx);
+      return next.map((ch, i) => ({ ...ch, number: i + 1 }));
+    });
+
+  const updateAudioChapter = <K extends keyof AudioChapterDraft>(
+    idx: number,
+    field: K,
+    value: AudioChapterDraft[K]
+  ) => setAudioChapters((prev) => prev.map((ch, i) => (i === idx ? { ...ch, [field]: value } : ch)));
+
+  const toggleAudioChapterExpand = (idx: number) =>
+    setAudioChapters((prev) =>
+      prev.map((ch, i) => (i === idx ? { ...ch, expanded: !ch.expanded } : ch))
+    );
+
+  const uploadAudioChapterFile = async (idx: number, file: File) => {
+    if (!file.type.startsWith("audio/")) { toast.error("Vui lòng chọn file audio"); return; }
+    if (file.size > 1536 * 1024 * 1024) { toast.error("File audio không được vượt quá 1.5GB"); return; }
+    updateAudioChapter(idx, "uploadingAudio", true);
+    updateAudioChapter(idx, "audioPreview", URL.createObjectURL(file));
+    try {
+      const url = await uploadFile(file, "audio");
+      updateAudioChapter(idx, "audioUrl", url);
+    } catch {
+      toast.error(`Lỗi upload audio chương ${idx + 1}`);
+      updateAudioChapter(idx, "audioPreview", "");
+    } finally {
+      updateAudioChapter(idx, "uploadingAudio", false);
+    }
+  };
+
   useEffect(() => {
     fetchAffiliates();
     if (storyId) {
@@ -226,6 +286,24 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
                 audioUrl: ch.audioUrl || "",
                 audioPreview: ch.audioUrl ? getMediaUrl(ch.audioUrl) : "",
                 affiliateId: ch.affiliateId || "",
+                isLocked: ch.isLocked ?? false,
+                expanded: false,
+                uploadingAudio: false,
+              }))
+          );
+        }
+
+        // Populate audio chapters from API
+        if (story.type === "AUDIO" && story.chapters?.length > 0) {
+          setAudioChapters(
+            story.chapters
+              .sort((a: any, b: any) => a.number - b.number)
+              .map((ch: any) => ({
+                id: ch.id,
+                number: ch.number,
+                title: ch.title || `Chương ${ch.number}`,
+                audioUrl: ch.audioUrl || "",
+                audioPreview: ch.audioUrl ? getMediaUrl(ch.audioUrl) : "",
                 isLocked: ch.isLocked ?? false,
                 expanded: false,
                 uploadingAudio: false,
@@ -452,6 +530,34 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
           }
         }
 
+        // For AUDIO: create or update audio chapters
+        if (formData.type === "AUDIO") {
+          const sid = storyId || response.data.story?.id || response.data.data?.story?.id;
+          if (sid) {
+            for (const ch of audioChapters) {
+              try {
+                if (ch.id) {
+                  await apiClient.put(`admin/chapters/${ch.id}`, {
+                    title: ch.title || `Chương ${ch.number}`,
+                    isLocked: ch.isLocked,
+                    audioUrl: ch.audioUrl || null,
+                  });
+                } else {
+                  await apiClient.post(`admin/stories/${sid}/chapters`, {
+                    number: ch.number,
+                    title: ch.title || `Chương ${ch.number}`,
+                    content: "",
+                    audioUrl: ch.audioUrl || null,
+                    isLocked: ch.isLocked,
+                  });
+                }
+              } catch (chErr: any) {
+                toast.error(`Lỗi chương audio ${ch.number}: ${chErr.response?.data?.message || chErr.message}`);
+              }
+            }
+          }
+        }
+
         const successMessage = storyId ? "Cập nhật truyện thành công!" : "Tạo truyện thành công!";
 
         toast.success(successMessage);
@@ -473,6 +579,7 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
           setThumbnailPreview("");
           setChapter1AudioPreview("");
           setTextChapters([emptyChapter(1)]);
+          setAudioChapters([emptyAudioChapter(1)]);
         }
 
         // Call success callback to refresh parent list
@@ -875,74 +982,152 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
           </div>
         )}
 
-        {/* Chapter 1 section for AUDIO — show in both create and edit modes */}
+        {/* Chapters accordion for AUDIO type */}
         {formData.type === "AUDIO" && (
-          <div className="mt-6 p-4 border border-purple-200 dark:border-purple-700 rounded-lg bg-purple-50 dark:bg-purple-900/20">
-            <h3 className="text-sm font-semibold text-purple-700 dark:text-purple-300 mb-4">
-              🎧 {storyId ? "Cập nhật Chương 1" : "Chương 1 (tạo cùng truyện)"}
-            </h3>
-            <div className="space-y-4">
-              {/* Chapter 1 title */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Tiêu đề chương
-                </label>
-                <input
-                  type="text"
-                  name="chapter1Title"
-                  value={formData.chapter1Title}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500"
-                  placeholder="VD: Chương 1"
-                />
-              </div>
+          <div className="mt-6">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-semibold text-purple-700 dark:text-purple-300">
+                🎧 Danh sách chương audio ({audioChapters.length})
+              </h3>
+              <button
+                type="button"
+                onClick={addAudioChapter}
+                className="px-3 py-1.5 bg-purple-600 text-white text-sm rounded-md hover:bg-purple-700 transition-colors"
+              >
+                + Thêm chương
+              </button>
+            </div>
 
-              {/* Chapter 1 audio */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  File audio chương 1
-                </label>
-                <div className="space-y-2">
-                  <input
-                    type="file"
-                    accept="audio/*"
-                    onChange={handleChapter1AudioChange}
-                    disabled={uploadingChapter1}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowChapter1AudioModal(true)}
-                    className="w-full px-3 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
+            <div className="space-y-2">
+              {audioChapters.map((chapter, idx) => (
+                <div
+                  key={idx}
+                  className="border border-purple-200 dark:border-purple-700 rounded-lg overflow-hidden"
+                >
+                  {/* Header */}
+                  <div
+                    className="flex items-center justify-between px-4 py-3 bg-purple-50 dark:bg-purple-900/20 cursor-pointer select-none"
+                    onClick={() => toggleAudioChapterExpand(idx)}
                   >
-                    {uploadingChapter1 ? (
-                      <span className="flex items-center justify-center gap-2">
-                        <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-                        Đang upload...
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-xs font-bold text-purple-600 dark:text-purple-400 shrink-0">
+                        #{chapter.number}
                       </span>
-                    ) : (
-                      "🎵 Chọn từ thư viện"
-                    )}
-                  </button>
-                </div>
-                {chapter1AudioPreview && (
-                  <div className="mt-2">
-                    <audio
-                      controls
-                      className="w-full"
-                      onError={() => {
-                        // File missing on server — clear preview so user can re-upload
-                        setChapter1AudioPreview("");
-                        setFormData((prev) => ({ ...prev, chapter1AudioUrl: "" }));
-                        toast.error("File audio bị thiếu trên server, vui lòng upload lại.");
-                      }}
-                    >
-                      <source src={chapter1AudioPreview} />
-                      Trình duyệt không hỗ trợ phát audio.
-                    </audio>
+                      <span className="text-sm text-gray-700 dark:text-gray-300 truncate">
+                        {chapter.title || `Chương ${chapter.number}`}
+                      </span>
+                      {chapter.isLocked && <span className="text-xs shrink-0">🔒</span>}
+                      {chapter.audioUrl && <span className="text-xs text-green-600 dark:text-green-400 shrink-0">🎵</span>}
+                      {chapter.id && (
+                        <span className="text-xs text-green-600 dark:text-green-400 shrink-0">(có sẵn)</span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {audioChapters.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); removeAudioChapter(idx); }}
+                          className="text-xs text-red-600 hover:text-red-800 px-1"
+                        >
+                          Xóa
+                        </button>
+                      )}
+                      <svg
+                        className={`w-4 h-4 text-gray-500 transition-transform ${chapter.expanded ? "rotate-180" : ""}`}
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
                   </div>
-                )}
-              </div>
+
+                  {/* Body */}
+                  {chapter.expanded && (
+                    <div className="p-4 space-y-3 bg-white dark:bg-gray-800">
+                      {/* Title */}
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                          Tiêu đề chương
+                        </label>
+                        <input
+                          type="text"
+                          value={chapter.title}
+                          onChange={(e) => updateAudioChapter(idx, "title", e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-purple-500"
+                          placeholder={`Chương ${chapter.number}`}
+                        />
+                      </div>
+
+                      {/* Audio upload */}
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                          File audio{idx === 0 && !chapter.id ? " *" : ""}
+                        </label>
+                        <div className="flex gap-2">
+                          <label className="flex-1 cursor-pointer">
+                            <div className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-xs text-center hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                              {chapter.uploadingAudio ? (
+                                <span className="flex items-center justify-center gap-1">
+                                  <span className="animate-spin rounded-full h-3 w-3 border-b-2 border-purple-600" />
+                                  Đang upload...
+                                </span>
+                              ) : (
+                                "📂 Chọn file audio"
+                              )}
+                            </div>
+                            <input
+                              type="file"
+                              accept="audio/*"
+                              className="hidden"
+                              disabled={chapter.uploadingAudio}
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) uploadAudioChapterFile(idx, file);
+                                e.target.value = "";
+                              }}
+                            />
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => setAudioChapterModalIdx(idx)}
+                            disabled={chapter.uploadingAudio}
+                            className="px-3 py-2 bg-purple-600 text-white text-xs rounded-md hover:bg-purple-700 disabled:opacity-50 transition-colors whitespace-nowrap"
+                          >
+                            🎵 Thư viện
+                          </button>
+                        </div>
+                        {chapter.audioPreview && (
+                          <audio
+                            controls
+                            className="w-full mt-2 h-8"
+                            onError={() => {
+                              updateAudioChapter(idx, "audioPreview", "");
+                              updateAudioChapter(idx, "audioUrl", "");
+                              toast.error(`File audio chương ${chapter.number} bị thiếu, vui lòng upload lại.`);
+                            }}
+                          >
+                            <source src={chapter.audioPreview} />
+                          </audio>
+                        )}
+                        {chapter.audioUrl && !chapter.audioPreview && (
+                          <p className="text-xs text-green-600 dark:text-green-400 mt-1">✓ Đã có audio</p>
+                        )}
+                      </div>
+
+                      {/* isLocked */}
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={chapter.isLocked}
+                          onChange={(e) => updateAudioChapter(idx, "isLocked", e.target.checked)}
+                          className="rounded text-purple-600 focus:ring-purple-500"
+                        />
+                        <span className="text-xs text-gray-700 dark:text-gray-300">🔒 Khóa chương</span>
+                      </label>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -993,6 +1178,20 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
             updateTextChapter(chapterAudioModalIdx, "audioPreview", getMediaUrl(media.url));
           }
           setChapterAudioModalIdx(-1);
+        }}
+        type="audio"
+        title="Chọn audio cho chương"
+      />
+
+      <MediaSelectModal
+        isOpen={audioChapterModalIdx >= 0}
+        onClose={() => setAudioChapterModalIdx(-1)}
+        onSelect={(media: any) => {
+          if (audioChapterModalIdx >= 0) {
+            updateAudioChapter(audioChapterModalIdx, "audioUrl", media.url);
+            updateAudioChapter(audioChapterModalIdx, "audioPreview", getMediaUrl(media.url));
+          }
+          setAudioChapterModalIdx(-1);
         }}
         type="audio"
         title="Chọn audio cho chương"

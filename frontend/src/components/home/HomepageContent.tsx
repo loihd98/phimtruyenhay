@@ -9,6 +9,7 @@ import { getMediaUrl, formatViewCount } from "../../utils/media";
 import {
     isAffiliateCooldown,
     markAffiliateShown,
+    openAffiliateLink,
 } from "../../utils/affiliateCooldown";
 import { Story } from "../../types";
 import { AdLeaderboard } from "../seo/AdBanner";
@@ -403,7 +404,7 @@ const HomepageContent: React.FC<HomepageContentProps> = ({
                                 onClick={() => {
                                     if (popupReview.affiliate?.targetUrl) {
                                         markAffiliateShown(popupReview.affiliate.targetUrl);
-                                        window.open(popupReview.affiliate.targetUrl, "_blank", "noopener,noreferrer");
+                                        openAffiliateLink(popupReview.affiliate.targetUrl);
                                     }
                                     const slug = popupReview.slug;
                                     setPopupReview(null);

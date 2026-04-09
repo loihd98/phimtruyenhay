@@ -444,6 +444,10 @@ class FilmReviewsController {
           affiliate: {
             select: { id: true, provider: true, targetUrl: true, label: true },
           },
+          episodes: {
+            orderBy: { episodeNum: "asc" },
+            select: { id: true, episodeNum: true, title: true, videoUrl: true, duration: true, language: true },
+          },
           _count: { select: { comments: true, episodes: true } },
         },
       });
@@ -1106,6 +1110,13 @@ class FilmReviewsController {
         },
       });
 
+      // Sync totalEpisodes on parent FilmReview
+      const episodeCount = await prisma.filmEpisode.count({ where: { filmReviewId: filmId } });
+      await prisma.filmReview.update({
+        where: { id: filmId },
+        data: { totalEpisodes: episodeCount },
+      });
+
       res.status(201).json({ data: episode });
     } catch (error) {
       if (error.code === "P2002") {
@@ -1146,7 +1157,26 @@ class FilmReviewsController {
   async adminDeleteEpisode(req, res) {
     try {
       const { id } = req.params;
+
+      // Get filmReviewId before deleting
+      const episode = await prisma.filmEpisode.findUnique({
+        where: { id },
+        select: { filmReviewId: true },
+      });
+
+      if (!episode) {
+        return res.status(404).json({ error: "Episode not found" });
+      }
+
       await prisma.filmEpisode.delete({ where: { id } });
+
+      // Sync totalEpisodes on parent FilmReview
+      const episodeCount = await prisma.filmEpisode.count({ where: { filmReviewId: episode.filmReviewId } });
+      await prisma.filmReview.update({
+        where: { id: episode.filmReviewId },
+        data: { totalEpisodes: episodeCount },
+      });
+
       res.json({ message: "Deleted" });
     } catch (error) {
       if (error.code === "P2025") return res.status(404).json({ error: "Episode not found" });

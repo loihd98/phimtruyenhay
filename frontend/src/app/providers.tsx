@@ -8,6 +8,7 @@ import { store, persistor } from "../store";
 import { setTokenHandlers } from "../utils/api";
 import { clearAuth, refreshToken } from "../store/slices/authSlice";
 import { getBookmarks } from "../store/slices/bookmarkSlice";
+import { fetchVipStatus } from "../store/slices/vipSlice";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 
 export default function ClientProvider({
@@ -56,6 +57,7 @@ export default function ClientProvider({
           .then((result) => {
             if (refreshToken.fulfilled.match(result)) {
               store.dispatch(getBookmarks());
+              store.dispatch(fetchVipStatus());
             } else {
               store.dispatch(clearAuth());
             }

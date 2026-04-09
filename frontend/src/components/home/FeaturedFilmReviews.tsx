@@ -9,6 +9,7 @@ import apiClient from "../../utils/api";
 import {
   isAffiliateCooldown,
   markAffiliateShown,
+  openAffiliateLink,
 } from "../../utils/affiliateCooldown";
 
 interface FilmReview {
@@ -259,11 +260,7 @@ const FeaturedFilmReviews: React.FC<FeaturedFilmReviewsProps> = ({ initialReview
                 onClick={() => {
                   if (popupReview.affiliate?.targetUrl) {
                     markAffiliateShown(popupReview.affiliate.targetUrl);
-                    window.open(
-                      popupReview.affiliate.targetUrl,
-                      "_blank",
-                      "noopener,noreferrer"
-                    );
+                    openAffiliateLink(popupReview.affiliate.targetUrl);
                   }
                   const slug = popupReview.slug;
                   setPopupReview(null);

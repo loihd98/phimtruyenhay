@@ -5,11 +5,17 @@ import React, { useState, useRef, useEffect } from "react";
 interface SimpleAudioPlayerProps {
   src: string;
   title: string;
+  initialTime?: number;
+  onEnded?: () => void;
+  onTimeUpdate?: (currentTime: number) => void;
 }
 
 const SimpleAudioPlayer: React.FC<SimpleAudioPlayerProps> = ({
   src,
   title,
+  initialTime,
+  onEnded,
+  onTimeUpdate,
 }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -29,10 +35,15 @@ const SimpleAudioPlayer: React.FC<SimpleAudioPlayerProps> = ({
     const handleLoadedMetadata = () => {
       setDuration(audio.duration);
       setIsLoading(false);
+      if (initialTime && initialTime > 0 && initialTime < audio.duration) {
+        audio.currentTime = initialTime;
+        setCurrentTime(initialTime);
+      }
     };
 
     const handleTimeUpdate = () => {
       setCurrentTime(audio.currentTime);
+      onTimeUpdate?.(audio.currentTime);
     };
 
     const handleLoadStart = () => {
@@ -42,6 +53,7 @@ const SimpleAudioPlayer: React.FC<SimpleAudioPlayerProps> = ({
     const handleEnded = () => {
       setIsPlaying(false);
       setCurrentTime(0);
+      onEnded?.();
     };
 
     const handleError = () => {

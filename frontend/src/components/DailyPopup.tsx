@@ -1,7 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 import apiClient from '@/utils/api';
+import { isShownForItem, markShownForItem, openAffiliateLink } from '@/utils/affiliateCooldown';
 
 const STORAGE_KEY = 'dailyPopupData';
 const MAX_DAILY_SHOWS = 2;
@@ -53,12 +56,25 @@ export default function DailyPopup({ storyId, affiliateLink }: DailyPopupProps) 
     const [isVisible, setIsVisible] = useState(false);
     const [popupLink, setPopupLink] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const isVip = useSelector((state: RootState) => state.vip?.isVip ?? false);
 
     useEffect(() => {
         const checkAndShowPopup = async () => {
             try {
+                // VIP users: skip all affiliate popups
+                if (isVip) {
+                    setIsLoading(false);
+                    return;
+                }
+
                 // Only show on mobile devices
                 if (!isMobileDevice()) {
+                    setIsLoading(false);
+                    return;
+                }
+
+                // Skip if StoryCard popup already shown for this story
+                if (isShownForItem(storyId)) {
                     setIsLoading(false);
                     return;
                 }
@@ -97,16 +113,21 @@ export default function DailyPopup({ storyId, affiliateLink }: DailyPopupProps) 
         };
 
         checkAndShowPopup();
-    }, [storyId, affiliateLink]);
+    }, [storyId, affiliateLink, isVip]);
 
     const handleClose = () => {
         // Increment show count
         const popupData = getDailyPopupData();
         saveDailyPopupData(popupData.count + 1);
 
-        // Redirect to link if available
+        // Mark this story as shown to prevent StoryCard duplicate
+        markShownForItem(storyId);
+
+        // Open affiliate in new tab (delay to keep current page stable)
         if (popupLink) {
-            window.open(popupLink, '_blank', 'noopener,noreferrer');
+            setTimeout(() => {
+                openAffiliateLink(popupLink);
+            }, 100);
         }
 
         setIsVisible(false);

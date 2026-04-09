@@ -9,6 +9,7 @@ import Image from "next/image";
 import { AppDispatch } from "../../store";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
+import { useVip } from "@/hooks/useVip";
 import { useTheme } from "@/components/layout/ThemeProvider";
 
 const Navbar: React.FC = () => {
@@ -25,6 +26,7 @@ const Navbar: React.FC = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const { user, isAuthenticated, isAdmin, hasAdminAccess, isReady } = useAuth();
+  const { isVip } = useVip();
   const { theme, toggleTheme } = useTheme();
 
   const isStoriesPage = useMemo(() => {
@@ -93,6 +95,7 @@ const Navbar: React.FC = () => {
     { href: "/truyen-audio", label: t("nav.audio") },
     { href: "/truyen-text", label: t("nav.stories") },
     { href: "/the-loai", label: "Thể loại" },
+    { href: "/vip", label: "👑 VIP" },
   ];
 
   const isActive = (href: string) => (href === "/" ? pathName === "/" : pathName?.startsWith(href));
@@ -163,18 +166,30 @@ const Navbar: React.FC = () => {
                     )}
                     <div className="relative" ref={userMenuRef}>
                       <button onClick={() => setIsUserMenuOpen(!isUserMenuOpen)} className="flex items-center gap-2 p-1 rounded-full hover:bg-white/[0.06] transition-all">
-                        {user.avatar ? (
-                          <img className="h-8 w-8 rounded-full object-cover ring-2 ring-white/10" src={user.avatar} alt={user.name} />
-                        ) : (
-                          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary-500 to-cinema-purple flex items-center justify-center text-white text-sm font-bold ring-2 ring-white/10">
-                            {user.name.charAt(0).toUpperCase()}
-                          </div>
-                        )}
+                        <div className="relative">
+                          {user.avatar ? (
+                            <img className={`h-8 w-8 rounded-full object-cover ring-2 ${isVip ? "ring-yellow-500/60" : "ring-white/10"}`} src={user.avatar} alt={user.name} />
+                          ) : (
+                            <div className={`h-8 w-8 rounded-full bg-gradient-to-br from-primary-500 to-cinema-purple flex items-center justify-center text-white text-sm font-bold ring-2 ${isVip ? "ring-yellow-500/60" : "ring-white/10"}`}>
+                              {user.name.charAt(0).toUpperCase()}
+                            </div>
+                          )}
+                          {isVip && (
+                            <span className="absolute -top-1.5 -right-1.5 text-[11px] leading-none bg-yellow-500 rounded-full w-4 h-4 flex items-center justify-center shadow-sm shadow-yellow-500/40">
+                              👑
+                            </span>
+                          )}
+                        </div>
                       </button>
                       {isUserMenuOpen && (
                         <div className="absolute right-0 mt-3 w-52 rounded-2xl bg-[#141420] border border-white/[0.06] shadow-2xl shadow-black/40 overflow-hidden">
                           <div className="px-4 py-3 border-b border-white/[0.04]">
-                            <p className="text-sm font-medium text-white truncate">{user.name}</p>
+                            <div className="flex items-center gap-1.5 mb-0.5">
+                              <p className="text-sm font-medium text-white truncate">{user.name}</p>
+                              {isVip && (
+                                <span className="px-1.5 py-0.5 rounded-full bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 text-[10px] font-bold leading-none">VIP</span>
+                              )}
+                            </div>
                             <p className="text-xs text-zinc-500 truncate">{user.email}</p>
                           </div>
                           <div className="py-1">
@@ -186,6 +201,12 @@ const Navbar: React.FC = () => {
                               <svg className="w-4 h-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" /></svg>
                               {t("nav.bookmarks")}
                             </Link>
+                            {!isVip && (
+                              <Link href="/vip" onClick={() => setIsUserMenuOpen(false)} className="px-4 py-2.5 text-sm text-yellow-400 hover:bg-yellow-500/10 transition-colors flex items-center gap-3">
+                                <span className="text-base leading-none">👑</span>
+                                Nâng cấp VIP
+                              </Link>
+                            )}
                           </div>
                           <div className="border-t border-white/[0.04] py-1">
                             <button onClick={handleLogout} className="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors flex items-center gap-3">
@@ -260,16 +281,34 @@ const Navbar: React.FC = () => {
                 <div className="space-y-1">
                   <div className="flex items-center gap-3 px-4 py-3">
                     {user.avatar ? (
-                      <img className="h-9 w-9 rounded-full object-cover ring-2 ring-white/10" src={user.avatar} alt={user.name} />
+                      <div className="relative">
+                        <img className={`h-9 w-9 rounded-full object-cover ring-2 ${isVip ? "ring-yellow-500/60" : "ring-white/10"}`} src={user.avatar} alt={user.name} />
+                        {isVip && (
+                          <span className="absolute -top-1.5 -right-1.5 text-[10px] bg-yellow-500 rounded-full w-4 h-4 flex items-center justify-center">👑</span>
+                        )}
+                      </div>
                     ) : (
-                      <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary-500 to-cinema-purple flex items-center justify-center text-white text-sm font-bold ring-2 ring-white/10">{user.name.charAt(0).toUpperCase()}</div>
+                      <div className="relative">
+                        <div className={`h-9 w-9 rounded-full bg-gradient-to-br from-primary-500 to-cinema-purple flex items-center justify-center text-white text-sm font-bold ring-2 ${isVip ? "ring-yellow-500/60" : "ring-white/10"}`}>{user.name.charAt(0).toUpperCase()}</div>
+                        {isVip && (
+                          <span className="absolute -top-1.5 -right-1.5 text-[10px] bg-yellow-500 rounded-full w-4 h-4 flex items-center justify-center">👑</span>
+                        )}
+                      </div>
                     )}
                     <div>
-                      <p className="text-sm font-medium text-white">{user.name}</p>
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-sm font-medium text-white">{user.name}</p>
+                        {isVip && <span className="px-1.5 py-0.5 rounded-full bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 text-[10px] font-bold leading-none">VIP</span>}
+                      </div>
                       <p className="text-xs text-zinc-500">{user.role}</p>
                     </div>
                   </div>
                   <Link href="/bookmarks" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-white hover:bg-white/[0.04] transition-colors">Bookmarks</Link>
+                  {!isVip && (
+                    <Link href="/vip" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-2.5 rounded-xl text-sm text-yellow-400 hover:bg-yellow-500/10 transition-colors">
+                      👑 Nâng cấp VIP
+                    </Link>
+                  )}
                   {hasAdminAccess && <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-white hover:bg-white/[0.04] transition-colors">Admin Panel</Link>}
                   <button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} className="w-full text-left px-4 py-2.5 rounded-xl text-sm text-red-400 hover:bg-red-500/10 transition-colors">{t("auth.logout")}</button>
                 </div>

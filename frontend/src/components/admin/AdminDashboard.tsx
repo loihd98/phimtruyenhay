@@ -21,6 +21,7 @@ import AdminSidebar from "./AdminSidebar";
 import RoleManagement from "./RoleManagement";
 import AdminBlogManager from "./AdminBlogManager";
 import AdminBlogCategoryManager from "./AdminBlogCategoryManager";
+import AdminVipManager from "./AdminVipManager";
 import { AdminTab } from "../../types/admin";
 
 const AdminDashboard: React.FC = () => {
@@ -131,6 +132,8 @@ const AdminDashboard: React.FC = () => {
         return <AdminBlogManager />;
       case "blog-categories":
         return <AdminBlogCategoryManager />;
+      case "vip":
+        return <AdminVipManager />;
       default:
         return <AdminStats />;
     }
