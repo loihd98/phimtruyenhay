@@ -283,14 +283,17 @@ export default function VipUpgradeModal({ isOpen, onClose, onSuccess }: VipUpgra
               <div className="flex justify-center mb-5">
                 <div className="bg-white rounded-2xl p-3">
                   <img
-                    src={({
-                      MONTH_1: "/images/QR_CODE_37K.png",
-                      MONTH_3: "/images/QR_CODE_99K.png",
-                      MONTH_6: "/images/QR_CODE_189K.png",
-                      MONTH_12: "/images/QR_CODE_369K.png",
-                    } as Record<string, string>)[selectedPlan?.id ?? ""] ?? "/images/QR_CODE_37K.png"}
+                    src={payment.qrUrl}
                     alt="QR Thanh toán"
                     className="w-48 h-48 object-contain"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src = ({
+                        MONTH_1: "/images/QR_CODE_37K.png",
+                        MONTH_3: "/images/QR_CODE_99K.png",
+                        MONTH_6: "/images/QR_CODE_189K.png",
+                        MONTH_12: "/images/QR_CODE_369K.png",
+                      } as Record<string, string>)[selectedPlan?.id ?? ""] ?? "/images/QR_CODE_37K.png";
+                    }}
                   />
                 </div>
               </div>
