@@ -28,6 +28,7 @@ export default function VipUpgradeModal({ isOpen, onClose, onSuccess }: VipUpgra
   const [timeLeft, setTimeLeft] = useState(0);
   const pollRef = useRef<NodeJS.Timeout | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const visibilityHandlerRef = useRef<(() => void) | null>(null);
 
   // Fetch plans on mount
   useEffect(() => {
@@ -75,7 +76,14 @@ export default function VipUpgradeModal({ isOpen, onClose, onSuccess }: VipUpgra
         const res = await apiClient.get(`/vip/payment-status/${paymentId}`);
         const status = res.data?.data?.status;
         if (status) {
-          setPaymentStatus(status);
+          setPaymentStatus((prev) => {
+            // When we first detect the transfer, switch to faster polling (2s)
+            if (prev !== "DETECTED" && status === "DETECTED") {
+              if (pollRef.current) clearInterval(pollRef.current);
+              pollRef.current = setInterval(poll, 2000);
+            }
+            return status;
+          });
           if (status === "COMPLETED" || status === "EXPIRED" || status === "FAILED") {
             if (pollRef.current) clearInterval(pollRef.current);
             if (status === "COMPLETED") {
@@ -93,12 +101,13 @@ export default function VipUpgradeModal({ isOpen, onClose, onSuccess }: VipUpgra
     pollRef.current = setInterval(poll, POLL_INTERVAL);
 
     // Also re-poll when user returns from background tab (e.g. bank app)
-    const handleVisibility = () => {
+    if (visibilityHandlerRef.current) {
+      document.removeEventListener("visibilitychange", visibilityHandlerRef.current);
+    }
+    visibilityHandlerRef.current = () => {
       if (document.visibilityState === "visible") poll();
     };
-    document.addEventListener("visibilitychange", handleVisibility);
-    // Store cleanup reference
-    (pollRef as any)._visibilityHandler = handleVisibility;
+    document.addEventListener("visibilitychange", visibilityHandlerRef.current);
   }, [dispatch, onSuccess]);
 
   // Cleanup on unmount
@@ -106,8 +115,10 @@ export default function VipUpgradeModal({ isOpen, onClose, onSuccess }: VipUpgra
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
       if (timerRef.current) clearInterval(timerRef.current);
-      const handler = (pollRef as any)._visibilityHandler;
-      if (handler) document.removeEventListener("visibilitychange", handler);
+      if (visibilityHandlerRef.current) {
+        document.removeEventListener("visibilitychange", visibilityHandlerRef.current);
+        visibilityHandlerRef.current = null;
+      }
     };
   }, []);
 
@@ -134,6 +145,10 @@ export default function VipUpgradeModal({ isOpen, onClose, onSuccess }: VipUpgra
   const handleClose = () => {
     if (pollRef.current) clearInterval(pollRef.current);
     if (timerRef.current) clearInterval(timerRef.current);
+    if (visibilityHandlerRef.current) {
+      document.removeEventListener("visibilitychange", visibilityHandlerRef.current);
+      visibilityHandlerRef.current = null;
+    }
     setStep("plans");
     setPayment(null);
     setPaymentStatus("PENDING");

@@ -367,11 +367,21 @@ class VipController {
         return res.json({ success: false, message: "Gói VIP không hợp lệ" });
       }
 
-      // Validate amount — allow partial overpay but reject underpay
+      // Mark as DETECTED immediately so the polling frontend sees progress
+      await prisma.paymentTransaction.update({
+        where: { id: matched.id },
+        data: { status: "DETECTED", detectedAt: new Date() },
+      });
+
+      // Validate amount — reject underpay and mark as FAILED so user sees clear error
       const receivedAmount = parseFloat(String(transferAmount)) || 0;
       if (receivedAmount < matched.amount) {
         console.warn(`SePay underpay: expected ${matched.amount}, got ${receivedAmount} for ${matched.transferContent}`);
-        return res.json({ success: true, message: "Số tiền không đủ" });
+        await prisma.paymentTransaction.update({
+          where: { id: matched.id },
+          data: { status: "FAILED" },
+        });
+        return res.json({ success: true, message: "Số tiền không đủ, giao dịch đã bị từ chối" });
       }
 
       // Duration in days (not calendar months to avoid DST issues)
@@ -392,23 +402,37 @@ class VipController {
       const endDate = new Date(baseDate.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
       const startDate = new Date();
 
-      await prisma.$transaction([
-        prisma.paymentTransaction.update({
-          where: { id: matched.id },
-          data: { status: "COMPLETED", verifiedAt: new Date(), detectedAt: new Date() },
-        }),
-        prisma.vipSubscription.create({
-          data: {
-            userId: matched.userId,
-            plan: matched.plan,
-            amount: matched.amount,
-            startDate,
-            endDate,
-            isActive: true,
-            paymentId: matched.id,
-          },
-        }),
-      ]);
+      try {
+        await prisma.$transaction([
+          prisma.paymentTransaction.update({
+            where: { id: matched.id },
+            data: { status: "COMPLETED", verifiedAt: new Date() },
+          }),
+          prisma.vipSubscription.create({
+            data: {
+              userId: matched.userId,
+              plan: matched.plan,
+              amount: matched.amount,
+              startDate,
+              endDate,
+              isActive: true,
+              paymentId: matched.id,
+            },
+          }),
+        ]);
+      } catch (txError) {
+        // P2002 = unique constraint violation on VipSubscription.paymentId
+        // Means a concurrent webhook already created the subscription — idempotent, just ensure COMPLETED
+        if (txError.code === "P2002") {
+          await prisma.paymentTransaction.update({
+            where: { id: matched.id },
+            data: { status: "COMPLETED", verifiedAt: new Date() },
+          });
+          console.log(`SePay webhook: duplicate call for ${matched.transferContent}, idempotent OK`);
+        } else {
+          throw txError;
+        }
+      }
 
       console.log(`SePay webhook: activated VIP for user ${matched.userId}, plan ${matched.plan}, endDate ${endDate}`);
       return res.json({ success: true, message: "Kích hoạt VIP thành công" });
