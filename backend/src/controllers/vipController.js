@@ -17,8 +17,10 @@ const BANK_INFO = {
   qrTemplate: process.env.VIP_QR_TEMPLATE || "",
 };
 
-// Payment timeout: 15 minutes
-const PAYMENT_TIMEOUT_MS = 15 * 60 * 1000;
+// Payment timeout: 30 minutes (SePay webhook delivery can be delayed)
+const PAYMENT_TIMEOUT_MS = 30 * 60 * 1000;
+// Extra grace period for webhook: SePay may fire up to 30 min after payment expiry
+const WEBHOOK_GRACE_MS = 30 * 60 * 1000;
 
 class VipController {
   // GET /api/vip/plans — Get available VIP plans
@@ -341,12 +343,12 @@ class VipController {
         return res.json({ success: true, message: "Không có nội dung chuyển khoản" });
       }
 
-      // Fetch all non-expired pending payments and find the one whose transferContent
-      // is contained in the bank transfer content string sent by SePay
+      // Fetch pending payments — include recently expired ones (grace period) so
+      // late SePay webhook deliveries are still processed
       const pendingPayments = await prisma.paymentTransaction.findMany({
         where: {
           status: { in: ["PENDING", "DETECTED", "VERIFYING"] },
-          expiresAt: { gt: new Date() },
+          expiresAt: { gt: new Date(Date.now() - WEBHOOK_GRACE_MS) },
         },
       });
 
