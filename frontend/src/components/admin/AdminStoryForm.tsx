@@ -47,6 +47,7 @@ interface TextChapterDraft {
   isLocked: boolean;
   expanded: boolean;
   uploadingAudio: boolean;
+  uploadProgress: number;
 }
 
 interface AudioChapterDraft {
@@ -58,6 +59,7 @@ interface AudioChapterDraft {
   isLocked: boolean;
   expanded: boolean;
   uploadingAudio: boolean;
+  uploadProgress: number;
 }
 
 interface AdminStoryFormProps {
@@ -100,6 +102,7 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
   const [chapter1AudioPreview, setChapter1AudioPreview] = useState<string>("");
   const [showChapter1AudioModal, setShowChapter1AudioModal] = useState(false);
   const [uploadingChapter1, setUploadingChapter1] = useState(false);
+  const [chapter1AudioProgress, setChapter1AudioProgress] = useState(0);
 
   // TEXT chapters accordion
   const emptyChapter = (num: number): TextChapterDraft => ({
@@ -112,6 +115,7 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
     isLocked: false,
     expanded: num === 1,
     uploadingAudio: false,
+    uploadProgress: 0,
   });
   const [textChapters, setTextChapters] = useState<TextChapterDraft[]>([emptyChapter(1)]);
   const [chapterAudioModalIdx, setChapterAudioModalIdx] = useState<number>(-1);
@@ -140,9 +144,10 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
     if (!file.type.startsWith("audio/")) { toast.error("Vui lòng chọn file audio"); return; }
     if (file.size > 1536 * 1024 * 1024) { toast.error("File audio không được vượt quá 1.5GB"); return; }
     updateTextChapter(idx, "uploadingAudio", true);
+    updateTextChapter(idx, "uploadProgress", 0);
     updateTextChapter(idx, "audioPreview", URL.createObjectURL(file));
     try {
-      const url = await uploadFile(file, "audio");
+      const url = await uploadFile(file, "audio", (percent) => updateTextChapter(idx, "uploadProgress", percent));
       updateTextChapter(idx, "audioUrl", url);
     } catch {
       toast.error(`Lỗi upload audio chương ${idx + 1}`);
@@ -161,6 +166,7 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
     isLocked: false,
     expanded: num === 1,
     uploadingAudio: false,
+    uploadProgress: 0,
   });
   const [audioChapters, setAudioChapters] = useState<AudioChapterDraft[]>([emptyAudioChapter(1)]);
   const [audioChapterModalIdx, setAudioChapterModalIdx] = useState<number>(-1);
@@ -189,9 +195,10 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
     if (!file.type.startsWith("audio/")) { toast.error("Vui lòng chọn file audio"); return; }
     if (file.size > 1536 * 1024 * 1024) { toast.error("File audio không được vượt quá 1.5GB"); return; }
     updateAudioChapter(idx, "uploadingAudio", true);
+    updateAudioChapter(idx, "uploadProgress", 0);
     updateAudioChapter(idx, "audioPreview", URL.createObjectURL(file));
     try {
-      const url = await uploadFile(file, "audio");
+      const url = await uploadFile(file, "audio", (percent) => updateAudioChapter(idx, "uploadProgress", percent));
       updateAudioChapter(idx, "audioUrl", url);
     } catch {
       toast.error(`Lỗi upload audio chương ${idx + 1}`);
@@ -354,7 +361,8 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
 
   const uploadFile = async (
     file: File,
-    type: "image" | "audio"
+    type: "image" | "audio",
+    onProgress?: (percent: number) => void
   ): Promise<string> => {
     const fileKey = type === "audio" ? "audio" : "image";
 
@@ -366,6 +374,9 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
         "Content-Type": "multipart/form-data",
       },
       timeout: 0,
+      onUploadProgress: onProgress
+        ? (e) => { if (e.total) onProgress(Math.round((e.loaded * 100) / e.total)); }
+        : undefined,
     });
 
     return response.data.file.url;
@@ -430,8 +441,9 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
     }
     try {
       setUploadingChapter1(true);
+      setChapter1AudioProgress(0);
       setChapter1AudioPreview(URL.createObjectURL(file));
-      const url = await uploadFile(file, "audio");
+      const url = await uploadFile(file, "audio", (percent) => setChapter1AudioProgress(percent));
       setFormData((prev) => ({ ...prev, chapter1AudioUrl: url }));
     } catch {
       toast.error("Có lỗi xảy ra khi upload audio chương 1");
@@ -918,7 +930,7 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
                               {chapter.uploadingAudio ? (
                                 <span className="flex items-center justify-center gap-1">
                                   <span className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600" />
-                                  Đang upload...
+                                  {chapter.uploadProgress > 0 ? `${chapter.uploadProgress}%` : "Đang upload..."}
                                 </span>
                               ) : (
                                 "📂 Chọn file audio"
@@ -945,6 +957,16 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
                             🎵 Thư viện
                           </button>
                         </div>
+                        {chapter.uploadingAudio && chapter.uploadProgress > 0 && (
+                          <div className="mt-2">
+                            <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-1.5">
+                              <div
+                                className="bg-blue-600 h-1.5 rounded-full transition-all duration-300"
+                                style={{ width: `${chapter.uploadProgress}%` }}
+                              />
+                            </div>
+                          </div>
+                        )}
                         {chapter.audioPreview && (
                           <audio
                             controls
@@ -1069,7 +1091,7 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
                               {chapter.uploadingAudio ? (
                                 <span className="flex items-center justify-center gap-1">
                                   <span className="animate-spin rounded-full h-3 w-3 border-b-2 border-purple-600" />
-                                  Đang upload...
+                                  {chapter.uploadProgress > 0 ? `${chapter.uploadProgress}%` : "Đang upload..."}
                                 </span>
                               ) : (
                                 "📂 Chọn file audio"
@@ -1096,6 +1118,16 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
                             🎵 Thư viện
                           </button>
                         </div>
+                        {chapter.uploadingAudio && chapter.uploadProgress > 0 && (
+                          <div className="mt-2">
+                            <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-1.5">
+                              <div
+                                className="bg-purple-600 h-1.5 rounded-full transition-all duration-300"
+                                style={{ width: `${chapter.uploadProgress}%` }}
+                              />
+                            </div>
+                          </div>
+                        )}
                         {chapter.audioPreview && (
                           <audio
                             controls

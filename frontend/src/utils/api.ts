@@ -96,6 +96,10 @@ apiClient.interceptors.response.use(
           addRefreshSubscriber((token: string | null) => {
             if (token && originalRequest.headers) {
               originalRequest.headers.Authorization = `Bearer ${token}`;
+              // Clear stale multipart boundary so the browser regenerates it
+              if (originalRequest.data instanceof FormData) {
+                delete originalRequest.headers["Content-Type"];
+              }
               resolve(apiClient(originalRequest));
             } else {
               reject(error);
@@ -115,6 +119,10 @@ apiClient.interceptors.response.use(
 
           if (newToken && originalRequest.headers) {
             originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            // Clear stale multipart boundary so the browser regenerates it
+            if (originalRequest.data instanceof FormData) {
+              delete originalRequest.headers["Content-Type"];
+            }
             return apiClient(originalRequest);
           }
         }

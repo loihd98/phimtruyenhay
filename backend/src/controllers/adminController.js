@@ -819,19 +819,6 @@ class AdminController {
         },
       });
 
-      // Auto-create Chapter 1 for AUDIO stories
-      if (type === "AUDIO") {
-        await prisma.chapter.create({
-          data: {
-            storyId: story.id,
-            number: 1,
-            title: chapter1Title?.trim() || "Chương 1",
-            audioUrl: chapter1AudioUrl || null,
-            isLocked: false,
-          },
-        });
-      }
-
       res.status(201).json({
         message: "Tạo truyện thành công",
         story: normalizeStory(story),

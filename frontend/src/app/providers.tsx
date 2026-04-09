@@ -43,29 +43,25 @@ export default function ClientProvider({
       }
     );
 
-    // Validate auth on app startup by attempting a silent refresh.
-    // After rehydration, we have user info but no accessToken
-    // (stripped by the persist transform). The httpOnly cookie
-    // is used to get a fresh accessToken.
+    // Validate auth on app startup by always attempting a silent refresh.
+    // The httpOnly refresh-token cookie is sent automatically.
+    // If the cookie is valid the user is silently logged back in;
+    // if not, the request simply fails and the user stays logged out.
+    // We intentionally do NOT gate this on Redux state so that clearing
+    // localStorage (Ctrl+Shift+Del) no longer breaks authentication.
     const validateAuth = () => {
-      const state = store.getState();
-
-      if (state.auth.isAuthenticated || state.auth.user) {
-        // Try to refresh the access token
-        store
-          .dispatch(refreshToken())
-          .then((result) => {
-            if (refreshToken.fulfilled.match(result)) {
-              store.dispatch(getBookmarks());
-              store.dispatch(fetchVipStatus());
-            } else {
-              store.dispatch(clearAuth());
-            }
-          })
-          .catch(() => {
-            store.dispatch(clearAuth());
-          });
-      }
+      store
+        .dispatch(refreshToken())
+        .then((result) => {
+          if (refreshToken.fulfilled.match(result)) {
+            store.dispatch(getBookmarks());
+            store.dispatch(fetchVipStatus());
+          }
+          // If rejected the user is not authenticated — that's fine.
+        })
+        .catch(() => {
+          // Network error or similar — ignore, user stays logged out.
+        });
     };
 
     // Wait for persist gate to rehydrate, then validate

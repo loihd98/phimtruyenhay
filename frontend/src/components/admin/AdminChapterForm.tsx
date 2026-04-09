@@ -59,6 +59,7 @@ const AdminChapterForm: React.FC<AdminChapterFormProps> = ({
   const [audioPreview, setAudioPreview] = useState<string>("");
   const [thumbnailPreview, setThumbnailPreview] = useState<string>("");
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -125,7 +126,8 @@ const AdminChapterForm: React.FC<AdminChapterFormProps> = ({
 
   const uploadFile = async (
     file: File,
-    type: "image" | "audio"
+    type: "image" | "audio",
+    onProgress?: (percent: number) => void
   ): Promise<string> => {
     const fileKey = type === "audio" ? "audio" : "image";
     const form = new FormData();
@@ -133,6 +135,9 @@ const AdminChapterForm: React.FC<AdminChapterFormProps> = ({
     const response = await apiClient.post(`media/upload/${type}`, form, {
       headers: { "Content-Type": "multipart/form-data" },
       timeout: 0,
+      onUploadProgress: onProgress
+        ? (e) => { if (e.total) onProgress(Math.round((e.loaded * 100) / e.total)); }
+        : undefined,
     });
     return response.data.file.url;
   };
@@ -173,15 +178,16 @@ const AdminChapterForm: React.FC<AdminChapterFormProps> = ({
       setError("Vui lòng chọn file audio");
       return;
     }
-    if (file.size > 500 * 1024 * 1024) {
-      setError("File audio không được vượt quá 500MB");
+    if (file.size > 1536 * 1024 * 1024) {
+      setError("File audio không được vượt quá 1.5GB");
       return;
     }
     try {
       setUploading(true);
+      setUploadProgress(0);
       setError("");
       setAudioPreview(URL.createObjectURL(file));
-      const filename = await uploadFile(file, "audio");
+      const filename = await uploadFile(file, "audio", (percent) => setUploadProgress(percent));
       setFormData((prev) => ({ ...prev, audioUrl: filename }));
     } catch {
       setError("Có lỗi khi upload audio");
@@ -394,7 +400,26 @@ const AdminChapterForm: React.FC<AdminChapterFormProps> = ({
                           📁 Library
                         </button>
                       </div>
-                      {audioPreview && (
+                      {uploading && uploadProgress > 0 && uploadProgress < 100 && (
+                        <div className="mt-2">
+                          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
+                            <span>Đang upload audio...</span>
+                            <span>{uploadProgress}%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                            <div
+                              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                              style={{ width: `${uploadProgress}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                      {uploading && uploadProgress === 0 && (
+                        <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 animate-pulse">
+                          Đang chuẩn bị upload...
+                        </p>
+                      )}
+                      {audioPreview && !uploading && (
                         <div className="mt-3">
                           <audio controls className="w-full">
                             <source src={audioPreview} />

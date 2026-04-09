@@ -111,7 +111,7 @@ router.use((error, req, res, next) => {
     if (error.code === "LIMIT_FILE_SIZE") {
       return res.status(413).json({
         error: "Payload Too Large",
-        message: "File quá lớn. ᐐm thanh tối đa 500MB, hình ảnh tối đa 100MB.",
+        message: "File quá lớn. Âm thanh tối đa 1.5GB, hình ảnh tối đa 100MB.",
       });
     }
   }
