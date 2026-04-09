@@ -157,8 +157,8 @@ class VipController {
         });
       }
 
-      // Check if expired
-      if (payment.status === "PENDING" && new Date() > payment.expiresAt) {
+      // Check if expired (auto-expire PENDING or stuck DETECTED payments)
+      if (["PENDING", "DETECTED"].includes(payment.status) && new Date() > payment.expiresAt) {
         await prisma.paymentTransaction.update({
           where: { id: paymentId },
           data: { status: "EXPIRED" },
@@ -315,7 +315,8 @@ class VipController {
   // POST /api/vip/webhook/sepay — SePay automatic bank transfer webhook (PUBLIC, no auth)
   async sePayWebhook(req, res) {
     try {
-      // Validate SePay API key if configured
+      // Log every incoming webhook call for debugging
+      console.log(`[SePay webhook] ${new Date().toISOString()} — body:`, JSON.stringify(req.body));
       // SePay sends: Authorization: Apikey <token>
       const sePayToken = process.env.SEPAY_WEBHOOK_TOKEN;
       if (sePayToken) {
