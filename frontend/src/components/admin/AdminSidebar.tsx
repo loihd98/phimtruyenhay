@@ -257,6 +257,8 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
               <img
                 src={user.avatar}
                 alt={user.name}
+                loading="lazy"
+                decoding="async"
                 className="h-12 w-12 rounded-full object-cover ring-2 ring-red-500 ring-offset-2 ring-offset-gray-800"
               />
             ) : (

@@ -204,6 +204,8 @@ const AdminDashboard: React.FC = () => {
                         <img
                           src={user.avatar}
                           alt={user.name}
+                          loading="lazy"
+                          decoding="async"
                           className="h-8 w-8 rounded-full object-cover ring-2 ring-red-500"
                         />
                       ) : (

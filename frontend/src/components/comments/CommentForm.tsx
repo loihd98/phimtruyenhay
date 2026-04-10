@@ -77,6 +77,8 @@ const CommentForm: React.FC<CommentFormProps> = ({
                 <img
                   src={user.avatar}
                   alt={user.name}
+                  loading="lazy"
+                  decoding="async"
                   className="w-8 h-8 rounded-full object-cover"
                 />
               ) : (

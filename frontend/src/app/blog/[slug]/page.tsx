@@ -146,7 +146,7 @@ export default function BlogPostPage() {
           <div className="flex items-center gap-4 mt-4 text-sm text-zinc-500">
             <div className="flex items-center gap-2">
               {post.author.avatar ? (
-                <img src={post.author.avatar} alt="" className="w-8 h-8 rounded-full" />
+                <img src={post.author.avatar} alt="" className="w-8 h-8 rounded-full" loading="lazy" decoding="async" />
               ) : (
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-cinema-purple flex items-center justify-center text-white text-sm font-bold">
                   {post.author.name.charAt(0)}
@@ -163,7 +163,7 @@ export default function BlogPostPage() {
           {/* Thumbnail */}
           {post.thumbnailUrl && (
             <div className="relative h-64 md:h-96 rounded-2xl overflow-hidden mt-8">
-              <Image src={post.thumbnailUrl} alt={post.title} fill className="object-cover" />
+              <Image src={post.thumbnailUrl} alt={post.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 900px" priority />
             </div>
           )}
 
@@ -236,7 +236,7 @@ export default function BlogPostPage() {
                 <div key={comment.id} className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-4">
                   <div className="flex items-center gap-2 mb-2">
                     {comment.user.avatar ? (
-                      <img src={comment.user.avatar} alt="" className="w-7 h-7 rounded-full" />
+                      <img src={comment.user.avatar} alt="" className="w-7 h-7 rounded-full" loading="lazy" decoding="async" />
                     ) : (
                       <div className="w-7 h-7 rounded-full bg-primary-500/20 flex items-center justify-center text-[11px] text-primary-400 font-bold">
                         {comment.user.name.charAt(0)}

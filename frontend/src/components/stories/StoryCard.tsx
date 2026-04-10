@@ -146,6 +146,8 @@ const StoryCard: React.FC<StoryCardProps> = ({
                   <img
                     src={getMediaUrl(story.thumbnailUrl)}
                     alt={story.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover/thumb:opacity-90 transition-opacity rounded"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
@@ -224,6 +226,8 @@ const StoryCard: React.FC<StoryCardProps> = ({
                 <img
                   src={getMediaUrl(story.thumbnailUrl)}
                   alt={story.title}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover/thumb:scale-105 transition-transform duration-300"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
@@ -351,6 +355,8 @@ const StoryCard: React.FC<StoryCardProps> = ({
                 <img
                   src={getMediaUrl(story.thumbnailUrl)}
                   alt={story.title}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
@@ -465,6 +471,8 @@ const StoryCard: React.FC<StoryCardProps> = ({
                 <img
                   src={getMediaUrl(story.thumbnailUrl)}
                   alt={story.title}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover/thumb:scale-105 transition-transform duration-300"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;

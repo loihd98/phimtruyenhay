@@ -615,6 +615,8 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
                 <img
                   src={getMediaUrl(formData.thumbnailUrl)}
                   alt="Preview"
+                  loading="lazy"
+                  decoding="async"
                   className="w-32 h-44 object-cover rounded-lg border-2 border-gray-200 dark:border-gray-600 shadow-sm"
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = "none";

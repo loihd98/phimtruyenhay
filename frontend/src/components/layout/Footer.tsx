@@ -54,7 +54,7 @@ const Footer: React.FC = () => {
                 <span className="text-primary-500 ml-1">Hay</span>
               </span>
             </div>
-            <img src="logo_phim.png" alt="logo phim truyện hay" className="w-[200px] h-[200px] rounded-sm" />
+            <Image src="/logo_phim.png" alt="logo phim truyện hay" width={200} height={200} className="rounded-sm" loading="lazy" />
             <p className="text-sm text-zinc-600 leading-relaxed max-w-xs">
               Review phim chuyên sâu, dễ hiểu. Phân tích nội dung, giải thích ending & gợi ý phim hay.
             </p>

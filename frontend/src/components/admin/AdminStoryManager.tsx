@@ -377,6 +377,8 @@ const AdminStoryManager: React.FC<{ storyType?: "TEXT" | "AUDIO" }> = ({ storyTy
                           "https://via.placeholder.com/60x80?text=No+Image"
                         }
                         alt={story.title}
+                        loading="lazy"
+                        decoding="async"
                         className="h-16 w-12 object-cover rounded"
                       />
                       <div className="ml-4">

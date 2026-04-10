@@ -450,6 +450,8 @@ const EnhancedStoriesClient: React.FC<EnhancedStoriesClientProps> = ({
                         "https://via.placeholder.com/80x120?text=No+Image"
                       }
                       alt={story.title}
+                      loading="lazy"
+                      decoding="async"
                       className="w-16 h-24 object-cover rounded-lg"
                     />
                     <div className="flex-1 min-w-0">

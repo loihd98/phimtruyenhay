@@ -120,7 +120,7 @@ export default function BlogWritePage() {
               <label className="block text-sm font-medium text-zinc-400 mb-2">Ảnh bìa</label>
               {thumbnailUrl ? (
                 <div className="relative h-48 rounded-xl overflow-hidden mb-2">
-                  <img src={thumbnailUrl} alt="Thumbnail" className="w-full h-full object-cover" />
+                  <img src={thumbnailUrl} alt="Thumbnail" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   <button
                     onClick={() => setThumbnailUrl("")}
                     className="absolute top-2 right-2 w-8 h-8 bg-black/60 rounded-full flex items-center justify-center text-white hover:bg-black/80 transition-colors"

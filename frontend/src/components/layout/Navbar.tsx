@@ -168,7 +168,7 @@ const Navbar: React.FC = () => {
                       <button onClick={() => setIsUserMenuOpen(!isUserMenuOpen)} className="flex items-center gap-2 p-1 rounded-full hover:bg-white/[0.06] transition-all">
                         <div className="relative">
                           {user.avatar ? (
-                            <img className={`h-8 w-8 rounded-full object-cover ring-2 ${isVip ? "ring-yellow-500/60" : "ring-white/10"}`} src={user.avatar} alt={user.name} />
+                            <img loading="lazy" decoding="async" className={`h-8 w-8 rounded-full object-cover ring-2 ${isVip ? "ring-yellow-500/60" : "ring-white/10"}`} src={user.avatar} alt={user.name} />
                           ) : (
                             <div className={`h-8 w-8 rounded-full bg-gradient-to-br from-primary-500 to-cinema-purple flex items-center justify-center text-white text-sm font-bold ring-2 ${isVip ? "ring-yellow-500/60" : "ring-white/10"}`}>
                               {user.name.charAt(0).toUpperCase()}
@@ -282,7 +282,7 @@ const Navbar: React.FC = () => {
                   <div className="flex items-center gap-3 px-4 py-3">
                     {user.avatar ? (
                       <div className="relative">
-                        <img className={`h-9 w-9 rounded-full object-cover ring-2 ${isVip ? "ring-yellow-500/60" : "ring-white/10"}`} src={user.avatar} alt={user.name} />
+                        <img loading="lazy" decoding="async" className={`h-9 w-9 rounded-full object-cover ring-2 ${isVip ? "ring-yellow-500/60" : "ring-white/10"}`} src={user.avatar} alt={user.name} />
                         {isVip && (
                           <span className="absolute -top-1.5 -right-1.5 text-[10px] bg-yellow-500 rounded-full w-4 h-4 flex items-center justify-center">👑</span>
                         )}

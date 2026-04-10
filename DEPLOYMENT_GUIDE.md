@@ -31,7 +31,7 @@ Before starting, ensure you have:
 - A VPS with Ubuntu 20.04 LTS (IP: `103.199.17.168`)
 - Root SSH access to the VPS
 - Domain `phimtruyenhay.com` registered and ready to configure
-- Your project code pushed to GitHub at `https://github.com/loihd98/vivutruyenghay.git`
+- Your project code pushed to GitHub at `https://github.com/loihd98/phimtruyenhay.com.git`
 
 ---
 

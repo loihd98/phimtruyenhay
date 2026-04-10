@@ -786,6 +786,8 @@ const AdminStoryForm: React.FC<AdminStoryFormProps> = ({
                   <img
                     src={thumbnailPreview}
                     alt="Thumbnail preview"
+                    loading="lazy"
+                    decoding="async"
                     className="rounded-md object-cover w-[200px] h-[250px]"
                   />
                 </div>

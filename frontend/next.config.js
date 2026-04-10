@@ -16,6 +16,9 @@ const nextConfig = {
     // volume-mounted files.
     loaderFile: "./src/imageLoader.ts",
     formats: ["image/avif", "image/webp"],
+    // Responsive breakpoints for srcset generation
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     // minimumCacheTTL not needed with custom loader
   },
   env: {

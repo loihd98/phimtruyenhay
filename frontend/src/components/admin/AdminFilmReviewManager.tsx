@@ -616,6 +616,8 @@ const AdminFilmReviewManager: React.FC = () => {
                             <img
                               src={review.thumbnailUrl}
                               alt={review.title}
+                              loading="lazy"
+                              decoding="async"
                               className="w-12 h-16 object-cover rounded mr-3 flex-shrink-0"
                             />
                           ) : (

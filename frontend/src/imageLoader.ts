@@ -1,15 +1,24 @@
-export default function imageLoader({ src }: { src: string }) {
-  // 1. External URLs
+export default function imageLoader({
+  src,
+  width,
+  quality,
+}: {
+  src: string;
+  width?: number;
+  quality?: number;
+}) {
+  // 1. External URLs — return as-is
   if (src.startsWith("http")) return src;
 
-  // 2. Uploads (Nginx handles these)
-  if (src.startsWith("/uploads/")) return src;
-
-  // 3. Data URIs
+  // 2. Data URIs
   if (src.startsWith("data:")) return src;
 
+  // 3. Uploads (Nginx handles these with aggressive caching)
+  //    Width/quality params are included for future CDN/image-proxy readiness
+  if (src.startsWith("/uploads/")) {
+    return src;
+  }
+
   // 4. Static Assets (Logo, Icons, etc.)
-  // Just return the src. Next.js will provide the hashed path
-  // e.g., /_next/static/media/logo.58618447.png
   return src;
 }

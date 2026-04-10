@@ -471,6 +471,8 @@ const AdminChapterForm: React.FC<AdminChapterFormProps> = ({
                           <img
                             src={thumbnailPreview}
                             alt="Thumbnail preview"
+                            loading="lazy"
+                            decoding="async"
                             className="rounded-md object-cover border border-gray-200 dark:border-gray-600 w-[200px] h-[250px]"
                           />
                         </div>

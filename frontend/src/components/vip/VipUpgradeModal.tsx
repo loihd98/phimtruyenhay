@@ -285,6 +285,8 @@ export default function VipUpgradeModal({ isOpen, onClose, onSuccess }: VipUpgra
                   <img
                     src={payment.qrUrl}
                     alt="QR Thanh toán"
+                    loading="lazy"
+                    decoding="async"
                     className="w-48 h-48 object-contain"
                     onError={(e) => {
                       (e.currentTarget as HTMLImageElement).src = ({

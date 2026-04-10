@@ -312,6 +312,8 @@ const MediaManager: React.FC = () => {
                     <img
                       src={getMediaUrl(file.url)}
                       alt={file.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-32 object-cover rounded"
                     />
                   </div>

@@ -429,6 +429,8 @@ const AdminMediaUpload: React.FC = () => {
                     <img
                       src={getMediaUrl(file.url)}
                       alt={file.originalName}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-32 object-cover rounded-lg mb-3"
                     />
                   ) : (

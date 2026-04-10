@@ -137,6 +137,8 @@ const CommentItem: React.FC<CommentItemProps> = ({
                 <img
                   src={comment.user.avatar}
                   alt={comment.user.name}
+                  loading="lazy"
+                  decoding="async"
                   className="w-8 h-8 rounded-full object-cover"
                 />
               ) : (

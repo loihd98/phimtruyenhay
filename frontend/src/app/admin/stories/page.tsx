@@ -268,6 +268,8 @@ const AdminStoriesPage: React.FC = () => {
                               className="h-12 w-8 object-cover rounded"
                               src={getMediaUrl(story.thumbnailUrl)}
                               alt={story.title}
+                              loading="lazy"
+                              decoding="async"
                             />
                           ) : (
                             <div className="h-12 w-8 bg-gray-200 rounded flex items-center justify-center">

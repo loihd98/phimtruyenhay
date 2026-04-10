@@ -124,6 +124,14 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Phim Truyện Hay" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="application-name" content="Phim Truyện Hay" />
+        {/* Preconnect to own origin for uploads (images/audio served by nginx) */}
+        <link rel="preconnect" href={siteUrl} />
+        <link rel="dns-prefetch" href={siteUrl} />
+        {/* Preconnect to Google services (Analytics, AdSense, Fonts) */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
         <link rel="author" href={`${siteUrl}/humans.txt`} />
         {/* Inline script to restore persisted theme before React hydration */}
         <script

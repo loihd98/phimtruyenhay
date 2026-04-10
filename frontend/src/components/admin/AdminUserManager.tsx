@@ -530,6 +530,8 @@ const AdminUserManager: React.FC = () => {
                           )}&background=random`
                         }
                         alt={user.username || user.name}
+                        loading="lazy"
+                        decoding="async"
                         className="h-10 w-10 rounded-full object-cover"
                       />
                       <div className="ml-4">

@@ -151,7 +151,7 @@ export default function BlogPage() {
                 >
                   {post.thumbnailUrl ? (
                     <div className="relative h-48 overflow-hidden">
-                      <Image src={post.thumbnailUrl} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <Image src={post.thumbnailUrl} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     </div>
                   ) : (
@@ -180,7 +180,7 @@ export default function BlogPage() {
                     <div className="flex items-center gap-3 mt-4 text-[12px] text-zinc-600">
                       <div className="flex items-center gap-1.5">
                         {post.author.avatar ? (
-                          <img src={post.author.avatar} alt="" className="w-5 h-5 rounded-full" />
+                          <img src={post.author.avatar} alt="" className="w-5 h-5 rounded-full" loading="lazy" decoding="async" />
                         ) : (
                           <div className="w-5 h-5 rounded-full bg-primary-500/20 flex items-center justify-center text-[10px] text-primary-400 font-bold">
                             {post.author.name.charAt(0)}
