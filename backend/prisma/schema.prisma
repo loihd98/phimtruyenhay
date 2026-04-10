@@ -561,8 +561,9 @@ model PaymentTransaction {
   userId          String
   user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   plan            VipPlanType
-  amount          Int           // Amount in VND
-  transferContent String        @unique // Unique transfer content for matching
+  amount          Int           // Amount in VND (base price + random 1-999 suffix for uniqueness)
+  transferContent String        @unique // Unique transfer content for QR code
+  referenceCode   String?       @unique // SePay transaction reference for idempotent webhook processing
   status          PaymentStatus @default(PENDING)
   
   // Bank info snapshot
@@ -573,7 +574,7 @@ model PaymentTransaction {
   // Verification
   detectedAt      DateTime?     // When payment was detected
   verifiedAt      DateTime?     // When payment was verified
-  expiresAt       DateTime      // When pending payment expires (15 min)
+  expiresAt       DateTime      // When pending payment expires
   
   // Metadata
   ipAddress       String?
@@ -589,5 +590,6 @@ model PaymentTransaction {
   @@index([status])
   @@index([transferContent])
   @@index([expiresAt])
+  @@index([amount, status])
   @@map("payment_transactions")
 }

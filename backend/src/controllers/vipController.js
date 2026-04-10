@@ -84,10 +84,7 @@ class VipController {
       }
 
       const planInfo = VIP_PLANS[plan];
-
-      // Generate unique transfer content
-      const shortId = crypto.randomBytes(4).toString("hex").toUpperCase();
-      const transferContent = `VIP${shortId}`;
+      const baseAmount = planInfo.price;
 
       // Cancel any existing pending payments for this user
       await prisma.paymentTransaction.updateMany({
@@ -100,37 +97,89 @@ class VipController {
         },
       });
 
-      const payment = await prisma.paymentTransaction.create({
-        data: {
-          userId,
-          plan,
-          amount: planInfo.price,
-          transferContent,
-          status: "PENDING",
-          bankName: BANK_INFO.bankName,
-          accountNumber: BANK_INFO.accountNumber,
-          accountHolder: BANK_INFO.accountHolder,
-          expiresAt: new Date(Date.now() + PAYMENT_TIMEOUT_MS),
-          ipAddress: req.ip,
-          userAgent: req.headers["user-agent"],
-        },
-      });
+      // Generate unique amount (base + random 1-999 suffix) within serializable
+      // transaction to prevent race conditions between concurrent requests
+      const payment = await prisma.$transaction(
+        async (tx) => {
+          // Find amounts already taken by active (non-terminal) payments in suffix range
+          const activePayments = await tx.paymentTransaction.findMany({
+            where: {
+              status: { in: ["PENDING", "DETECTED", "VERIFYING"] },
+              amount: { gte: baseAmount + 1, lte: baseAmount + 999 },
+            },
+            select: { amount: true },
+          });
 
-      // Build QR URL (VietQR standard)
-      const qrUrl = `https://img.vietqr.io/image/${BANK_INFO.bankName}-${BANK_INFO.accountNumber}-compact.png?amount=${planInfo.price}&addInfo=${transferContent}&accountName=${encodeURIComponent(BANK_INFO.accountHolder)}`;
+          const usedAmounts = new Set(activePayments.map((p) => p.amount));
+
+          // Try random suffix first for even distribution
+          let suffix;
+          for (let i = 0; i < 50; i++) {
+            const candidate = Math.floor(Math.random() * 999) + 1;
+            if (!usedAmounts.has(baseAmount + candidate)) {
+              suffix = candidate;
+              break;
+            }
+          }
+
+          // Fallback: sequential scan for first available slot
+          if (suffix === undefined) {
+            for (let s = 1; s <= 999; s++) {
+              if (!usedAmounts.has(baseAmount + s)) {
+                suffix = s;
+                break;
+              }
+            }
+          }
+
+          if (suffix === undefined) {
+            throw new Error("NO_AVAILABLE_AMOUNT");
+          }
+
+          const finalAmount = baseAmount + suffix;
+          const shortId = crypto.randomBytes(4).toString("hex").toUpperCase();
+          const transferContent = `VIP${shortId}`;
+
+          return tx.paymentTransaction.create({
+            data: {
+              userId,
+              plan,
+              amount: finalAmount,
+              transferContent,
+              status: "PENDING",
+              bankName: BANK_INFO.bankName,
+              accountNumber: BANK_INFO.accountNumber,
+              accountHolder: BANK_INFO.accountHolder,
+              expiresAt: new Date(Date.now() + PAYMENT_TIMEOUT_MS),
+              ipAddress: req.ip,
+              userAgent: req.headers["user-agent"],
+            },
+          });
+        },
+        { isolationLevel: "Serializable" }
+      );
+
+      // Build QR URL (VietQR standard) with exact unique amount
+      const qrUrl = `https://img.vietqr.io/image/${BANK_INFO.bankName}-${BANK_INFO.accountNumber}-compact.png?amount=${payment.amount}&addInfo=${payment.transferContent}&accountName=${encodeURIComponent(BANK_INFO.accountHolder)}`;
 
       res.status(201).json({
         data: {
           paymentId: payment.id,
           plan: planInfo,
-          amount: planInfo.price,
-          transferContent,
+          amount: payment.amount,
+          transferContent: payment.transferContent,
           bankInfo: BANK_INFO,
           qrUrl,
           expiresAt: payment.expiresAt,
         },
       });
     } catch (error) {
+      if (error.message === "NO_AVAILABLE_AMOUNT") {
+        return res.status(503).json({
+          error: "Service Unavailable",
+          message: "Hệ thống đang bận, vui lòng thử lại sau vài phút",
+        });
+      }
       console.error("Create payment error:", error);
       res.status(500).json({
         error: "Internal Server Error",
@@ -332,31 +381,41 @@ class VipController {
 
       // SePay payload shape: { id, gateway, transactionDate, accountNumber, subAccount,
       //   code, content, transferType, transferAmount, accumulated, referenceCode }
-      const { content, transferAmount, transferType } = req.body;
+      const { transferAmount, transferType, referenceCode } = req.body;
 
       // Only process incoming transfers
       if (transferType && transferType !== "in") {
         return res.json({ success: true, message: "Bỏ qua giao dịch ra" });
       }
 
-      if (!content) {
-        return res.json({ success: true, message: "Không có nội dung chuyển khoản" });
+      const receivedAmount = parseInt(String(transferAmount), 10) || 0;
+      if (receivedAmount <= 0) {
+        return res.json({ success: true, message: "Số tiền không hợp lệ" });
       }
 
-      // Fetch pending payments — include recently expired ones (grace period) so
-      // late SePay webhook deliveries are still processed
-      const pendingPayments = await prisma.paymentTransaction.findMany({
+      // Idempotent: if SePay fires the same webhook twice, referenceCode will match
+      if (referenceCode) {
+        const alreadyProcessed = await prisma.paymentTransaction.findFirst({
+          where: { referenceCode: String(referenceCode) },
+        });
+        if (alreadyProcessed) {
+          console.log(`SePay webhook: duplicate referenceCode ${referenceCode}, skipping`);
+          return res.json({ success: true, message: "Giao dịch đã xử lý" });
+        }
+      }
+
+      // Match by exact amount among active payments (with grace period for late webhooks)
+      const matched = await prisma.paymentTransaction.findFirst({
         where: {
+          amount: receivedAmount,
           status: { in: ["PENDING", "DETECTED", "VERIFYING"] },
           expiresAt: { gt: new Date(Date.now() - WEBHOOK_GRACE_MS) },
         },
+        orderBy: { createdAt: "asc" }, // oldest matching payment first
       });
 
-      const matched = pendingPayments.find((p) =>
-        content.toUpperCase().includes(p.transferContent.toUpperCase())
-      );
-
       if (!matched) {
+        console.warn(`SePay webhook: no matching PENDING payment for amount ${receivedAmount}`);
         return res.json({ success: true, message: "Không tìm thấy giao dịch khớp" });
       }
 
@@ -370,21 +429,24 @@ class VipController {
         return res.json({ success: false, message: "Gói VIP không hợp lệ" });
       }
 
-      // Mark as DETECTED immediately so the polling frontend sees progress
-      await prisma.paymentTransaction.update({
-        where: { id: matched.id },
-        data: { status: "DETECTED", detectedAt: new Date() },
-      });
-
-      // Validate amount — reject underpay and mark as FAILED so user sees clear error
-      const receivedAmount = parseFloat(String(transferAmount)) || 0;
-      if (receivedAmount < matched.amount) {
-        console.warn(`SePay underpay: expected ${matched.amount}, got ${receivedAmount} for ${matched.transferContent}`);
+      // Mark as DETECTED immediately — atomically set referenceCode (unique) to prevent
+      // duplicate processing if SePay fires the same webhook concurrently
+      try {
         await prisma.paymentTransaction.update({
           where: { id: matched.id },
-          data: { status: "FAILED" },
+          data: {
+            status: "DETECTED",
+            detectedAt: new Date(),
+            ...(referenceCode ? { referenceCode: String(referenceCode) } : {}),
+          },
         });
-        return res.json({ success: true, message: "Số tiền không đủ, giao dịch đã bị từ chối" });
+      } catch (detectErr) {
+        // P2002 on referenceCode unique constraint → concurrent duplicate webhook
+        if (detectErr.code === "P2002") {
+          console.log(`SePay webhook: concurrent duplicate for referenceCode ${referenceCode}, idempotent OK`);
+          return res.json({ success: true, message: "Giao dịch đã xử lý" });
+        }
+        throw detectErr;
       }
 
       // Duration in days (not calendar months to avoid DST issues)
@@ -431,13 +493,13 @@ class VipController {
             where: { id: matched.id },
             data: { status: "COMPLETED", verifiedAt: new Date() },
           });
-          console.log(`SePay webhook: duplicate call for ${matched.transferContent}, idempotent OK`);
+          console.log(`SePay webhook: duplicate call for payment ${matched.id}, idempotent OK`);
         } else {
           throw txError;
         }
       }
 
-      console.log(`SePay webhook: activated VIP for user ${matched.userId}, plan ${matched.plan}, endDate ${endDate}`);
+      console.log(`SePay webhook: activated VIP for user ${matched.userId}, plan ${matched.plan}, amount ${matched.amount}, endDate ${endDate}`);
       return res.json({ success: true, message: "Kích hoạt VIP thành công" });
     } catch (error) {
       console.error("SePay webhook error:", error);
