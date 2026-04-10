@@ -61,8 +61,8 @@ export default function StorySidebar({ className = "", flat = false }: SidebarPr
         apiClient.get("/stories?sort=createdAt&order=desc&limit=5"),
       ]);
 
-      const hot = hotResponse.data?.stories || [];
-      const trending = trendingResponse.data?.stories || [];
+      const hot = hotResponse.data?.data || [];
+      const trending = trendingResponse.data?.data || [];
 
       setHotStories(hot);
       setTrendingStories(trending);

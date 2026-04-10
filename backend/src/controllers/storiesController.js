@@ -276,13 +276,44 @@ class StoriesController {
         data: { viewCount: { increment: 1 } },
       });
 
-      // Add unlock status to chapters
-      story.chapters = story.chapters.map((chapter) => ({
-        ...chapter,
-        isUnlocked:
+      // Check if user has active VIP subscription
+      let isVip = false;
+      if (req.user) {
+        const vipSub = await prisma.vipSubscription.findFirst({
+          where: {
+            userId: req.user.id,
+            isActive: true,
+            endDate: { gt: new Date() },
+          },
+          select: { id: true },
+        });
+        isVip = !!vipSub;
+      }
+
+      // Add unlock status to chapters and strip content from locked ones
+      story.chapters = story.chapters.map((chapter) => {
+        const isUnlocked =
           !chapter.isLocked ||
-          (chapter.unlockedBy && chapter.unlockedBy.length > 0),
-      }));
+          isVip ||
+          (chapter.unlockedBy && chapter.unlockedBy.length > 0);
+
+        const { unlockedBy, ...chapterData } = chapter;
+
+        if (chapter.isLocked && !isUnlocked) {
+          // Strip sensitive content from locked chapters
+          return {
+            ...chapterData,
+            content: null,
+            audioUrl: null,
+            isUnlocked: false,
+          };
+        }
+
+        return {
+          ...chapterData,
+          isUnlocked: true,
+        };
+      });
 
       res.json({ story: normalizeStory(story) });
     } catch (error) {

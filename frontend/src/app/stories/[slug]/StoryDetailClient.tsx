@@ -17,6 +17,7 @@ import CommentSection from "@/components/comments/CommentSection";
 import { useLanguage } from "@/contexts/LanguageContext";
 import DailyPopup from "@/components/DailyPopup";
 import SharePopup from "@/components/ui/SharePopup";
+import VipUpgradeModal from "@/components/vip/VipUpgradeModal";
 import {
   isAffiliateCooldown,
   markAffiliateShown,
@@ -56,6 +57,7 @@ interface Story {
     content?: string;
     audioUrl?: string;
     isLocked: boolean;
+    isUnlocked?: boolean;
     affiliateId?: string;
     affiliate?: {
       id: string;
@@ -88,6 +90,7 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { user } = useSelector((state: RootState) => state.auth);
+  const isVip = useSelector((state: RootState) => state.vip?.isVip ?? false);
   const { t } = useLanguage();
 
   const [story, setStory] = useState<Story | null>(initialStory || null);
@@ -101,6 +104,7 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
   const [showAudioChapterList, setShowAudioChapterList] = useState(false);
   const [audioInitialTime, setAudioInitialTime] = useState(0);
   const [showSharePopup, setShowSharePopup] = useState(false);
+  const [showVipModal, setShowVipModal] = useState(false);
   // Capture initial 'from' value so affiliate check works even after URL cleanup
   const initialFrom = useRef(searchParams.get("from"));
   const audioSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -242,6 +246,9 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
     (c) => c.number === selectedChapter
   );
 
+  const isChapterAccessible = (chapter: Story["chapters"][0]) =>
+    !chapter.isLocked || chapter.isUnlocked || isVip;
+
   const handleChapterChange = (chapterNumber: number) => {
     setSelectedChapter(chapterNumber);
     // Cập nhật URL param
@@ -254,6 +261,16 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
     const nextChapter = story?.chapters.find(
       (c) => c.number === chapterNumber
     );
+
+    // Block navigation to locked chapters for non-VIP users
+    if (nextChapter && nextChapter.isLocked && !isChapterAccessible(nextChapter)) {
+      if (!user) {
+        router.push("/auth/login");
+      } else {
+        setShowVipModal(true);
+      }
+      return;
+    }
 
     // If next chapter has an active affiliate link, open it in new tab
     if (nextChapter?.affiliate?.isActive && nextChapter.affiliate.targetUrl) {
@@ -268,6 +285,16 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
       const nextChapter = story.chapters.find(
         (c) => c.number === nextChapterNumber
       );
+
+      // Block navigation to locked chapters for non-VIP users
+      if (nextChapter && nextChapter.isLocked && !isChapterAccessible(nextChapter)) {
+        if (!user) {
+          router.push("/auth/login");
+        } else {
+          setShowVipModal(true);
+        }
+        return;
+      }
 
       // If next chapter has an active affiliate link, open it in new tab
       if (nextChapter?.affiliate?.isActive && nextChapter.affiliate.targetUrl) {
@@ -420,7 +447,34 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                     height={400}
                     className="w-full h-auto rounded-xl object-contain bg-white/[0.04]"
                   />
-                  {currentChapter?.audioUrl ? (
+                  {currentChapter && currentChapter.isLocked && !isChapterAccessible(currentChapter) ? (
+                    <div className="text-center py-8 mt-4">
+                      <div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-7 h-7 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                      </div>
+                      <h3 className="text-lg font-semibold text-white mb-2">
+                        Chương này dành cho VIP
+                      </h3>
+                      <p className="text-zinc-500 text-sm mb-4">
+                        {!user ? "Vui lòng đăng nhập và nâng cấp VIP để nghe chương này" : "Nâng cấp VIP để nghe tất cả các chương"}
+                      </p>
+                      {!user ? (
+                        <button
+                          onClick={() => router.push("/auth/login")}
+                          className="bg-primary-500 text-white px-6 py-2.5 rounded-xl hover:bg-primary-600 transition-colors text-sm"
+                        >
+                          Đăng nhập
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setShowVipModal(true)}
+                          className="bg-gradient-to-r from-yellow-500 to-amber-500 text-white px-6 py-2.5 rounded-xl hover:from-yellow-600 hover:to-amber-600 transition-colors text-sm font-medium"
+                        >
+                          ⭐ Nâng cấp VIP
+                        </button>
+                      )}
+                    </div>
+                  ) : currentChapter?.audioUrl ? (
                     <div className="mb-6 mt-4">
                       <SimpleAudioPlayer
                         src={getMediaUrl(currentChapter.audioUrl)}
@@ -492,7 +546,7 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                                   )}
                                   Chương {chapter.number}: {chapter.title}
                                 </span>
-                                {chapter.isLocked && !user && <span>🔒</span>}
+                                {chapter.isLocked && !isChapterAccessible(chapter) && <span>🔒</span>}
                               </div>
                             </button>
                           ))}
@@ -683,7 +737,7 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                       {story.chapters.map((chapter) => (
                         <option key={chapter.id} value={chapter.number}>
                           Chương {chapter.number}: {chapter.title}
-                          {chapter.isLocked && !user ? " 🔒" : ""}
+                          {chapter.isLocked && !isChapterAccessible(chapter) ? " 🔒" : ""}
                         </option>
                       ))}
                     </select>
@@ -724,23 +778,32 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
                   </div>
                 </div>
 
-                {currentChapter.isLocked && !user ? (
+                {currentChapter.isLocked && !isChapterAccessible(currentChapter) ? (
                   <div className="text-center py-12">
                     <div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mx-auto mb-4">
                       <svg className="w-7 h-7 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                     </div>
                     <h3 className="text-lg font-semibold text-white mb-2">
-                      Chương này cần đăng nhập
+                      Chương này dành cho VIP
                     </h3>
                     <p className="text-zinc-500 text-sm mb-4">
-                      Vui lòng đăng nhập để đọc chương này
+                      {!user ? "Vui lòng đăng nhập và nâng cấp VIP để đọc chương này" : "Nâng cấp VIP để đọc tất cả các chương"}
                     </p>
-                    <button
-                      onClick={() => router.push("/auth/login")}
-                      className="bg-primary-500 text-white px-6 py-2.5 rounded-xl hover:bg-primary-600 transition-colors text-sm"
-                    >
-                      Đăng nhập
-                    </button>
+                    {!user ? (
+                      <button
+                        onClick={() => router.push("/auth/login")}
+                        className="bg-primary-500 text-white px-6 py-2.5 rounded-xl hover:bg-primary-600 transition-colors text-sm"
+                      >
+                        Đăng nhập
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setShowVipModal(true)}
+                        className="bg-gradient-to-r from-yellow-500 to-amber-500 text-white px-6 py-2.5 rounded-xl hover:from-yellow-600 hover:to-amber-600 transition-colors text-sm font-medium"
+                      >
+                        ⭐ Nâng cấp VIP
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <div>
@@ -927,6 +990,11 @@ export default function StoryDetailClient({ params, initialStory }: StoryPagePro
         onClose={() => setShowSharePopup(false)}
         url={typeof window !== "undefined" ? window.location.href : ""}
         title={story.title}
+      />
+
+      <VipUpgradeModal
+        isOpen={showVipModal}
+        onClose={() => setShowVipModal(false)}
       />
     </Layout >
   );
