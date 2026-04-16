@@ -3,6 +3,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
+const passport = require("./config/passport");
 const prisma = require("./lib/prisma");
 const config = require("./config");
 
@@ -48,6 +49,10 @@ app.use(cors(corsOptions));
 
 // Cookie parser — needed to read httpOnly refresh-token cookie
 app.use(cookieParser());
+
+// Passport — must be initialized before any route that uses passport.authenticate()
+// No session needed; we use stateless JWT + httpOnly cookie refresh tokens.
+app.use(passport.initialize());
 
 // Rate limiting
 const limiter = rateLimit({
