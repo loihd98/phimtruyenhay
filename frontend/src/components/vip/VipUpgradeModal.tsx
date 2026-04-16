@@ -340,6 +340,13 @@ export default function VipUpgradeModal({ isOpen, onClose, onSuccess }: VipUpgra
                 </div>
               </div>
 
+              {/* Important notice about transfer content */}
+              <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3 mb-5">
+                <p className="text-xs text-yellow-300 text-center font-medium">
+                  ⚠️ Vui lòng nhập <strong>đúng nội dung chuyển khoản</strong> để hệ thống tự động kích hoạt VIP
+                </p>
+              </div>
+
               {/* Status indicator */}
               <div className={`text-center p-3 rounded-xl border mb-4 ${
                 paymentStatus === "COMPLETED"

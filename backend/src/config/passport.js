@@ -11,39 +11,61 @@ if (config.google.clientId && config.google.clientSecret) {
       {
         clientID: config.google.clientId,
         clientSecret: config.google.clientSecret,
-        callbackURL: `${config.baseUrl}/api/auth/google/callback`,
+        // callbackURL must resolve via the public domain so Google can call back.
+        // nginx routes /api/* → backend, so ${corsOrigin}/api/auth/google/callback works
+        // in both production (https://phimtruyenhay.com) and development.
+        callbackURL: `${config.corsOrigin}/api/auth/google/callback`,
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
+          const googleEmail = profile.emails?.[0]?.value;
+          const googleAvatar = profile.photos?.[0]?.value || null;
+          const googleName = profile.displayName || null;
+
           // Check if user already exists with Google ID
           let user = await prisma.user.findUnique({
             where: { googleId: profile.id },
           });
 
           if (user) {
-            return done(null, user);
-          }
-
-          // Check if user exists with same email
-          const existingUser = await prisma.user.findUnique({
-            where: { email: profile.emails[0].value },
-          });
-
-          if (existingUser) {
-            // Link Google account to existing user
+            // Update name and avatar in case they changed since last login
             user = await prisma.user.update({
-              where: { id: existingUser.id },
-              data: { googleId: profile.id },
+              where: { id: user.id },
+              data: {
+                name: googleName || user.name,
+                avatar: googleAvatar || user.avatar,
+              },
             });
             return done(null, user);
           }
 
-          // Create new user
+          if (!googleEmail) {
+            return done(new Error("Google profile has no email"), null);
+          }
+
+          // Check if user exists with same email — link accounts
+          const existingUser = await prisma.user.findUnique({
+            where: { email: googleEmail },
+          });
+
+          if (existingUser) {
+            // Link Google account to existing user and refresh avatar
+            user = await prisma.user.update({
+              where: { id: existingUser.id },
+              data: {
+                googleId: profile.id,
+                avatar: existingUser.avatar || googleAvatar,
+              },
+            });
+            return done(null, user);
+          }
+
+          // Create new user from Google profile
           user = await prisma.user.create({
             data: {
-              email: profile.emails[0].value,
-              name: profile.displayName,
-              avatar: profile.photos[0]?.value,
+              email: googleEmail,
+              name: googleName,
+              avatar: googleAvatar,
               googleId: profile.id,
               role: "USER",
             },
@@ -65,46 +87,59 @@ if (config.facebook.appId && config.facebook.appSecret) {
       {
         clientID: config.facebook.appId,
         clientSecret: config.facebook.appSecret,
-        callbackURL: `${config.baseUrl}/api/auth/facebook/callback`,
+        callbackURL: `${config.corsOrigin}/api/auth/facebook/callback`,
         profileFields: ["id", "emails", "name", "picture.type(large)"],
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
+          const fbEmail = profile.emails?.[0]?.value || null;
+          const fbAvatar = profile.photos?.[0]?.value || null;
+          const fbName = profile.name
+            ? `${profile.name.givenName || ""} ${profile.name.familyName || ""}`.trim()
+            : profile.displayName || null;
+
           // Check if user already exists with Facebook ID
           let user = await prisma.user.findUnique({
             where: { facebookId: profile.id },
           });
 
           if (user) {
+            // Update name and avatar in case they changed since last login
+            user = await prisma.user.update({
+              where: { id: user.id },
+              data: {
+                name: fbName || user.name,
+                avatar: fbAvatar || user.avatar,
+              },
+            });
             return done(null, user);
           }
 
-          // Check if user exists with same email
-          const email =
-            profile.emails && profile.emails[0]
-              ? profile.emails[0].value
-              : null;
-          if (email) {
+          // Check if user exists with same email — link accounts
+          if (fbEmail) {
             const existingUser = await prisma.user.findUnique({
-              where: { email },
+              where: { email: fbEmail },
             });
 
             if (existingUser) {
-              // Link Facebook account to existing user
               user = await prisma.user.update({
                 where: { id: existingUser.id },
-                data: { facebookId: profile.id },
+                data: {
+                  facebookId: profile.id,
+                  avatar: existingUser.avatar || fbAvatar,
+                },
               });
               return done(null, user);
             }
           }
 
-          // Create new user
+          // Create new user from Facebook profile
           user = await prisma.user.create({
             data: {
-              email: email || `facebook_${profile.id}@webtruyen.com`,
-              name: `${profile.name.givenName} ${profile.name.familyName}`,
-              avatar: profile.photos[0]?.value,
+              // Use email if available, else synthetic identifier (no real email needed)
+              email: fbEmail || `fb_${profile.id}@phimtruyenhay.com`,
+              name: fbName || `User ${profile.id}`,
+              avatar: fbAvatar,
               facebookId: profile.id,
               role: "USER",
             },

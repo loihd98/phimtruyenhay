@@ -73,6 +73,7 @@ const authLimiter = rateLimit({
 });
 app.use("/api/auth/login", authLimiter);
 app.use("/api/auth/register", authLimiter);
+app.use("/api/auth/refresh", authLimiter);
 
 // Body parsing - increase limit for large file uploads (audio up to 1.5GB)
 app.use(express.json({ limit: "2gb" }));

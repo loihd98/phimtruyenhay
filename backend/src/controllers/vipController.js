@@ -508,6 +508,146 @@ class VipController {
     }
   }
 
+  // POST /hooks/gmail-payment — Gmail scanner webhook (matches by transferContent)
+  async gmailPaymentWebhook(req, res) {
+    try {
+      console.log(`[Gmail webhook] ${new Date().toISOString()} — body:`, JSON.stringify(req.body));
+
+      // Verify webhook secret
+      const webhookSecret = process.env.GMAIL_WEBHOOK_SECRET;
+      if (!webhookSecret) {
+        console.error("Gmail webhook: GMAIL_WEBHOOK_SECRET not configured");
+        return res.status(500).json({ success: false, message: "Webhook not configured" });
+      }
+
+      const authHeader = req.headers["authorization"] || "";
+      const providedToken = authHeader.replace(/^Bearer\s+/i, "").trim();
+      if (!providedToken || providedToken !== webhookSecret) {
+        console.warn("Gmail webhook: invalid secret");
+        return res.status(401).json({ success: false, message: "Unauthorized" });
+      }
+
+      const { transferContent, transferAmount } = req.body;
+
+      if (!transferContent || typeof transferContent !== "string") {
+        return res.status(400).json({ success: false, message: "Missing transferContent" });
+      }
+
+      // Validate transferContent format (VIP + 8 hex chars)
+      if (!/^VIP[0-9A-F]{8}$/i.test(transferContent)) {
+        console.warn(`Gmail webhook: invalid transferContent format: ${transferContent}`);
+        return res.status(400).json({ success: false, message: "Invalid transferContent format" });
+      }
+
+      // Find matching payment by transferContent (more reliable than amount matching)
+      const matched = await prisma.paymentTransaction.findFirst({
+        where: {
+          transferContent: transferContent.toUpperCase(),
+          status: { in: ["PENDING", "DETECTED", "VERIFYING"] },
+          expiresAt: { gt: new Date(Date.now() - WEBHOOK_GRACE_MS) },
+        },
+      });
+
+      if (!matched) {
+        console.warn(`Gmail webhook: no matching PENDING payment for transferContent ${transferContent}`);
+        return res.json({ success: true, message: "Không tìm thấy giao dịch khớp" });
+      }
+
+      // Idempotent: already completed
+      if (matched.status === "COMPLETED") {
+        return res.json({ success: true, message: "Giao dịch đã xử lý" });
+      }
+
+      // Optional: verify amount matches if provided
+      if (transferAmount) {
+        const receivedAmount = parseInt(String(transferAmount), 10);
+        if (receivedAmount > 0 && receivedAmount !== matched.amount) {
+          console.warn(`Gmail webhook: amount mismatch for ${transferContent}: expected ${matched.amount}, got ${receivedAmount}`);
+          // Still proceed — transferContent is the primary match key
+          // But log it for manual review
+        }
+      }
+
+      const planInfo = VIP_PLANS[matched.plan];
+      if (!planInfo) {
+        return res.json({ success: false, message: "Gói VIP không hợp lệ" });
+      }
+
+      // Mark as DETECTED
+      const referenceCode = `GMAIL-${Date.now()}-${transferContent}`;
+      try {
+        await prisma.paymentTransaction.update({
+          where: { id: matched.id },
+          data: {
+            status: "DETECTED",
+            detectedAt: new Date(),
+            referenceCode,
+          },
+        });
+      } catch (detectErr) {
+        if (detectErr.code === "P2002") {
+          console.log(`Gmail webhook: duplicate for ${transferContent}, idempotent OK`);
+          return res.json({ success: true, message: "Giao dịch đã xử lý" });
+        }
+        throw detectErr;
+      }
+
+      // Duration in days
+      const PLAN_DAYS = { MONTH_1: 30, MONTH_3: 90, MONTH_6: 180, MONTH_12: 365 };
+      const daysToAdd = PLAN_DAYS[matched.plan] ?? 30;
+
+      // Extend existing active subscription or create from now
+      const existingSub = await prisma.vipSubscription.findFirst({
+        where: {
+          userId: matched.userId,
+          isActive: true,
+          endDate: { gt: new Date() },
+        },
+        orderBy: { endDate: "desc" },
+      });
+
+      const baseDate = existingSub ? existingSub.endDate : new Date();
+      const endDate = new Date(baseDate.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
+      const startDate = new Date();
+
+      try {
+        await prisma.$transaction([
+          prisma.paymentTransaction.update({
+            where: { id: matched.id },
+            data: { status: "COMPLETED", verifiedAt: new Date() },
+          }),
+          prisma.vipSubscription.create({
+            data: {
+              userId: matched.userId,
+              plan: matched.plan,
+              amount: matched.amount,
+              startDate,
+              endDate,
+              isActive: true,
+              paymentId: matched.id,
+            },
+          }),
+        ]);
+      } catch (txError) {
+        if (txError.code === "P2002") {
+          await prisma.paymentTransaction.update({
+            where: { id: matched.id },
+            data: { status: "COMPLETED", verifiedAt: new Date() },
+          });
+          console.log(`Gmail webhook: duplicate subscription for payment ${matched.id}, idempotent OK`);
+        } else {
+          throw txError;
+        }
+      }
+
+      console.log(`Gmail webhook: activated VIP for user ${matched.userId}, plan ${matched.plan}, transferContent ${transferContent}, endDate ${endDate}`);
+      return res.json({ success: true, message: "Kích hoạt VIP thành công" });
+    } catch (error) {
+      console.error("Gmail webhook error:", error);
+      return res.status(500).json({ success: false, message: "Lỗi xử lý webhook" });
+    }
+  }
+
   // POST /api/vip/reject-payment/:paymentId — Admin: reject/cancel a payment
   async rejectPayment(req, res) {
     try {

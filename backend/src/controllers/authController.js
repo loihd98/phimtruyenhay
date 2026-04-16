@@ -276,7 +276,7 @@ class AuthController {
         });
       }
 
-      res.json({ user });
+      res.json({ data: user });
     } catch (error) {
       console.error("Get profile error:", error);
 
