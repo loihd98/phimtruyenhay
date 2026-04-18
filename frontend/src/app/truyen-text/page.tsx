@@ -94,7 +94,7 @@ export default async function TruyenTextPage({
                 </div>
 
                 {/* Ad Banner */}
-                <AdLeaderboard />
+                {/* <AdLeaderboard /> */}
 
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                     <div className="lg:col-span-3">

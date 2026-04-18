@@ -1212,6 +1212,22 @@ class AdminController {
         message: "Tạo chương thành công",
         chapter,
       });
+
+      // Auto-create notification for new chapters
+      if (chapter.story) {
+        const { broadcastNotification } = require("./notificationController");
+        const storyTitle = chapter.story.title || "Truyện";
+        const linkPath = chapter.story.type === "AUDIO"
+          ? `/truyen-audio/${chapter.story.slug}`
+          : `/truyen-text/${chapter.story.slug}`;
+        broadcastNotification({
+          type: "NEW_CHAPTER",
+          title: "Chương mới",
+          message: `"${storyTitle}" vừa ra chương ${chapter.chapterNumber}`,
+          link: linkPath,
+          metadata: { storyId: chapter.storyId, chapterId: chapter.id },
+        });
+      }
     } catch (error) {
       console.error("Create chapter error:", error);
 

@@ -64,6 +64,7 @@ model User {
   blogComments BlogComment[]
   vipSubscriptions VipSubscription[]
   paymentTransactions PaymentTransaction[]
+  notifications  Notification[]
   
   @@map("users")
 }
@@ -592,4 +593,33 @@ model PaymentTransaction {
   @@index([expiresAt])
   @@index([amount, status])
   @@map("payment_transactions")
+}
+
+// ─── Notification System ────────────────────────────────────────
+enum NotificationType {
+  NEW_STORY
+  NEW_CHAPTER
+  NEW_FILM
+  VIP_ACTIVATED
+  VIP_EXPIRING
+  SYSTEM
+  COMMENT_REPLY
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String?          // null = broadcast to all users
+  user      User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  message   String
+  link      String?          // URL to navigate when clicked
+  isRead    Boolean          @default(false)
+  metadata  Json?            // Extra data (storyId, chapterId, etc.)
+  createdAt DateTime         @default(now())
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@index([type])
+  @@map("notifications")
 }

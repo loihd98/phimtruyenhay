@@ -575,6 +575,18 @@ class FilmReviewsController {
         message: "Đã tạo review phim thành công",
         data: filmReview,
       });
+
+      // Auto-create notification for published films
+      if (filmReview.status === "PUBLISHED") {
+        const { broadcastNotification } = require("./notificationController");
+        broadcastNotification({
+          type: "NEW_FILM",
+          title: "Phim mới",
+          message: `Phim "${filmReview.title}" vừa được thêm mới`,
+          link: `/phim/${filmReview.slug}`,
+          metadata: { filmReviewId: filmReview.id },
+        });
+      }
     } catch (error) {
       console.error("Admin create film review error:", error);
       res.status(500).json({

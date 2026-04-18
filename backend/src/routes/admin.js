@@ -123,4 +123,9 @@ router.delete(
 router.post("/sample-data", adminController.createSampleData);
 router.get("/analytics", requirePermission("admin.analytics.view")[1], adminController.getAnalytics);
 
+// Notifications (admin)
+const notificationController = require("../controllers/notificationController");
+router.post("/notifications", notificationController.adminCreateNotification);
+router.delete("/notifications/:id", notificationController.adminDeleteNotification);
+
 module.exports = router;

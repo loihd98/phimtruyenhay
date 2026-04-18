@@ -2,6 +2,7 @@ import React from "react";
 import { Metadata } from "next";
 import Layout from "../../components/layout/Layout";
 import ContactForm from "../../components/contact/ContactForm";
+import ContactSidebar from "../../components/contact/ContactSidebar";
 
 // Generate metadata for SEO
 export const metadata: Metadata = {
@@ -75,7 +76,16 @@ export default function ContactPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Main content with sidebar */}
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Sidebar */}
+            <div className="lg:w-64 shrink-0">
+              <ContactSidebar />
+            </div>
+
+            {/* Main content */}
+            <div className="flex-1">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Form */}
             <div className="animate-slide-up animation-delay-400">
               <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-8">
@@ -221,7 +231,10 @@ export default function ContactPage() {
                 </div>
               </div>
             </div>
-          </div>
+            </div>
+            </div> {/* end grid */}
+            </div> {/* end flex-1 */}
+          </div> {/* end flex row */}
 
           {/* Support Categories */}
           <div className="mt-16 animate-slide-up animation-delay-600">

@@ -113,7 +113,7 @@ export default function BlogPage() {
           )}
 
           {/* Ad Banner */}
-          <AdLeaderboard />
+          {/* <AdLeaderboard /> */}
 
           {/* Posts grid */}
           {isLoading ? (

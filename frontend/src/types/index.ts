@@ -534,3 +534,26 @@ export interface PaymentCreateResponse {
   qrUrl: string;
   expiresAt: string;
 }
+
+// ===== Notification Types =====
+
+export type NotificationType =
+  | "NEW_STORY"
+  | "NEW_CHAPTER"
+  | "NEW_FILM"
+  | "VIP_ACTIVATED"
+  | "VIP_EXPIRING"
+  | "SYSTEM"
+  | "COMMENT_REPLY";
+
+export interface Notification {
+  id: string;
+  userId: string | null;
+  type: NotificationType;
+  title: string;
+  message: string;
+  link?: string;
+  isRead: boolean;
+  metadata?: Record<string, any>;
+  createdAt: string;
+}

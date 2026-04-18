@@ -249,7 +249,11 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
               onClick={() => {
                 if (youtubeId) {
                   setIsVideoPlaying(true);
-                } else if (currentVideoUrl) {
+                } else if (hasEpisodes) {
+                  // If series with episodes, play first episode
+                  setActiveEpisode(0);
+                  setIsVideoPlaying(true);
+                } else if (currentVideoUrl && currentVideoUrl !== "#") {
                   window.open(currentVideoUrl, "_blank", "noopener,noreferrer");
                 }
               }}
@@ -535,7 +539,7 @@ const FilmReviewDetail: React.FC<FilmReviewDetailProps> = ({
         )}
 
         {/* Ad Banner */}
-        <AdInArticle />
+        {/* <AdInArticle /> */}
 
         {/* 9. Comments Section */}
         <div className="mt-8 pt-8 border-t border-white/[0.06]">

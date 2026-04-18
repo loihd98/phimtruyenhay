@@ -57,7 +57,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
   const { t } = useLanguage();
   const router = useRouter();
   const { hasPermission } = usePermissions();
-  const [expandedGroups, setExpandedGroups] = useState<string[]>(["audio", "text", "film", "blog"]);
+  const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
 
   const isAdmin = user?.role === "ADMIN";
 

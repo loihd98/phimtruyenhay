@@ -233,8 +233,34 @@ const AdminFilmReviewForm: React.FC<AdminFilmReviewFormProps> = ({
         );
         toast.success("Cập nhật review phim thành công!");
       } else {
-        await apiClient.post("/admin/film-reviews", { ...payload, initViewCount: viewCountValue });
-        toast.success("Tạo review phim thành công!");
+        const createRes = await apiClient.post("/admin/film-reviews", { ...payload, initViewCount: viewCountValue });
+        const newFilmId = createRes.data?.data?.id;
+
+        // Save episodes for new film if any
+        if (newFilmId && episodes.length > 0) {
+          try {
+            for (const ep of episodes) {
+              if (!ep.videoUrl.trim()) continue;
+              await apiClient.post(`/admin/film-reviews/${newFilmId}/episodes`, {
+                episodeNum: Number(ep.episodeNum),
+                title: ep.title.trim() || null,
+                videoUrl: ep.videoUrl.trim(),
+                duration: ep.duration ? Number(ep.duration) : null,
+                language: ep.language,
+              });
+            }
+            // Update totalEpisodes
+            await apiClient.put(`/admin/film-reviews/${newFilmId}`, {
+              totalEpisodes: episodes.length,
+            });
+            toast.success(`Tạo review phim thành công với ${episodes.length} tập!`);
+          } catch (epError: any) {
+            console.error("Error saving episodes for new film:", epError);
+            toast.error("Tạo phim thành công nhưng có lỗi khi lưu tập. Vui lòng chỉnh sửa để thêm lại.");
+          }
+        } else {
+          toast.success("Tạo review phim thành công!");
+        }
       }
 
       onSuccess();

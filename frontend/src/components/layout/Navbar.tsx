@@ -11,6 +11,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useVip } from "@/hooks/useVip";
 import { useTheme } from "@/components/layout/ThemeProvider";
+import NotificationBell from "@/components/layout/NotificationBell";
 
 const Navbar: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -95,6 +96,7 @@ const Navbar: React.FC = () => {
     { href: "/truyen-audio", label: t("nav.audio") },
     { href: "/truyen-text", label: t("nav.stories") },
     { href: "/the-loai", label: "Thể loại" },
+    { href: "/contact", label: "Liên hệ" },
     { href: "/vip", label: "👑 VIP" },
   ];
 
@@ -156,6 +158,7 @@ const Navbar: React.FC = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
                       </svg>
                     </Link>
+                    <NotificationBell />
                     {hasAdminAccess && (
                       <Link href="/admin" className="p-2 rounded-full text-zinc-400 hover:text-accent-400 hover:bg-accent-500/10 transition-all" title="Admin">
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -228,11 +231,16 @@ const Navbar: React.FC = () => {
 
               {/* Mobile bookmark icon */}
               {isReady && isAuthenticated && (
-                <Link href="/bookmarks" className="lg:hidden p-2 rounded-full text-zinc-400 hover:text-accent-400 hover:bg-accent-500/10 transition-all" title="Bookmarks">
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
-                  </svg>
-                </Link>
+                <>
+                  <Link href="/bookmarks" className="lg:hidden p-2 rounded-full text-zinc-400 hover:text-accent-400 hover:bg-accent-500/10 transition-all" title="Bookmarks">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                    </svg>
+                  </Link>
+                  <div className="lg:hidden">
+                    <NotificationBell />
+                  </div>
+                </>
               )}
 
               {/* Hamburger */}

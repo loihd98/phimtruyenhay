@@ -500,6 +500,18 @@ class VipController {
       }
 
       console.log(`SePay webhook: activated VIP for user ${matched.userId}, plan ${matched.plan}, amount ${matched.amount}, endDate ${endDate}`);
+
+      // Notify user about VIP activation
+      const { createNotification } = require("./notificationController");
+      const planInfo2 = VIP_PLANS[matched.plan];
+      createNotification({
+        userId: matched.userId,
+        type: "VIP_ACTIVATED",
+        title: "VIP đã kích hoạt! 👑",
+        message: `Gói VIP ${planInfo2?.label || matched.plan} đã được kích hoạt thành công. Hết hạn: ${endDate.toLocaleDateString("vi-VN")}`,
+        link: "/vip",
+      });
+
       return res.json({ success: true, message: "Kích hoạt VIP thành công" });
     } catch (error) {
       console.error("SePay webhook error:", error);
@@ -641,6 +653,18 @@ class VipController {
       }
 
       console.log(`Gmail webhook: activated VIP for user ${matched.userId}, plan ${matched.plan}, transferContent ${transferContent}, endDate ${endDate}`);
+
+      // Notify user about VIP activation
+      const { createNotification } = require("./notificationController");
+      const planInfoG = VIP_PLANS[matched.plan];
+      createNotification({
+        userId: matched.userId,
+        type: "VIP_ACTIVATED",
+        title: "VIP đã kích hoạt! 👑",
+        message: `Gói VIP ${planInfoG?.label || matched.plan} đã được kích hoạt thành công. Hết hạn: ${endDate.toLocaleDateString("vi-VN")}`,
+        link: "/vip",
+      });
+
       return res.json({ success: true, message: "Kích hoạt VIP thành công" });
     } catch (error) {
       console.error("Gmail webhook error:", error);

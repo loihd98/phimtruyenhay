@@ -254,7 +254,7 @@ const FilmReviewsClient: React.FC<FilmReviewsClientProps> = ({
       </div>
 
       {/* Ad Banner */}
-      <AdLeaderboard />
+      {/* <AdLeaderboard /> */}
 
       {/* Film Reviews Grid */}
       {loading ? (
@@ -446,7 +446,7 @@ const FilmReviewsClient: React.FC<FilmReviewsClientProps> = ({
       )}
 
       {/* Ad Banner */}
-      <AdLeaderboard />
+      {/* <AdLeaderboard /> */}
 
       {/* Affiliate Popup */}
       {popupReview && (

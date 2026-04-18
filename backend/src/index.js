@@ -113,6 +113,7 @@ app.use("/api/affiliate", require("./routes/affiliate"));
 app.use("/api/film-reviews", require("./routes/filmReviews"));
 app.use("/api/blog", require("./routes/blog"));
 app.use("/api/vip", require("./routes/vip"));
+app.use("/api/notifications", require("./routes/notifications"));
 
 // Webhook endpoints (no /api prefix — matches SePay's expected URL format)
 app.use("/hooks", require("./routes/hooks"));

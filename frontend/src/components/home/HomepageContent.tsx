@@ -214,7 +214,7 @@ const HomepageContent: React.FC<HomepageContentProps> = ({
             </section>
 
             {/* Ad Banner */}
-            <AdLeaderboard />
+            {/* <AdLeaderboard /> */}
 
             {/* ── Film Reviews ── */}
             <section className="animate-fade-up-delay-1">
@@ -271,7 +271,7 @@ const HomepageContent: React.FC<HomepageContentProps> = ({
             </section>
 
             {/* Ad Banner */}
-            <AdLeaderboard />
+            {/* <AdLeaderboard /> */}
 
             {/* ── Two-column: Truyện Chữ + Trending ── */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-up-delay-2">
@@ -378,7 +378,7 @@ const HomepageContent: React.FC<HomepageContentProps> = ({
             </div>
 
             {/* Ad Banner */}
-            <AdLeaderboard />
+            {/* <AdLeaderboard /> */}
 
             {/* Affiliate Popup */}
             {popupReview && (

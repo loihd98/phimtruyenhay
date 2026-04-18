@@ -272,6 +272,11 @@ const translations: Record<Language, TranslationKeys> = {
     "language.chinese": "中文",
     "language.korean": "한국어",
     "language.japanese": "日本語",
+
+
+    // AUTH
+    "auth.logout": "Đăng xuất",
+    "auth.login": "Đăng nhập"
   },
   en: {
     // Navigation
@@ -593,6 +598,7 @@ const translations: Record<Language, TranslationKeys> = {
     "stories.sort.title": "タイトル順",
     "stories.no_stories": "小説が見つかりません",
     "stories.search_results": "検索結果",
+  
 
     // Genres page
     "genres.title": "小説ジャンル",

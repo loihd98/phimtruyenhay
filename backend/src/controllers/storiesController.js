@@ -713,6 +713,20 @@ class StoriesController {
         message: "Tạo truyện thành công",
         story: normalizeStory(story),
       });
+
+      // Auto-create notification for published stories
+      if (story.status === "PUBLISHED") {
+        const { broadcastNotification } = require("./notificationController");
+        const typeLabel = story.type === "AUDIO" ? "Truyện audio mới" : "Truyện mới";
+        const linkPath = story.type === "AUDIO" ? `/truyen-audio/${story.slug}` : `/truyen-text/${story.slug}`;
+        broadcastNotification({
+          type: "NEW_STORY",
+          title: typeLabel,
+          message: `"${story.title}" vừa được thêm mới`,
+          link: linkPath,
+          metadata: { storyId: story.id },
+        });
+      }
     } catch (error) {
       console.error("Create story error:", error);
       res.status(500).json({

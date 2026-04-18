@@ -7,7 +7,7 @@ const router = express.Router();
 // Rate limiting for contact form - more restrictive
 const contactLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 30000000000, // limit each IP to 3 contact form submissions per windowMs
+  max: 5, // limit each IP to 5 contact form submissions per windowMs
   message: {
     error: "Too Many Requests",
     message: "Bạn đã gửi quá nhiều tin nhắn. Vui lòng thử lại sau 15 phút.",

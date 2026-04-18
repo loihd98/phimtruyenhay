@@ -194,7 +194,7 @@ export default function BlogPostPage() {
           )}
 
           {/* Ad Banner */}
-          <AdInArticle />
+          {/* <AdInArticle /> */}
 
           {/* Comments section */}
           <section className="mt-12 pt-8 border-t border-white/[0.06]">
