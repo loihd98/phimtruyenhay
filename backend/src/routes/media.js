@@ -16,8 +16,11 @@ router.use(authenticateToken);
 
 // Permission check middleware — ADMIN bypasses, others need media permissions
 const requireMediaPermission = (code) => async (req, res, next) => {
-  if (req.user.role === "ADMIN") return next();
   try {
+    if (!req.user) {
+      return res.status(401).json({ error: "Unauthorized", message: "Chưa xác thực" });
+    }
+    if (req.user.role === "ADMIN") return next();
     const hasAccess = await permissionService.hasPermission(
       req.user.role,
       code,

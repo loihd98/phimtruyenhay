@@ -18,7 +18,7 @@ const prisma = new PrismaClient();
 const ACCOUNTS = [
   {
     email: "admin@phimtruyenhay.com",
-    password: "Admin@Midnight2026!",
+    password: "admin123456",
     name: "Admin Midnight",
     role: "ADMIN",
   },
