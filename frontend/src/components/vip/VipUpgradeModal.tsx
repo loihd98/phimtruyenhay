@@ -186,21 +186,21 @@ export default function VipUpgradeModal({ isOpen, onClose, onSuccess }: VipUpgra
         {/* Top accent bar */}
         <div className="h-1 w-full bg-gradient-to-r from-yellow-500 via-orange-500 to-yellow-500" />
 
-        {/* Close button */}
-        <button
-          onClick={handleClose}
-          className="absolute top-4 right-4 text-zinc-400 hover:text-white z-10"
-        >
-          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-
         {/* Ambient glow */}
         <div className="absolute -top-16 -right-16 w-48 h-48 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 p-6">
+          {/* Close button */}
+          <button
+            type="button"
+            onClick={handleClose}
+            className="absolute top-4 right-4 text-zinc-400 hover:text-white"
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
           {step === "plans" && (
             <>
               {/* VIP Header */}
@@ -341,9 +341,16 @@ export default function VipUpgradeModal({ isOpen, onClose, onSuccess }: VipUpgra
               </div>
 
               {/* Important notice about transfer content */}
-              <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3 mb-5">
+              <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3 mb-3">
                 <p className="text-xs text-yellow-300 text-center font-medium">
                   ⚠️ Vui lòng nhập <strong>đúng nội dung chuyển khoản</strong> để hệ thống tự động kích hoạt VIP
+                </p>
+              </div>
+
+              {/* Admin approval notice */}
+              <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3 mb-5">
+                <p className="text-xs text-blue-300 text-center">
+                  🕐 Vui lòng sau khi thanh toán đợi một thời gian để admin approve. Xin cảm ơn!
                 </p>
               </div>
 
