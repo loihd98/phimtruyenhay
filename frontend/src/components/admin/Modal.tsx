@@ -24,7 +24,6 @@ const Modal: React.FC<ModalProps> = ({
       {/* overlay */}
       <div
         className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
-        onClick={onClose}
       ></div>
 
       {/* modal content */}

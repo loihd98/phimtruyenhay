@@ -429,7 +429,7 @@ const StoryCard: React.FC<StoryCardProps> = ({
 
             {/* Minimal bottom content */}
             <div className="p-2 flex flex-col flex-1">
-              <h3 className="text-gray-900 dark:text-white pb-2 font-bold line-clamp-2">{story?.title}</h3>
+              <h3 className="text-gray-900 dark:text-white mb-2 font-bold line-clamp-2">{story?.title}</h3>
               {/* Genres */}
               <div className="flex flex-wrap gap-1 mb-2">
                 {story?.genres?.slice(0, 2).map((genre) => (
